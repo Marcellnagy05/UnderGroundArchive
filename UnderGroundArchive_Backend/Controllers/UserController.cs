@@ -29,7 +29,7 @@ namespace UnderGroundArchive_Backend.Controllers
         [HttpGet("books")]
         public async Task<ActionResult<IEnumerable<Books>>> GetBooks()
         {
-            var books = await _dbContext.Books.ToListAsync();
+            var books = await _dbContext.Books.Include(c => c.Comments).Include(r => r.ReaderRatings).Include(cr => cr.CriticRatings).ToListAsync();
             return Ok(books);
         }
 
@@ -37,7 +37,7 @@ namespace UnderGroundArchive_Backend.Controllers
         [HttpGet("book/{id}")]
         public async Task<ActionResult<Books>> GetBook(int id)
         {
-            var book = await _dbContext.Books.Include(c => c.Comments).FirstOrDefaultAsync(c => c.BookId == id);
+            var book = await _dbContext.Books.Include(c => c.Comments).Include(r => r.ReaderRatings).Include(cr => cr.CriticRatings).FirstOrDefaultAsync(c => c.BookId == id);
             return book == null ? NotFound() : book;
         }
 
@@ -59,7 +59,7 @@ namespace UnderGroundArchive_Backend.Controllers
             return comment == null ? NotFound() : comment;
         }
 
-        [HttpPost("")]
+        [HttpPost]
         public async Task<IActionResult> CreateComment(Comments comment)
         {
             var bookExists = await _dbContext.Books.AnyAsync(k => k.BookId == comment.BookId);
