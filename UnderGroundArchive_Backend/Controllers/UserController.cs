@@ -25,6 +25,54 @@ namespace UnderGroundArchive_Backend.Controllers
             var users = await _dbContext.Users.ToListAsync();
             return Ok(users);
         }
-        
+
+        [HttpGet("books")]
+        public async Task<ActionResult<IEnumerable<Books>>> GetBooks()
+        {
+            var books = await _dbContext.Books.ToListAsync();
+            return Ok(books);
+        }
+
+
+        [HttpGet("book/{id}")]
+        public async Task<ActionResult<Books>> GetBook(int id)
+        {
+            var book = await _dbContext.Books.Include(c => c.Comments).FirstOrDefaultAsync(c => c.BookId == id);
+            return book == null ? NotFound() : book;
+        }
+
+
+
+        // Comment endpoints
+        [HttpGet("comments")]
+        public async Task<ActionResult<IEnumerable<Comments>>> GetComments()
+        {
+
+
+            return await _dbContext.Comments.ToListAsync();
+        }
+
+        [HttpGet("comment/{id}")]
+        public async Task<ActionResult<Comments>> GetComment(int id)
+        {
+            var comment = await _dbContext.Comments.Include(j => j.Books).FirstOrDefaultAsync(j => j.CommentId == id);
+            return comment == null ? NotFound() : comment;
+        }
+
+        [HttpPost("")]
+        public async Task<IActionResult> CreateComment(Comments comment)
+        {
+            var bookExists = await _dbContext.Books.AnyAsync(k => k.BookId == comment.BookId);
+            if (!bookExists)
+            {
+                return BadRequest("The specified Book does not exist.");
+            }
+
+            _dbContext.Comments.Add(comment);
+            await _dbContext.SaveChangesAsync();
+
+            return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
+        }
+
     }
 }
