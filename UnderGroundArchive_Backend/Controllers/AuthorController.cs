@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using UnderGroundArchive_Backend.Dbcontext;
 using UnderGroundArchive_Backend.DTO;
 using UnderGroundArchive_Backend.Models;
@@ -24,30 +26,55 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPost("publish")]
+        [Authorize] // Kötelező a hitelesítés
         public async Task<IActionResult> PublishBook([FromBody] BookDTO bookDto)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
+            // Ellenőrizzük, hogy a DTO nem null és az adatok meg vannak adva
+            if (bookDto == null || string.IsNullOrEmpty(bookDto.BookName) || bookDto.GenreId <= 0 || bookDto.CategoryId <= 0)
             {
-                return Unauthorized("Nem található bejelentkezett felhasználó.");
+                return BadRequest(new { message = "Hiányos vagy érvénytelen adatokat küldtél." });
             }
 
-            // Itt egy Book objektumot hozunk létre a DTO alapján
-            var book = new Books
+            // JWT-ből a felhasználó azonosítása
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                BookName = bookDto.BookName,
-                GenreId = bookDto.GenreId,
-                CategoryId = bookDto.CategoryId,
-                BookDescription = bookDto.BookDescription,
-                AuthorId = user.Id,
-            };
+                return Unauthorized(new { message = "Nem található bejelentkezett felhasználó. A token érvénytelen vagy hiányzik." });
+            }
 
-            // Könyv mentése
-            _dbContext.Books.Add(book);
-            await _dbContext.SaveChangesAsync();
+            // Felhasználó ellenőrzése az adatbázisban
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Nem található a felhasználó az adatbázisban." });
+            }
 
-            return Ok("A könyv sikeresen publikálva.");
+            try
+            {
+                // Új könyv létrehozása
+                var book = new Books
+                {
+                    BookName = bookDto.BookName,
+                    GenreId = bookDto.GenreId,
+                    CategoryId = bookDto.CategoryId,
+                    BookDescription = bookDto.BookDescription,
+                    AuthorId = user.Id,
+                };
+
+                // Adatbázis mentés
+                _dbContext.Books.Add(book);
+                await _dbContext.SaveChangesAsync();
+
+                // Sikeres válasz
+                return Ok(new { message = "A könyv sikeresen publikálva.", bookId = book.BookId });
+            }
+            catch (Exception ex)
+            {
+                // Hiba esetén visszatérés
+                return StatusCode(500, new { message = "Belső szerverhiba történt a könyv mentése során.", error = ex.Message });
+            }
         }
+
     }
 }

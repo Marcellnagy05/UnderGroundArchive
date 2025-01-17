@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using UnderGroundArchive_Backend.Dbcontext;
 using UnderGroundArchive_Backend.DTO;
 using UnderGroundArchive_Backend.Models;
@@ -13,6 +17,7 @@ namespace UnderGroundArchive_Backend.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
         private readonly UGA_DBContext _dbContext;
 
         private decimal LimitBalance(decimal balance)
@@ -20,11 +25,12 @@ namespace UnderGroundArchive_Backend.Controllers
             return Math.Round(balance, 2);  // Két tizedesjegyig kerekít
         }
 
-        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, UGA_DBContext dBContext)
+        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, UGA_DBContext dBContext, IConfiguration configuration)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _dbContext = dBContext;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -55,13 +61,40 @@ namespace UnderGroundArchive_Backend.Controllers
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
             if (result.Succeeded)
             {
-                // Sikeres bejelentkezés
-                return Ok(new { message = "Sikeres bejelentkezés." });
+                // JWT generálása
+                var token = GenerateJwtToken(user);
+
+                // Válasz visszaadása a tokennel
+                return Ok(new { token });
             }
             else
             {
                 return Unauthorized("Hibás felhasználónév vagy jelszó.");
             }
+        }
+
+        // JWT generálás
+        private string GenerateJwtToken(ApplicationUser user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SA5Tq6PMb/6UKyx7IPCe7c1kISP3wnSoyH/mFeZzxoM="));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(30), // Token érvényességi ideje
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         [HttpPost("register")]

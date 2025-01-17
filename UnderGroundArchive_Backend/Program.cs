@@ -1,73 +1,124 @@
-﻿
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using UnderGroundArchive_Backend.Dbcontext;
 using UnderGroundArchive_Backend.Models;
 using UnderGroundArchive_Backend.Services;
 
-namespace UnderGroundArchive_Backend
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        builder.Services.AddDbContext<UGA_DBContext>(options =>
+            options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+                new MySqlServerVersion(new Version(8, 0, 33)))); // Replace with your MySQL version
+
+        builder.Services.AddScoped<IBookService, BookService>();
+
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
-            var builder = WebApplication.CreateBuilder(args);
+            options.Password.RequireDigit = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequiredUniqueChars = 1;
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<UGA_DBContext>()
+        .AddDefaultTokenProviders();
 
-            // Add services to the container.
-            builder.Services.AddDbContext<UGA_DBContext>(options =>
-                options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-                    new MySqlServerVersion(new Version(8, 0, 33)))); // Replace with your MySQL version
-
-            builder.Services.AddScoped<IBookService, BookService>();
-
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        // AddJwtBearer beállítás
+        var secretKey = Encoding.UTF8.GetBytes("SA5Tq6PMb/6UKyx7IPCe7c1kISP3wnSoyH/mFeZzxoM=");
+        builder.Services.AddAuthentication(options =>
+        {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(options =>
             {
-                options.Password.RequireDigit = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequiredUniqueChars = 1;
-                options.User.RequireUniqueEmail = true;
-            })
-            .AddEntityFrameworkStores<UGA_DBContext>()
-            .AddDefaultTokenProviders();
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+                };
 
-            // Auth cookie beállítása (opcionális)
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Account/Login"; // Bejelentkezési oldal
-                options.LogoutPath = "/Account/Logout"; // Kijelentkezési oldal
-                options.ExpireTimeSpan = TimeSpan.FromDays(14); // Cookie lejárati idő
-                options.SlidingExpiration = true; // Automatikus hosszabbítás
+                options.Events = new JwtBearerEvents
+                {
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonSerializer.Serialize(new { message = "Token érvénytelen vagy hiányzik." });
+                        return context.Response.WriteAsync(result);
+                    }
+                };
             });
 
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+                if (context.Request.Path.StartsWithSegments("/api"))
+                {
+                    context.Response.StatusCode = 401; // Ne irányítsa át, csak adjon vissza 401-et
+                    return Task.CompletedTask;
+                }
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            };
+        });
 
-            app.UseHttpsRedirection();
+        // CORS beállítása
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowLocalhost", builder =>
+            {
+                builder.WithOrigins("http://localhost:5173")
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials();
+            });
+        });
 
-            app.UseAuthorization();
-            app.UseStaticFiles();
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+        var app = builder.Build();
 
-            app.MapControllers();
-
-            app.Run();
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
+
+        app.UseHttpsRedirection();
+
+        // CORS beállítás alkalmazása a UseRouting előtt
+        app.UseCors("AllowLocalhost");  // CORS szabályok alkalmazása
+        app.UseRouting();  // Routing beállítása
+
+        app.UseAuthentication(); // Bejelentkezés (JWT alapú)
+        app.UseAuthorization();  // Jogosultságok ellenőrzése
+        app.UseStaticFiles();  // Statikus fájlok kezelése (ha van)
+
+        app.MapControllers();
+
+        app.Run();
     }
 }
