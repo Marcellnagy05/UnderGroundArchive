@@ -4,7 +4,6 @@ namespace UnderGroundArchive_Backend.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public int RoleId { get; set; } = 1;
         public int RankId { get; set; } = 0;
         public int SubscriptionId { get; set; } = 0;
         public DateTime JoinDate { get; set; } = DateTime.Now;

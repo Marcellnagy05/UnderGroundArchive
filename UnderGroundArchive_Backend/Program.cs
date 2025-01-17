@@ -18,6 +18,8 @@ namespace UnderGroundArchive_Backend
                 options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
                     new MySqlServerVersion(new Version(8, 0, 33)))); // Replace with your MySQL version
 
+            builder.Services.AddScoped<IBookService, BookService>();
+
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;

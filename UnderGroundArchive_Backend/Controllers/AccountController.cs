@@ -20,10 +20,11 @@ namespace UnderGroundArchive_Backend.Controllers
             return Math.Round(balance, 2);  // Két tizedesjegyig kerekít
         }
 
-        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, UGA_DBContext dBContext)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _dbContext = dBContext;
         }
 
         [HttpPost("login")]
@@ -90,7 +91,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
             // A jelszó hozzáadása és a hashelés automatikusan elvégzése az Identity által
             var result = await _userManager.CreateAsync(user, newUser.Password);
-
+            await _userManager.AddToRoleAsync(user, "User");
             if (!result.Succeeded)
             {
                 // Ha nem sikerült a regisztráció, hibaüzenetet adunk vissza
