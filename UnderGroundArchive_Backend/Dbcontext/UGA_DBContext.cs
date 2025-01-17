@@ -44,7 +44,7 @@ namespace UnderGroundArchive_Backend.Dbcontext
 
                 modelBuilder.Entity<Categories>()
                     .Property(c => c.IsAgeRestricted)
-                    .HasColumnType("TINYINT(1)"); // Ha szükséges
+                    .HasColumnType("TINYINT(1)");
             });
 
             // Primary Keys
