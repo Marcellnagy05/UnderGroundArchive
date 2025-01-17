@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UnderGroundArchive_Backend.Dbcontext;
 using UnderGroundArchive_Backend.Models;
+using UnderGroundArchive_Backend.Services;
 
 namespace UnderGroundArchive_Backend
 {
@@ -19,12 +20,12 @@ namespace UnderGroundArchive_Backend
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                // Identity beállítások (opcionális)
-                options.Password.RequireDigit = false; // Nem kell szám a jelszóban
-                options.Password.RequireNonAlphanumeric = false; // Nem kell speciális karakter
-                options.Password.RequireUppercase = false; // Nem kell nagybetű
-                options.Password.RequiredLength = 6; // Minimális hossz
-                options.User.RequireUniqueEmail = true; // E-mail egyediség
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 1;
+                options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<UGA_DBContext>()
             .AddDefaultTokenProviders();

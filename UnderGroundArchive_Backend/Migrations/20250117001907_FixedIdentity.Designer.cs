@@ -12,7 +12,7 @@ using UnderGroundArchive_Backend.Dbcontext;
 namespace UnderGroundArchive_Backend.Migrations
 {
     [DbContext(typeof(UGA_DBContext))]
-    [Migration("20250116231331_FixedIdentity")]
+    [Migration("20250117001907_FixedIdentity")]
     partial class FixedIdentity
     {
         /// <inheritdoc />
