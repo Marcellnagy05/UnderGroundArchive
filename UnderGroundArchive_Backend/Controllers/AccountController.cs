@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -133,5 +134,13 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return Ok("A felhasználó sikeresen regisztrálva.");
         }
+        [HttpPost("logout")]
+        [Authorize]
+        public IActionResult Logout()
+        {
+            // Nincs szükség külön backend logikára, csak egy OK választ küldünk vissza
+            return Ok(new { message = "Sikeres kijelentkezés." });
+        }
+
     }
 }
