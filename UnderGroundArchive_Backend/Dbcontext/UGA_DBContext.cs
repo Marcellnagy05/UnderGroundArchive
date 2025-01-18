@@ -73,13 +73,13 @@ namespace UnderGroundArchive_Backend.Dbcontext
             modelBuilder.Entity<Books>()
                 .HasOne(b => b.Categories)
                 .WithMany(c => c.Books)
-                .HasForeignKey(b => b.CategoryId);
+                .HasForeignKey(b => b.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Books>()
-                .HasOne(b => b.Users)
+                .HasOne<ApplicationUser>()
                 .WithMany()
-                .HasForeignKey(b => b.AuthorId)
-                .HasPrincipalKey(u => u.Id);
+                .HasForeignKey(b => b.AuthorId);
 
             // Requests Table
             modelBuilder.Entity<Requests>()

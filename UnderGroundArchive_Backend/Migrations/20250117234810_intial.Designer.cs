@@ -12,8 +12,8 @@ using UnderGroundArchive_Backend.Dbcontext;
 namespace UnderGroundArchive_Backend.Migrations
 {
     [DbContext(typeof(UGA_DBContext))]
-    [Migration("20250117001907_FixedIdentity")]
-    partial class FixedIdentity
+    [Migration("20250117234810_intial")]
+    partial class intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -245,9 +245,6 @@ namespace UnderGroundArchive_Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("RankPoints")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
@@ -620,7 +617,7 @@ namespace UnderGroundArchive_Backend.Migrations
                         .WithMany("Books")
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", "Users")
+                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -629,7 +626,7 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.HasOne("UnderGroundArchive_Backend.Models.Categories", "Categories")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("UnderGroundArchive_Backend.Models.Genre", "Genre")
@@ -641,8 +638,6 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Genre");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Comments", b =>

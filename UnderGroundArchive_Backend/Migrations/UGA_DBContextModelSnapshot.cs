@@ -244,9 +244,6 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<int>("RankPoints")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
 
@@ -617,7 +614,7 @@ namespace UnderGroundArchive_Backend.Migrations
                         .WithMany("Books")
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", "Users")
+                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -626,7 +623,7 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.HasOne("UnderGroundArchive_Backend.Models.Categories", "Categories")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("UnderGroundArchive_Backend.Models.Genre", "Genre")
@@ -638,8 +635,6 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Genre");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Comments", b =>

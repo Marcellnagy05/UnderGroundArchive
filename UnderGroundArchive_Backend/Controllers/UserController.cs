@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using UnderGroundArchive_Backend.Models;
 using UnderGroundArchive_Backend.DTO;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace UnderGroundArchive_Backend.Controllers
 {
@@ -25,6 +26,37 @@ namespace UnderGroundArchive_Backend.Controllers
             var users = await _dbContext.Users.ToListAsync();
             return Ok(users);
         }
+
+        [HttpGet("users/{id}")]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return Ok(user);
+        }
+
+        //test:
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            // A tokenből kinyert felhasználói ID (a JWT-ban található)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return Unauthorized(); // Ha nincs ID, akkor 401-es válasz
+            }
+
+            // Felhasználó lekérése az ID alapján
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound(); // Ha nincs ilyen felhasználó, akkor 404
+            }
+
+            return Ok(user); // A felhasználó adatainak visszaadása
+        }
+
 
         [HttpGet("books")]
         public async Task<ActionResult<IEnumerable<Books>>> GetBooks()

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UnderGroundArchive_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class FixedIdentity : Migration
+    public partial class intial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,7 +40,6 @@ namespace UnderGroundArchive_Backend.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
                     RankId = table.Column<int>(type: "int", nullable: false),
                     SubscriptionId = table.Column<int>(type: "int", nullable: false),
                     JoinDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -351,7 +350,7 @@ namespace UnderGroundArchive_Backend.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "CategoryId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Books_Genre_GenreId",
                         column: x => x.GenreId,

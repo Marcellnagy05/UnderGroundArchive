@@ -42,7 +42,6 @@ namespace UnderGroundArchive_Backend.Controllers
                 return BadRequest("Email és jelszó szükséges.");
             }
 
-            // Próbáljuk megkeresni a felhasználót email vagy felhasználónév alapján
             ApplicationUser user = null;
             if (loginDto.Login.Contains("@")) // Ha email formátumban van
             {
@@ -58,7 +57,6 @@ namespace UnderGroundArchive_Backend.Controllers
                 return Unauthorized("Hibás felhasználónév vagy jelszó.");
             }
 
-            // Ellenőrizzük a jelszót
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
             if (result.Succeeded)
             {
@@ -66,7 +64,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 var token = GenerateJwtToken(user);
 
                 // Válasz visszaadása a tokennel
-                return Ok(new { token });
+                return Ok(new { jwt = token }); // Az jwt kulcsot biztosan stringként küldjük vissza
             }
             else
             {
@@ -74,15 +72,22 @@ namespace UnderGroundArchive_Backend.Controllers
             }
         }
 
+
         // JWT generálás
-        private string GenerateJwtToken(ApplicationUser user)
+        private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
-            var claims = new[]
+            // Lekérdezzük a felhasználó szerepköreit
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
+
+            // Szerepkörök hozzáadása a tokenhez
+            claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SA5Tq6PMb/6UKyx7IPCe7c1kISP3wnSoyH/mFeZzxoM="));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -91,7 +96,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30), // Token érvényességi ideje
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds
             );
 
@@ -101,39 +106,45 @@ namespace UnderGroundArchive_Backend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDTO newUser)
         {
-            if (newUser == null || string.IsNullOrEmpty(newUser.Name) || string.IsNullOrEmpty(newUser.Email) || string.IsNullOrEmpty(newUser.Password))
+            if (newUser == null || string.IsNullOrEmpty(newUser.Name) ||
+                string.IsNullOrEmpty(newUser.Email) ||
+                string.IsNullOrEmpty(newUser.Password))
             {
-                return BadRequest("Hiányzó kötelező mezők.");
+                return BadRequest(new { errorCode = "MISSING_FIELDS", message = "Hiányzó kötelező mezők." });
             }
 
-            // Ellenőrizzük, hogy a felhasználó már létezik-e
-            var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == newUser.Email);
-            if (existingUser != null)
+            var existingEmail = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == newUser.Email);
+            var existingName = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.Name);
+            if (existingEmail != null)
             {
-                return BadRequest("A felhasználó már létezik.");
+                return BadRequest(new { errorCode = "EMAIL_ALREADY_EXISTS", message = "A felhasználó már létezik." });
+            }
+            else if(existingName != null)
+            {
+                return BadRequest(new { errorCode = "USERNAME_ALREADY_EXISTS", message = "A felhasználó már létezik." });
             }
 
-            // Felhasználó létrehozása
             var user = new ApplicationUser
             {
                 UserName = newUser.Name,
                 Email = newUser.Email,
                 BirthDate = newUser.BirthDate,
                 Country = newUser.Country,
-                Balance = LimitBalance(newUser.Balance)
+                PhoneNumber = newUser.PhoneNumber
             };
 
-            // A jelszó hozzáadása és a hashelés automatikusan elvégzése az Identity által
             var result = await _userManager.CreateAsync(user, newUser.Password);
-            await _userManager.AddToRoleAsync(user, "User");
             if (!result.Succeeded)
             {
-                // Ha nem sikerült a regisztráció, hibaüzenetet adunk vissza
-                return BadRequest(result.Errors.Select(e => e.Description));
+                var errorMessages = result.Errors.Select(e => e.Description).ToArray();
+                return BadRequest(new { errorCode = "REGISTRATION_FAILED", errors = errorMessages });
             }
 
-            return Ok("A felhasználó sikeresen regisztrálva.");
+            await _userManager.AddToRoleAsync(user, "Author");
+
+            return Ok(new { message = "A felhasználó sikeresen regisztrálva." });
         }
+
         [HttpPost("logout")]
         [Authorize]
         public IActionResult Logout()

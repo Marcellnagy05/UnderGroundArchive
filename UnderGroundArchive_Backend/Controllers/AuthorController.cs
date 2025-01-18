@@ -26,7 +26,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPost("publish")]
-        [Authorize] // Kötelező a hitelesítés
+        [Authorize(Roles = "Author")] // Kötelező a hitelesítés
         public async Task<IActionResult> PublishBook([FromBody] BookDTO bookDto)
         {
             // Ellenőrizzük, hogy a DTO nem null és az adatok meg vannak adva
