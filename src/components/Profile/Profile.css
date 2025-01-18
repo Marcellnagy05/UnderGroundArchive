@@ -1,0 +1,14 @@
+.profileContainer {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  
+  .profileContainer p {
+    margin: 0;
+  }
+  

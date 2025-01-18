@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Logout from "../Logout/Logout";
 
 const Home = () => {
   const navigate = useNavigate();

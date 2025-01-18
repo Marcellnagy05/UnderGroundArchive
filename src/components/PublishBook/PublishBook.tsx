@@ -159,7 +159,6 @@ const PublishBook = () => {
         {error && <p style={{ color: "red" }}>{error}</p>}
         <button type="submit">Könyv publikálása</button>
       </form>
-      <Logout />
     </div>
   );
 };

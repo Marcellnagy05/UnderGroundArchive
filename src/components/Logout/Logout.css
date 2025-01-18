@@ -1,0 +1,15 @@
+.logoutBtn {
+    position: fixed; /* A gomb mindig fixen az oldalon lesz */
+    bottom: 10px; /* A képernyő alján 10px távolságra */
+    left: 10px; /* Bal oldalon 10px távolságra */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 20px; /* Kényelmesebb méret */
+    cursor: pointer; /* Mutatja, hogy kattintható */
+  }
+  
+  .logoutBtn:hover {
+    background-color: #f0f0f0; /* Hover effekt */
+  }
+  

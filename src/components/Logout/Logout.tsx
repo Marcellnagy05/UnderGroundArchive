@@ -1,19 +1,22 @@
+import { useUserContext } from "../context/UserContext"; // Importáljuk a useUserContext hookot
 import { useNavigate } from "react-router-dom";
+import "./Logout.css"
 
 const Logout = () => {
-    const navigate = useNavigate(); // Hook a navigációhoz
+  const { setUser } = useUserContext(); // A setUser-t a kontextusból kapjuk
+  const navigate = useNavigate();
 
-    function logout() {
-        // Token törlése a localStorage-ból vagy sessionStorage-ból
-        localStorage.removeItem('jwt');
-        sessionStorage.removeItem('jwt');
-    
-        // Navigáció a login oldalra
-        navigate("/");
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("jwt"); // Töröljük a JWT tokent
+    setUser("guest"); // Frissítjük a felhasználót a "guest"-re
+    navigate("/"); // Átirányítjuk a felhasználót a főoldalra
+  };
+
   return (
-    <button onClick={logout}>Kijelentkezes</button>
-  )
-}
+    <button onClick={handleLogout} className="logoutBtn">
+      Kijelentkezés
+    </button>
+  );
+};
 
-export default Logout
+export default Logout;
