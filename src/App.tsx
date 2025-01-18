@@ -9,26 +9,40 @@ import Logout from "./components/Logout/Logout";
 import { UserProvider } from "./components/context/UserContext"; // Importáljuk a UserProvider-t
 import "./App.css";
 import "../src/components/Profile/Profile.css";
+import { useUserContext } from "./components/context/UserContext";
 
 const App = () => {
   return (
     <Router>
-      <UserProvider> {/* A UserProvider köré rendezzük az alkalmazást */}
-        <div style={{ position: "relative" }}>
-          <Profile /> {/* Profil megjelenítése a bal sarokban */}
-          <Logout /> {/* Kijelentkezés gomb a jobb sarokban */}
-
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/publish" element={<PublishBook />} />
-            <Route path="/books" element={<Books />} />
-          </Routes>
+      <UserProvider>
+        <div className="appContent">
+          <AppContent/>
         </div>
       </UserProvider>
     </Router>
   );
 };
+
+const AppContent = () =>{
+  const { user } = useUserContext();
+
+  return(
+    <div style={{ position: "relative" }}>
+    <Profile /> {/* Profil megjelenítése a bal sarokban */}
+    {user !== "guest" && (
+      <>
+        <Logout /> {/* Kijelentkezés gomb a jobb sarokban */}
+      </>
+    )}
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/publish" element={<PublishBook />} />
+      <Route path="/books" element={<Books />} />
+    </Routes>
+  </div>
+  )
+}
 
 export default App;
