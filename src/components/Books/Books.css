@@ -1,0 +1,23 @@
+.allBooks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .bookCard {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 16px;
+    width: 250px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bookCard h3 {
+    margin: 0 0 8px 0;
+  }
+  
+  .bookCard p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  

@@ -13,6 +13,7 @@ const Home = () => {
   <div>
     <button onClick={() => NavigationRouter("/login")}>Login</button>
     <button onClick={() => NavigationRouter("/register")}>Register</button>
+    <button onClick={() => NavigationRouter("/books")}>Books</button>
   </div>
   )
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Logout from "./Logout";
+import Logout from "../Logout/Logout";
 
 // Műfaj típus
 interface Genre {
