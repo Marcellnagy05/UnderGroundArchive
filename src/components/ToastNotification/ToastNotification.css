@@ -1,0 +1,76 @@
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 40%;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .toast.success {
+    background-color: green;
+  }
+  
+  .toast.error {
+    background-color: red;
+  }
+  
+  .toast button {
+    margin-left: 10px;
+    background: none;@keyframes fadeOut {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 40%;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out; /* Áttűnés */
+    }
+    
+    .toast.success {
+      background-color: green;
+    }
+    
+    .toast.error {
+      background-color: red;
+    }
+    
+    .toast button {
+      margin-left: 10px;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .toast.fade-out {
+      animation: fadeOut 0.5s forwards; /* 0.5 másodperc elhalványulás */
+    }
+    
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  

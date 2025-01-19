@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUserContext } from "../context/UserContext"; // Importáljuk a useUserContext hookot
+import { useUserContext } from "../contexts/UserContext"; // Importáljuk a useUserContext hookot
 
 const Profile = () => {
   const { user, setUser } = useUserContext(); // A felhasználói adatokat és setUser-t a kontextusból kapjuk

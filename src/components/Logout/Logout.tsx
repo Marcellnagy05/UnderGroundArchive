@@ -1,4 +1,4 @@
-import { useUserContext } from "../context/UserContext"; // Importáljuk a useUserContext hookot
+import { useUserContext } from "../contexts/UserContext"; // Importáljuk a useUserContext hookot
 import { useNavigate } from "react-router-dom";
 import "./Logout.css"
 

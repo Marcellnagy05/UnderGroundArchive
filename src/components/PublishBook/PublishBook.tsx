@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useToast } from "../contexts/ToastContext";
 
 // Műfaj típus
 interface Genre {
@@ -21,6 +22,7 @@ const PublishBook = () => {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isAuthor, setIsAuthor] = useState(false);
+  const {showToast} = useToast();
 
   // Műfajok és kategóriák lekérése
   const fetchGenresAndCategories = async () => {
@@ -59,7 +61,7 @@ const PublishBook = () => {
 
       // Ha egyik kulcsban sem találunk "Author" szerepkört, akkor nem engedjük az oldalt
       if (!(roles.includes("Author") && roleFromClaim === "Author")) {
-        setError("Nincs jogosultságod a könyv publikálásához.");
+        setError("Nem rendelkezik megfelelő jogosultságokkal az oldal eléréséhez.");
         setIsAuthor(false);
       } else {
         setIsAuthor(true);
@@ -72,15 +74,11 @@ const PublishBook = () => {
   }, []);
    // Üres dependency array, így csak egyszer fut le
 
-  useEffect(() => {
-    console.log("Bejelenetkezett felhasználó roleja author?:", isAuthor);
-  }, [isAuthor]); // Log csak akkor fut le, ha változik az isAuthor értéke
-
   const handlePublish = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!bookName || !genreId || !categoryId || !bookDescription) {
-      setError("Minden mezőt ki kell tölteni.");
+      showToast("Minden mező kitöltse kötelező!","error")
       return;
     }
 
@@ -111,21 +109,22 @@ const PublishBook = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("Sikeres könyv publikálás:", data.message);
+        showToast("A Könyv sikeresen publikálva.","success")
         setError(""); // Hiba törlése
       } else {
         switch (response.status) {
           case 400:
-            setError("Hibás kérés. Kérlek ellenőrizd a beküldött adatokat.");
+            showToast("Kérlek ellenőrizd a beküldött adatokat.","error");
             break;
           case 403:
-            setError("Publikálni csak a szerzői jogosultságokkal rendelkező tagok tudnak.");
+            showToast("Publikálni csak a szerzői jogosultságokkal rendelkező tagok tudnak.","error");
             break;
           case 500:
-            setError("Belső szerverhiba történt.");
+            showToast("Belső szerverhiba történt.","error");
             break;
           default:
             const responseText = await response.text();
-            setError(responseText || "Hiba történt a könyv publikálása során.");
+            showToast(responseText || "Hiba történt a könyv publikálása során.","error");
         }
       }
     } catch (err) {
@@ -146,7 +145,6 @@ const PublishBook = () => {
               type="text"
               value={bookName}
               onChange={(e) => setBookName(e.target.value)}
-              required
             />
           </div>
           <div>
@@ -154,7 +152,6 @@ const PublishBook = () => {
             <select
               value={genreId}
               onChange={(e) => setGenreId(e.target.value)}
-              required
             >
               <option value="">Válasszon műfajt</option>
               {genres.map((genre) => (
@@ -169,7 +166,6 @@ const PublishBook = () => {
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
-              required
             >
               <option value="">Válasszon kategóriát</option>
               {categories.map((category) => (
@@ -184,7 +180,6 @@ const PublishBook = () => {
             <textarea
               value={bookDescription}
               onChange={(e) => setBookDescription(e.target.value)}
-              required
             />
           </div>
           <button type="submit">Könyv publikálása</button>

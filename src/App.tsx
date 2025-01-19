@@ -11,19 +11,22 @@ import Register from "./components/Register/Register";
 import Books from "./components/Books/Books";
 import Profile from "./components/Profile/Profile";
 import Logout from "./components/Logout/Logout";
-import { UserProvider } from "./components/context/UserContext"; // Importáljuk a UserProvider-t
+import { UserProvider } from "./components/contexts/UserContext"; // Importáljuk a UserProvider-t
 import "./App.css";
 import "../src/components/Profile/Profile.css";
-import { useUserContext } from "./components/context/UserContext";
+import { useUserContext } from "./components/contexts/UserContext";
+import { ToastProvider } from "./components/contexts/ToastContext";
 
 const App = () => {
   return (
     <Router>
-      <UserProvider>
-        <div className="appContent">
-          <AppContent />
-        </div>
-      </UserProvider>
+      <ToastProvider>
+        <UserProvider>
+          <div className="appContent">
+            <AppContent />
+          </div>
+        </UserProvider>
+      </ToastProvider>
     </Router>
   );
 };
