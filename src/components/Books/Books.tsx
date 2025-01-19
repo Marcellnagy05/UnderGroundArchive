@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import "./Books.css";
 
 interface Books {
-  bookId: number;
+  id: number; // bookId helyett id
   bookName: string;
-  authorId: string; // Módosítva id-re
+  authorId: string;
   genreId: number;
   categoryId: number;
   bookDescription: string;
@@ -50,6 +50,11 @@ interface User {
   accessFailedCount: number;
 }
 
+interface user {
+  id: string;
+  userName: string;
+}
+
 const Books = () => {
   const [books, setBooks] = useState<Books[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -57,6 +62,10 @@ const Books = () => {
   const [users, setUsers] = useState<{ [key: string]: User }>({});
   const [error, setError] = useState("");
   const [selectedBook, setSelectedBook] = useState<Books | null>(null); // Kiválasztott könyv
+  const [user, setUser] = useState<user | null>(null); // Bejelentkezett felhasználó
+  const [role, setRole] = useState<string | null>(null); // Felhasználói szerepkör
+  const [hoveredRating, setHoveredRating] = useState<number | null>(null);
+  const [ratings, setRatings] = useState<{ [id: number]: number }>({}); // bookId helyett id
 
   /* #region Genre&Category fetch and methods */
   useEffect(() => {
@@ -92,21 +101,53 @@ const Books = () => {
   };
   /* #endregion */
 
-  // Felhasználó lekérése az authorId alapján
-  const fetchUser = async (authorId: string) => {
-    try {
-      const userResponse = await fetch(
-        `https://localhost:7197/api/User/user/${authorId}`
+  // Felhasználó és szerepkör lekérése a JWT-ból
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) {
+      setError(
+        "Nem rendelkezik megfelelő jogosultságokkal az oldal eléréséhez."
       );
-      const userData: User = await userResponse.json();
-      setUsers((prevUsers) => ({
-        ...prevUsers,
-        [authorId]: userData,
-      }));
-    } catch (err) {
-      console.error("Hiba a felhasználó lekérése során:", err);
+      return;
     }
-  };
+
+    try {
+      // Token dekódolása
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+      // Szerepkör ellenőrzése
+      const roles = decodedToken["roles"] || [];
+      const roleFromClaim =
+        decodedToken[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ];
+
+      if (!(roles === "Author" || roleFromClaim === "Author")) {
+        setError(
+          "Nem rendelkezik megfelelő jogosultságokkal az oldal eléréséhez."
+        );
+        return;
+      }
+
+      // Felhasználói adatok beállítása
+      setUser({
+        id: decodedToken[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+        ],
+        userName:
+          decodedToken[
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+          ],
+      });
+
+      // Szerepkör tárolása
+      setRole(roleFromClaim || "reader");
+    } catch (err) {
+      console.error("Hiba a token dekódolása során:", err);
+      setError("Hiba történt a jogosultságok ellenőrzésekor.");
+    }
+  }, []);
 
   // Könyvek és felhasználók lekérése
   const allBooks = async () => {
@@ -116,10 +157,76 @@ const Books = () => {
       setBooks(bookData);
 
       const authorIds = [...new Set(bookData.map((book) => book.authorId))];
-      authorIds.forEach((authorId) => fetchUser(authorId));
+      fetchUsersByIds(authorIds); // Összes felhasználó lekérése
     } catch (err) {
       console.error("Hiba a könyvek lekérése során:", err);
       setError("Hiba történt az adatok lekérésekor.");
+    }
+  };
+
+  const fetchUsersByIds = async (authorIds: string[]) => {
+    try {
+      const userPromises = authorIds.map((id) =>
+        fetch(`https://localhost:7197/api/User/user/${id}`).then((response) =>
+          response.json()
+        )
+      );
+      const usersData = await Promise.all(userPromises);
+
+      const usersMap = usersData.reduce((acc, user) => {
+        acc[user.id] = user;
+        return acc;
+      }, {});
+
+      setUsers(usersMap);
+    } catch (err) {
+      console.error("Hiba a felhasználók lekérése során:", err);
+    }
+  };
+
+  // Értékelés mentése
+  const saveRating = async (bookId: number, rating: number) => {
+    if (!role) {
+      alert("Nem rendelkezik jogosultsággal az értékeléshez.");
+      return;
+    }
+
+    const apiEndpoint =
+      role === "User"
+        ? "https://localhost:7197/api/User/createReaderRating"
+        : "https://localhost:7197/api/User/createCriticRating";
+
+    try {
+      const requestData = {
+        raterId: user?.id,
+        bookId: bookId,
+        ratingValue: rating,
+      };
+      console.log(requestData);
+
+      const response = await fetch(apiEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        console.error("Hiba az értékelés mentése során");
+        return;
+      }
+
+      // Frissítsd a helyi állapotot az értékelés mentése után
+      setRatings((prevRatings) => ({
+        ...prevRatings,
+        [bookId]: rating,
+      }));
+
+      alert("Értékelés mentése sikeres!");
+    } catch (err) {
+      console.error("Hiba az értékelés mentése során:", err);
     }
   };
 
@@ -131,35 +238,51 @@ const Books = () => {
     setSelectedBook(null); // Vissza a könyvlistához
   };
 
+  // Az alkalmazás kódja:
   return (
     <div>
-      <div className="allBookContainer">
-        <button onClick={allBooks}>Összes könyv lekérése</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+      <button onClick={() => allBooks()}>Összes könyv lekérése</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {!selectedBook ? (
         <div className="allBooks">
-          {!selectedBook ? (
-            books.map((book) => (
-              <div key={book.bookId} className="bookCard">
-                <h3>{book.bookName}</h3>
-                <p><strong>Szerző:</strong> {users[book.authorId]?.userName || "Betöltés..."}</p>
-                <p><strong>Műfaj:</strong> {getGenreName(book.genreId)}</p>
-                <p><strong>Kategória:</strong> {getCategoryName(book.categoryId)}</p>
-                <p><strong>Leírás:</strong> {book.bookDescription}</p>
-                <button onClick={() => handleDetails(book)}>Részletek</button>
-              </div>
-            ))
-          ) : (
-            <div className="bookDetails">
-              <h2>{selectedBook.bookName}</h2>
-              <p><strong>Szerző:</strong> {users[selectedBook.authorId]?.userName || "Betöltés..."}</p>
-              <p><strong>Műfaj:</strong> {getGenreName(selectedBook.genreId)}</p>
-              <p><strong>Kategória:</strong> {getCategoryName(selectedBook.categoryId)}</p>
-              <p><strong>Leírás:</strong> {selectedBook.bookDescription}</p>
-              <button onClick={handleBackToList}>Vissza a listához</button>
+          {books.map((book) => (
+            <div key={book.id} className="bookCard"> {/* bookId helyett id */}
+              <h3>{book.bookName}</h3>
+              <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
+              <p>Műfaj: {getGenreName(book.genreId)}</p>
+              <p>Kategória: {getCategoryName(book.categoryId)}</p>
+              <button onClick={() => handleDetails(book)}>Részletek</button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bookDetails">
+          <h2>{selectedBook.bookName}</h2>
+          <p>Szerző: {users[selectedBook.authorId]?.userName || "Betöltés..."}</p>
+          <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
+          <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
+          {role && (
+            <div className="rating">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${
+                    ratings[selectedBook.id] >= star || hoveredRating !== null && hoveredRating >= star
+                      ? "filled"
+                      : ""
+                  }`} // bookId helyett id
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onMouseLeave={() => setHoveredRating(null)}
+                  onClick={() => saveRating(selectedBook.id, star)} // bookId helyett id
+                >
+                  ★
+                </span>
+              ))}
             </div>
           )}
+          <button onClick={handleBackToList}>Vissza a listához</button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
