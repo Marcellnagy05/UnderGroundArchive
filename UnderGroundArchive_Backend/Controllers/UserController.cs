@@ -59,11 +59,30 @@ namespace UnderGroundArchive_Backend.Controllers
 
 
         [HttpGet("books")]
-        public async Task<ActionResult<IEnumerable<Books>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
         {
-            var books = await _dbContext.Books.Include(c => c.Comments).Include(r => r.ReaderRatings).Include(cr => cr.CriticRatings).ToListAsync();
+            var books = await _dbContext.Books
+                .Include(c => c.Comments)
+                .Include(r => r.ReaderRatings)
+                .Include(cr => cr.CriticRatings)
+                .Select(b => new BookDTO
+                {
+                    Id = b.BookId,
+                    BookName = b.BookName,
+                    GenreId = b.GenreId,  // Műfaj ID
+                    CategoryId = b.CategoryId,  // Kategória ID
+                    BookDescription = b.BookDescription,  // Könyv leírása
+                    Comments = b.Comments.Select(c => new CommentDTO { CommentMessage = c.CommentMessage }).ToList(),
+                    ReaderRatings = b.ReaderRatings.Select(r => new ReaderRatingDTO { RatingValue = r.RatingValue }).ToList(),
+                    CriticRatings = b.CriticRatings.Select(cr => new CriticRatingDTO { RatingValue = cr.RatingValue }).ToList(),
+                    AuthorId = b.AuthorId  // Hozzáadva az authorId
+                })
+                .ToListAsync();
+
             return Ok(books);
         }
+
+
 
 
         [HttpGet("book/{id}")]
@@ -130,17 +149,27 @@ namespace UnderGroundArchive_Backend.Controllers
         [HttpPost("createReaderRating")]
         public async Task<IActionResult> CreateReaderRating(ReaderRatings readerRating)
         {
-            var bookExists = await _dbContext.ReaderRatings.AnyAsync(k => k.BookId == readerRating.BookId);
+            // Ellenőrizzük, hogy létezik-e könyv az adott BookId-val
+            var bookExists = await _dbContext.Books.AnyAsync(b => b.BookId == readerRating.BookId);
             if (!bookExists)
             {
                 return BadRequest("The specified Book does not exist.");
             }
 
+            // Ellenőrizzük, hogy létezik-e a felhasználó
+            var userExists = await _dbContext.Users.AnyAsync(u => u.Id == readerRating.RaterId);
+            if (!userExists)
+            {
+                return BadRequest("The specified user does not exist.");
+            }
+
+            // Ha minden rendben van, akkor hozzáadjuk az értékelést
             _dbContext.ReaderRatings.Add(readerRating);
             await _dbContext.SaveChangesAsync();
 
             return CreatedAtAction("GetReaderRating", new { id = readerRating.RatingId }, readerRating);
         }
+
 
         [HttpPut("modifyReaderRating/{id}")]
         public async Task<ActionResult> PutReaderRating(int id, ReaderRatings modifiedReaderRating)
