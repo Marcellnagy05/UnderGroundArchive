@@ -4,7 +4,7 @@ import "./Books.css";
 interface Books {
   bookId: number;
   bookName: string;
-  authorId: string;  // Módosítva id-re
+  authorId: string; // Módosítva id-re
   genreId: number;
   categoryId: number;
   bookDescription: string;
@@ -54,8 +54,9 @@ const Books = () => {
   const [books, setBooks] = useState<Books[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [users, setUsers] = useState<{ [key: string]: User }>({});  // A felhasználók tárolása egy objektumban
+  const [users, setUsers] = useState<{ [key: string]: User }>({});
   const [error, setError] = useState("");
+  const [selectedBook, setSelectedBook] = useState<Books | null>(null); // Kiválasztott könyv
 
   /* #region Genre&Category fetch and methods */
   useEffect(() => {
@@ -100,7 +101,7 @@ const Books = () => {
       const userData: User = await userResponse.json();
       setUsers((prevUsers) => ({
         ...prevUsers,
-        [authorId]: userData,  // A felhasználót hozzáadjuk az users objektumhoz
+        [authorId]: userData,
       }));
     } catch (err) {
       console.error("Hiba a felhasználó lekérése során:", err);
@@ -110,18 +111,24 @@ const Books = () => {
   // Könyvek és felhasználók lekérése
   const allBooks = async () => {
     try {
-      // Könyvek lekérése
       const response = await fetch("https://localhost:7197/api/User/books");
       const bookData: Books[] = await response.json();
       setBooks(bookData);
 
-      // Felhasználók lekérése az authorId alapján (minden könyv szerzőjének lekérése)
       const authorIds = [...new Set(bookData.map((book) => book.authorId))];
-      authorIds.forEach((authorId) => fetchUser(authorId));  // Minden szerzőt lekérünk
+      authorIds.forEach((authorId) => fetchUser(authorId));
     } catch (err) {
       console.error("Hiba a könyvek lekérése során:", err);
       setError("Hiba történt az adatok lekérésekor.");
     }
+  };
+
+  const handleDetails = (book: Books) => {
+    setSelectedBook(book); // Kiválasztott könyv beállítása
+  };
+
+  const handleBackToList = () => {
+    setSelectedBook(null); // Vissza a könyvlistához
   };
 
   return (
@@ -130,22 +137,29 @@ const Books = () => {
         <button onClick={allBooks}>Összes könyv lekérése</button>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <div className="allBooks">
-          {books.map((book) => (
-            <div key={book.bookId} className="bookCard">
-              <h3>{book.bookName}</h3>
-              <p><strong>Szerző:</strong> {users[book.authorId]?.userName || "Betöltés..."}</p>
-              <p><strong>Műfaj:</strong> {getGenreName(book.genreId)}</p>
-              <p><strong>Kategória:</strong> {getCategoryName(book.categoryId)}</p>
-              <p><strong>Leírás:</strong> {book.bookDescription}</p>
+          {!selectedBook ? (
+            books.map((book) => (
+              <div key={book.bookId} className="bookCard">
+                <h3>{book.bookName}</h3>
+                <p><strong>Szerző:</strong> {users[book.authorId]?.userName || "Betöltés..."}</p>
+                <p><strong>Műfaj:</strong> {getGenreName(book.genreId)}</p>
+                <p><strong>Kategória:</strong> {getCategoryName(book.categoryId)}</p>
+                <p><strong>Leírás:</strong> {book.bookDescription}</p>
+                <button onClick={() => handleDetails(book)}>Részletek</button>
+              </div>
+            ))
+          ) : (
+            <div className="bookDetails">
+              <h2>{selectedBook.bookName}</h2>
+              <p><strong>Szerző:</strong> {users[selectedBook.authorId]?.userName || "Betöltés..."}</p>
+              <p><strong>Műfaj:</strong> {getGenreName(selectedBook.genreId)}</p>
+              <p><strong>Kategória:</strong> {getCategoryName(selectedBook.categoryId)}</p>
+              <p><strong>Leírás:</strong> {selectedBook.bookDescription}</p>
+              <button onClick={handleBackToList}>Vissza a listához</button>
             </div>
-          ))}
+          )}
         </div>
       </div>
-      {/* <div className="selectedBookContainer">
-        <button>Adott nevű könyv lekérése</button>
-        <input type="text" />
-        <div className="selectedBook"></div>
-      </div> */}
     </div>
   );
 };

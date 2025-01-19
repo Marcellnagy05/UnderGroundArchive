@@ -20,4 +20,29 @@
     margin: 4px 0;
     font-size: 14px;
   }
+
+  .bookDetails {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 600px;
+    min-width: 400px;
+    margin: 20px auto;
+    text-align: center;
+  }
+  
+  .bookDetails button {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .bookDetails button:hover {
+    background-color: #0056b3;
+  }
+  
   
