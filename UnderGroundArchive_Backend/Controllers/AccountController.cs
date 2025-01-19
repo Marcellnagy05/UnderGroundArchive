@@ -84,8 +84,9 @@ namespace UnderGroundArchive_Backend.Controllers
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim("roles", "Author")
             };
-
+            
             // Szerepkörök hozzáadása a tokenhez
             claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
