@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./Books.css";
 
 interface Books {
-  id: number; // bookId helyett id
+  id: number;
   bookName: string;
   authorId: string;
   genreId: number;
@@ -21,36 +21,6 @@ interface Category {
 }
 
 interface User {
-  rankId: number;
-  subscriptionId: number;
-  joinDate: Date;
-  birthDate: Date;
-  country: string;
-  rankPoints: number;
-  balance: string;
-  favourites: string;
-  books: Array<string>;
-  requests: Array<string>;
-  completedAchievements: Array<string>;
-  comments: Array<string>;
-  id: string;
-  userName: string;
-  normalizedUserName: string;
-  email: string;
-  normalizedEmail: string;
-  emailConfirmed: boolean;
-  passwordHash: string;
-  securityStamp: string;
-  concurrencyStamp: string;
-  phoneNumber: string;
-  phoneNumberConfirmed: boolean;
-  twoFactorEnabled: boolean;
-  lockoutEnd: null;
-  lockoutEnabled: boolean;
-  accessFailedCount: number;
-}
-
-interface user {
   id: string;
   userName: string;
 }
@@ -61,11 +31,11 @@ const Books = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [users, setUsers] = useState<{ [key: string]: User }>({});
   const [error, setError] = useState("");
-  const [selectedBook, setSelectedBook] = useState<Books | null>(null); // Kiválasztott könyv
-  const [user, setUser] = useState<user | null>(null); // Bejelentkezett felhasználó
-  const [role, setRole] = useState<string | null>(null); // Felhasználói szerepkör
+  const [selectedBook, setSelectedBook] = useState<Books | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
-  const [ratings, setRatings] = useState<{ [id: number]: number }>({}); // bookId helyett id
+  const [ratings, setRatings] = useState<{ [id: number]: number }>({});
 
   /* #region Genre&Category fetch and methods */
   useEffect(() => {
@@ -113,10 +83,8 @@ const Books = () => {
     }
 
     try {
-      // Token dekódolása
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
 
-      // Szerepkör ellenőrzése
       const roles = decodedToken["roles"] || [];
       const roleFromClaim =
         decodedToken[
@@ -130,7 +98,6 @@ const Books = () => {
         return;
       }
 
-      // Felhasználói adatok beállítása
       setUser({
         id: decodedToken[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
@@ -141,7 +108,6 @@ const Books = () => {
           ],
       });
 
-      // Szerepkör tárolása
       setRole(roleFromClaim || "reader");
     } catch (err) {
       console.error("Hiba a token dekódolása során:", err);
@@ -149,20 +115,48 @@ const Books = () => {
     }
   }, []);
 
-  // Könyvek és felhasználók lekérése
   const allBooks = async () => {
     try {
       const response = await fetch("https://localhost:7197/api/User/books");
       const bookData: Books[] = await response.json();
       setBooks(bookData);
-
+  
+      if (user?.id) {
+        // Csak az aktuális felhasználó értékeléseit töltjük be
+        const ratingsResponse = await fetch(
+          `https://localhost:7197/api/User/readerRatings?userId=${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            },
+          }
+        );
+  
+        if (ratingsResponse.ok) {
+          const ratingsData = await ratingsResponse.json();
+  
+          // Az értékeléseket a bookId alapján rendezzük
+          const userRatings = ratingsData.reduce(
+            (acc: { [id: number]: number }, rating: any) => {
+              acc[rating.bookId] = rating.ratingValue;
+              return acc;
+            },
+            {}
+          );
+  
+          // Csak a bejelentkezett felhasználó értékeléseit mentjük
+          setRatings(userRatings);
+        }
+      }
+  
+      // Szerzők adatainak lekérdezése
       const authorIds = [...new Set(bookData.map((book) => book.authorId))];
-      fetchUsersByIds(authorIds); // Összes felhasználó lekérése
+      fetchUsersByIds(authorIds);
     } catch (err) {
       console.error("Hiba a könyvek lekérése során:", err);
       setError("Hiba történt az adatok lekérésekor.");
     }
-  };
+  };  
 
   const fetchUsersByIds = async (authorIds: string[]) => {
     try {
@@ -184,26 +178,35 @@ const Books = () => {
     }
   };
 
-  // Értékelés mentése
   const saveRating = async (bookId: number, rating: number) => {
     if (!role) {
       alert("Nem rendelkezik jogosultsággal az értékeléshez.");
       return;
     }
-
+  
+    if (!user?.id) {
+      alert("Felhasználói azonosító hiányzik.");
+      return;
+    }
+  
+    if (ratings[bookId]) {
+      alert("Már értékelted ezt a könyvet. Az értékelést módosíthatod.");
+      return;
+    }
+  
     const apiEndpoint =
       role === "User"
         ? "https://localhost:7197/api/User/createReaderRating"
         : "https://localhost:7197/api/User/createCriticRating";
-
+  
     try {
       const requestData = {
-        raterId: user?.id,
+        raterId: user.id, // Mindig a tokenből származó felhasználó ID-t használjuk
         bookId: bookId,
         ratingValue: rating,
       };
-      console.log(requestData);
-
+      console.log("Request data:", requestData);
+  
       const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: {
@@ -212,33 +215,32 @@ const Books = () => {
         },
         body: JSON.stringify(requestData),
       });
-
+  
       if (!response.ok) {
         console.error("Hiba az értékelés mentése során");
         return;
       }
-
-      // Frissítsd a helyi állapotot az értékelés mentése után
+  
       setRatings((prevRatings) => ({
         ...prevRatings,
         [bookId]: rating,
       }));
-
+  
       alert("Értékelés mentése sikeres!");
     } catch (err) {
       console.error("Hiba az értékelés mentése során:", err);
     }
   };
+  
 
   const handleDetails = (book: Books) => {
-    setSelectedBook(book); // Kiválasztott könyv beállítása
+    setSelectedBook(book);
   };
 
   const handleBackToList = () => {
-    setSelectedBook(null); // Vissza a könyvlistához
+    setSelectedBook(null);
   };
 
-  // Az alkalmazás kódja:
   return (
     <div>
       <button onClick={() => allBooks()}>Összes könyv lekérése</button>
@@ -246,7 +248,7 @@ const Books = () => {
       {!selectedBook ? (
         <div className="allBooks">
           {books.map((book) => (
-            <div key={book.id} className="bookCard"> {/* bookId helyett id */}
+            <div key={book.id} className="bookCard">
               <h3>{book.bookName}</h3>
               <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
               <p>Műfaj: {getGenreName(book.genreId)}</p>
@@ -267,18 +269,34 @@ const Books = () => {
                 <span
                   key={star}
                   className={`star ${
-                    ratings[selectedBook.id] >= star || hoveredRating !== null && hoveredRating >= star
+                    ratings[selectedBook.id] >= star ||
+                    (hoveredRating !== null && hoveredRating >= star)
                       ? "filled"
                       : ""
-                  }`} // bookId helyett id
+                  }`}
                   onMouseEnter={() => setHoveredRating(star)}
                   onMouseLeave={() => setHoveredRating(null)}
-                  onClick={() => saveRating(selectedBook.id, star)} // bookId helyett id
+                  onClick={() => saveRating(selectedBook.id, star)}
                 >
                   ★
                 </span>
               ))}
             </div>
+          )}
+          {ratings[selectedBook.id] && (
+            <button
+              onClick={() => {
+                const newRating = prompt(
+                  "Adja meg az új értékelést (1-5 között):",
+                  ratings[selectedBook.id].toString()
+                );
+                if (newRating) {
+                  saveRating(selectedBook.id, parseInt(newRating));
+                }
+              }}
+            >
+              Értékelés módosítása
+            </button>
           )}
           <button onClick={handleBackToList}>Vissza a listához</button>
         </div>

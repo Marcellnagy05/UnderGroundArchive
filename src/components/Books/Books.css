@@ -67,4 +67,7 @@
   .star.hovered {
     color: #ffcc00;
   }
-  
+  .stars.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
