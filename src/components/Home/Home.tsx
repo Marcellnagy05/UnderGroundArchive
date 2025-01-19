@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Logout from "../Logout/Logout";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,6 +14,7 @@ const Home = () => {
     <button onClick={() => NavigationRouter("/login")}>Login</button>
     <button onClick={() => NavigationRouter("/register")}>Register</button>
     <button onClick={() => NavigationRouter("/books")}>Books</button>
+    <button onClick={() => NavigationRouter("/publish")}>Publish</button>
   </div>
   )
 };

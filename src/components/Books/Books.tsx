@@ -95,7 +95,7 @@ const Books = () => {
   const fetchUser = async (authorId: string) => {
     try {
       const userResponse = await fetch(
-        `https://localhost:7197/api/User/users/${authorId}`
+        `https://localhost:7197/api/User/user/${authorId}`
       );
       const userData: User = await userResponse.json();
       setUsers((prevUsers) => ({

@@ -1,36 +1,36 @@
 import React, { createContext, useState, ReactNode, useContext } from "react";
 
-// A felhasználói adatok típusa
 interface User {
   userName: string;
 }
 
-// A Context típusa
 interface UserContextType {
   user: User | string;
   setUser: React.Dispatch<React.SetStateAction<User | string>>;
+  logout: () => void;
 }
 
-// Alapértelmezett értékek
 const defaultUserContext: UserContextType = {
   user: "guest",
-  setUser: () => {}
+  setUser: () => {},
+  logout: () => {},
 };
 
-// A Context létrehozása
 export const UserContext = createContext<UserContextType>(defaultUserContext);
 
-// Context Provider komponens
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | string>("guest");
-  console.log("Userprovider:", user);
-  
+
+  const logout = () => {
+    localStorage.removeItem("jwt"); // JWT törlése
+    setUser("guest"); // Felhasználó alapértelmezett állapotra állítása
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-// Hook a context használatához
 export const useUserContext = () => useContext(UserContext);

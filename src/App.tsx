@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Login from "./components/Login/Login";
 import PublishBook from "./components/PublishBook/PublishBook";
 import Home from "./components/Home/Home";
@@ -16,33 +21,46 @@ const App = () => {
     <Router>
       <UserProvider>
         <div className="appContent">
-          <AppContent/>
+          <AppContent />
         </div>
       </UserProvider>
     </Router>
   );
 };
 
-const AppContent = () =>{
+const AppContent = () => {
   const { user } = useUserContext();
+  const location = useLocation();
 
-  return(
+  const isHomePage = location.pathname === "/";
+
+  return (
     <div style={{ position: "relative" }}>
-    <Profile /> {/* Profil megjelenítése a bal sarokban */}
-    {user !== "guest" && (
-      <>
-        <Logout /> {/* Kijelentkezés gomb a jobb sarokban */}
-      </>
-    )}
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/publish" element={<PublishBook />} />
-      <Route path="/books" element={<Books />} />
-    </Routes>
-  </div>
-  )
-}
+      <Profile /> {/* Profil megjelenítése a bal sarokban */}
+      {user !== "guest" && (
+        <>
+          <Logout /> {/* Kijelentkezés gomb a jobb sarokban */}
+        </>
+      )}
+      {!isHomePage && (
+        <button
+          onClick={() => {
+            window.location.href = "/"; // Navigáció a Home oldalra
+          }}
+          className="home-button"
+        >
+          Home
+        </button>
+      )}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/publish" element={<PublishBook />} />
+        <Route path="/books" element={<Books />} />
+      </Routes>
+    </div>
+  );
+};
 
 export default App;
