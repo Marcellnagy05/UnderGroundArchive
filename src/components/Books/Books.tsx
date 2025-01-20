@@ -9,7 +9,7 @@ interface Books {
   genreId: number;
   categoryId: number;
   bookDescription: string;
-  averageRating: number; // Új mező az átlagos értékeléshez
+  averageRating: number;
 }
 
 interface Genre {
@@ -235,10 +235,10 @@ const Books = () => {
   };
 
   const handleBackToList = async () => {
-    await allBooks(); // Frissítjük a könyvek listáját
-    setSelectedBook(null); // Visszatérünk a főoldalra
+    await allBooks();
+    setSelectedBook(null);
   };
-  
+
   return (
     <div>
       <button onClick={() => allBooks()}>Összes könyv lekérése</button>
@@ -295,26 +295,11 @@ const Books = () => {
               ))}
             </div>
           )}
-          {ratings[selectedBook.id] && (
-            <button
-              onClick={() => {
-                const newRating = prompt(
-                  "Adja meg az új értékelést (1-5 között):",
-                  ratings[selectedBook.id].toString()
-                );
-                if (newRating) {
-                  saveRating(selectedBook.id, parseInt(newRating));
-                }
-              }}
-            >
-              Értékelés módosítása
-            </button>
-          )}
           <button onClick={handleBackToList}>Vissza a listához</button>
         </div>
       )}
     </div>
-  );  
+  );
 };
 
 export default Books;
