@@ -76,7 +76,7 @@ namespace UnderGroundArchive_Backend.Controllers
                     ReaderRatings = b.ReaderRatings.Select(r => new ReaderRatingDTO { RatingValue = r.RatingValue }).ToList(),
                     CriticRatings = b.CriticRatings.Select(cr => new CriticRatingDTO { RatingValue = cr.RatingValue }).ToList(),
                     AverageRating = b.ReaderRatings.Any() ? b.ReaderRatings.Average(r => r.RatingValue) : 0,
-                    AuthorId = b.AuthorId // Szerző azonosító hozzáadása
+                    AuthorId = b.AuthorId
                 })
                 .ToListAsync();
 
@@ -216,10 +216,17 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
 
-        [HttpDelete("deleteReaderRating/{id}")]
-        public async Task<ActionResult> DeleteReaderRating(int id)
+        [HttpDelete("deleteReaderRating/{bookId}")]
+        public async Task<ActionResult> DeleteReaderRating(int bookId)
         {
-            var readerRating = await _dbContext.ReaderRatings.FindAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var readerRating = await _dbContext.ReaderRatings
+                .FirstOrDefaultAsync(r => r.BookId == bookId && r.RaterId == userId);
             if (readerRating == null)
             {
                 return NotFound();
@@ -229,6 +236,7 @@ namespace UnderGroundArchive_Backend.Controllers
             await _dbContext.SaveChangesAsync();
             return NoContent();
         }
+
 
         // ReaderRating endpoints
 
