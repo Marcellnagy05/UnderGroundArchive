@@ -230,6 +230,42 @@ const Books = () => {
     }
   };
 
+  const deleteRating = async (bookId: number) => {
+    if (!user?.id) {
+      alert("Felhasználói azonosító hiányzik.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://localhost:7197/api/User/deleteReaderRating/${bookId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );      
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Hiba az értékelés törlése során:", errorText);
+        alert(errorText || "Hiba az értékelés törlése során.");
+        return;
+      }
+
+      setRatings((prevRatings) => {
+        const updatedRatings = { ...prevRatings };
+        delete updatedRatings[bookId];
+        return updatedRatings;
+      });
+
+      alert("Értékelés sikeresen törölve!");
+    } catch (err) {
+      console.error("Hiba az értékelés törlése során:", err);
+    }
+  };
+
   const handleDetails = (book: Books) => {
     setSelectedBook(book);
   };
@@ -294,6 +330,11 @@ const Books = () => {
                 </span>
               ))}
             </div>
+          )}
+          {ratings[selectedBook.id] && (
+            <button onClick={() => deleteRating(selectedBook.id)}>
+              Értékelés törlése
+            </button>
           )}
           <button onClick={handleBackToList}>Vissza a listához</button>
         </div>

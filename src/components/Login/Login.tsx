@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useUserContext } from "../contexts/UserContext";
 import Loading from "../Loading/Loading";
 import {jwtDecode} from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [login, setLogin] = useState("");
@@ -10,6 +11,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser } = useUserContext(); // Context használata
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const checkIfLoggedIn = () => {
     const jwt = localStorage.getItem("jwt");
@@ -89,6 +91,7 @@ const Login = () => {
            
       // Várakozás a minimum idő biztosításához
       setTimeout(() => {
+        navigate("/")
         setIsLoading(false);
       }, remainingTime);
     }
