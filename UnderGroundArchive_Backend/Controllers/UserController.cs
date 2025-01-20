@@ -235,11 +235,33 @@ namespace UnderGroundArchive_Backend.Controllers
         // ReaderRating endpoints
 
         [HttpGet("criticRatings")]
-        public async Task<ActionResult<IEnumerable<CriticRatings>>> GetCriticRatings()
+        public async Task<ActionResult<IEnumerable<CriticRatingDTO>>> GetCriticRatings([FromQuery] string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
 
+            var criticRatings = await _dbContext.CriticRatings
+                .Where(c => c.RaterId == userId)
+                .Select(c => new CriticRatingDTO
+                {
+                    RatingId = c.RatingId,
+                    BookId = c.BookId,
+                    RatingValue = c.RatingValue,
+                    RaterId = c.RaterId,
+                    BookName = c.Books.BookName,
+                    GenreId = c.Books.GenreId,
+                    CategoryId = c.Books.CategoryId
+                })
+                .ToListAsync();
 
-            return await _dbContext.CriticRatings.ToListAsync();
+            if (!criticRatings.Any())
+            {
+                return NotFound("No ratings found for the given user.");
+            }
+
+            return Ok(criticRatings);
         }
 
         [HttpGet("criticRating/{id}")]
@@ -250,19 +272,34 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPost("createCriticRating")]
-        public async Task<IActionResult> CreateCriticRating(CriticRatings criticRating)
+        public async Task<ActionResult> CreateCriticRating(CriticRatingDTO criticRatingDTO)
         {
-            var bookExists = await _dbContext.CriticRatings.AnyAsync(k => k.BookId == criticRating.BookId);
-            if (!bookExists)
+            if (criticRatingDTO == null || criticRatingDTO.BookId == 0)
             {
-                return BadRequest("The specified Book does not exist.");
+                return BadRequest("Book ID is required.");
             }
+
+            // Ellenőrizzük, hogy a BookId létezik-e az adatbázisban
+            var book = await _dbContext.Books.FindAsync(criticRatingDTO.BookId);
+            if (book == null)
+            {
+                return NotFound("Book not found.");
+            }
+
+            var criticRating = new CriticRatings
+            {
+                BookId = criticRatingDTO.BookId,
+                RatingValue = criticRatingDTO.RatingValue,
+                RaterId = criticRatingDTO.RaterId
+            };
 
             _dbContext.CriticRatings.Add(criticRating);
             await _dbContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetCriticRating", new { id = criticRating.RatingId }, criticRating);
+            return Ok("Rating saved successfully.");
         }
+
+
 
         [HttpPut("modifyCriticRating/{id}")]
         public async Task<ActionResult> PutCriticRating(int id, CriticRatings modifiedCriticRating)

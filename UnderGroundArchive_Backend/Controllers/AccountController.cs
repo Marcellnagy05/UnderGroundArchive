@@ -97,7 +97,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddDays(7),
                 signingCredentials: creds
             );
 
@@ -141,7 +141,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 return BadRequest(new { errorCode = "REGISTRATION_FAILED", errors = errorMessages });
             }
 
-            await _userManager.AddToRoleAsync(user, "Author");
+            await _userManager.AddToRoleAsync(user, "Critic");
 
             return Ok(new { message = "A felhasználó sikeresen regisztrálva." });
         }
