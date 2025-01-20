@@ -42,9 +42,9 @@ const AppContent = () => {
       <Profile /> {/* Profil megjelenítése a bal sarokban */}
       {user !== "guest" && (
         <>
+          <Logout /> {/* Kijelentkezés gomb a jobb sarokban */}
         </>
       )}
-      <Logout /> {/* Kijelentkezés gomb a jobb sarokban */}
       {!isHomePage && (
         <button
           onClick={() => {

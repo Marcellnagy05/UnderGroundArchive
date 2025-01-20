@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../contexts/UserContext";
 import Loading from "../Loading/Loading";
+import {jwtDecode} from "jwt-decode";
 
 const Login = () => {
   const [login, setLogin] = useState("");
@@ -13,10 +14,19 @@ const Login = () => {
   const checkIfLoggedIn = () => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
+      try {
+        const decoded: any = jwtDecode(jwt);
+        const currentTime = Date.now() / 1000; // Idő másodpercben
+        if (decoded.exp > currentTime) {
+          setIsLoggedIn(true);
+          return;
+        }
+      } catch (err) {
+        console.error("Érvénytelen JWT:", err);
+      }
     }
+    setIsLoggedIn(false);
+    localStorage.removeItem("jwt"); // Érvénytelen token eltávolítása
   };
 
   useEffect(() => {
