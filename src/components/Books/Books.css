@@ -64,6 +64,11 @@
     color: #ffcc00;
   }
   
+  .star.half-filled {
+    background: linear-gradient(to right, gold 50%, grey 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   .star.hovered {
     color: #ffcc00;
   }

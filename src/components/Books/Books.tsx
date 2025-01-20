@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Books.css";
+import StarRating from "../StarRating/StarRating"
 
 interface Books {
   id: number;
@@ -8,6 +9,7 @@ interface Books {
   genreId: number;
   categoryId: number;
   bookDescription: string;
+  averageRating: number; // Új mező az átlagos értékeléshez
 }
 
 interface Genre {
@@ -37,7 +39,6 @@ const Books = () => {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [ratings, setRatings] = useState<{ [id: number]: number }>({});
 
-  /* #region Genre&Category fetch and methods */
   useEffect(() => {
     const fetchGenresAndCategories = async () => {
       try {
@@ -69,9 +70,7 @@ const Books = () => {
     const category = categories.find((c) => c.categoryId === categoryId);
     return category ? category.categoryName : "Ismeretlen kategória";
   };
-  /* #endregion */
 
-  // Felhasználó és szerepkör lekérése a JWT-ból
   useEffect(() => {
     const token = localStorage.getItem("jwt");
 
@@ -120,9 +119,8 @@ const Books = () => {
       const response = await fetch("https://localhost:7197/api/User/books");
       const bookData: Books[] = await response.json();
       setBooks(bookData);
-  
+
       if (user?.id) {
-        // Csak az aktuális felhasználó értékeléseit töltjük be
         const ratingsResponse = await fetch(
           `https://localhost:7197/api/User/readerRatings?userId=${user.id}`,
           {
@@ -131,11 +129,10 @@ const Books = () => {
             },
           }
         );
-  
+
         if (ratingsResponse.ok) {
           const ratingsData = await ratingsResponse.json();
-  
-          // Az értékeléseket a bookId alapján rendezzük
+
           const userRatings = ratingsData.reduce(
             (acc: { [id: number]: number }, rating: any) => {
               acc[rating.bookId] = rating.ratingValue;
@@ -143,20 +140,18 @@ const Books = () => {
             },
             {}
           );
-  
-          // Csak a bejelentkezett felhasználó értékeléseit mentjük
+
           setRatings(userRatings);
         }
       }
-  
-      // Szerzők adatainak lekérdezése
+
       const authorIds = [...new Set(bookData.map((book) => book.authorId))];
       fetchUsersByIds(authorIds);
     } catch (err) {
       console.error("Hiba a könyvek lekérése során:", err);
       setError("Hiba történt az adatok lekérésekor.");
     }
-  };  
+  };
 
   const fetchUsersByIds = async (authorIds: string[]) => {
     try {
@@ -183,31 +178,31 @@ const Books = () => {
       alert("Nem rendelkezik jogosultsággal az értékeléshez.");
       return;
     }
-  
+
     if (!user?.id) {
       alert("Felhasználói azonosító hiányzik.");
       return;
     }
-  
+
     const selectedBook = books.find((book) => book.id === bookId);
     if (!selectedBook) {
       alert("Nem található a könyv az adatok között.");
       return;
     }
-  
+
     const apiEndpoint =
       role === "User"
         ? "https://localhost:7197/api/User/createReaderRating"
         : "https://localhost:7197/api/User/createCriticRating";
-  
+
     try {
       const requestData = {
         raterId: user.id,
         bookId: selectedBook.id,
-        bookName: selectedBook.bookName, // Könyv neve hozzáadva
+        bookName: selectedBook.bookName,
         ratingValue: rating,
       };
-  
+
       const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: {
@@ -216,36 +211,34 @@ const Books = () => {
         },
         body: JSON.stringify(requestData),
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Hiba az értékelés mentése során:", errorText);
         alert(errorText || "Hiba az értékelés mentése során.");
         return;
       }
-  
+
       setRatings((prevRatings) => ({
         ...prevRatings,
         [bookId]: rating,
       }));
-  
+
       alert("Értékelés mentése sikeres!");
     } catch (err) {
       console.error("Hiba az értékelés mentése során:", err);
     }
   };
-  
-  
-  
 
   const handleDetails = (book: Books) => {
     setSelectedBook(book);
   };
 
-  const handleBackToList = () => {
-    setSelectedBook(null);
+  const handleBackToList = async () => {
+    await allBooks(); // Frissítjük a könyvek listáját
+    setSelectedBook(null); // Visszatérünk a főoldalra
   };
-
+  
   return (
     <div>
       <button onClick={() => allBooks()}>Összes könyv lekérése</button>
@@ -258,6 +251,19 @@ const Books = () => {
               <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
               <p>Műfaj: {getGenreName(book.genreId)}</p>
               <p>Kategória: {getCategoryName(book.categoryId)}</p>
+              <p>Átlagos értékelés:</p>
+              <StarRating rating={book.averageRating || 0} />
+              <p>Saját értékelés:</p>
+              <div className="rating">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    className={`star ${ratings[book.id] >= star ? "filled" : ""}`}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
               <button onClick={() => handleDetails(book)}>Részletek</button>
             </div>
           ))}
@@ -268,6 +274,7 @@ const Books = () => {
           <p>Szerző: {users[selectedBook.authorId]?.userName || "Betöltés..."}</p>
           <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
           <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
+          <p>{selectedBook.bookDescription}</p>
           {role && (
             <div className="rating">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -307,7 +314,7 @@ const Books = () => {
         </div>
       )}
     </div>
-  );
+  );  
 };
 
 export default Books;
