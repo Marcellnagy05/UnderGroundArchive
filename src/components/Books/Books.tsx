@@ -189,8 +189,9 @@ const Books = () => {
       return;
     }
   
-    if (ratings[bookId]) {
-      alert("Már értékelted ezt a könyvet. Az értékelést módosíthatod.");
+    const selectedBook = books.find((book) => book.id === bookId);
+    if (!selectedBook) {
+      alert("Nem található a könyv az adatok között.");
       return;
     }
   
@@ -201,11 +202,11 @@ const Books = () => {
   
     try {
       const requestData = {
-        raterId: user.id, // Mindig a tokenből származó felhasználó ID-t használjuk
-        bookId: bookId,
+        raterId: user.id,
+        bookId: selectedBook.id,
+        bookName: selectedBook.bookName, // Könyv neve hozzáadva
         ratingValue: rating,
       };
-      console.log("Request data:", requestData);
   
       const response = await fetch(apiEndpoint, {
         method: "POST",
@@ -217,7 +218,9 @@ const Books = () => {
       });
   
       if (!response.ok) {
-        console.error("Hiba az értékelés mentése során");
+        const errorText = await response.text();
+        console.error("Hiba az értékelés mentése során:", errorText);
+        alert(errorText || "Hiba az értékelés mentése során.");
         return;
       }
   
@@ -231,6 +234,8 @@ const Books = () => {
       console.error("Hiba az értékelés mentése során:", err);
     }
   };
+  
+  
   
 
   const handleDetails = (book: Books) => {
