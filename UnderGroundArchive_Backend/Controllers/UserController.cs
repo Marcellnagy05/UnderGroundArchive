@@ -69,21 +69,19 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     Id = b.BookId,
                     BookName = b.BookName,
-                    GenreId = b.GenreId,  // Műfaj ID
-                    CategoryId = b.CategoryId,  // Kategória ID
-                    BookDescription = b.BookDescription,  // Könyv leírása
+                    GenreId = b.GenreId,
+                    CategoryId = b.CategoryId,
+                    BookDescription = b.BookDescription,
                     Comments = b.Comments.Select(c => new CommentDTO { CommentMessage = c.CommentMessage }).ToList(),
                     ReaderRatings = b.ReaderRatings.Select(r => new ReaderRatingDTO { RatingValue = r.RatingValue }).ToList(),
                     CriticRatings = b.CriticRatings.Select(cr => new CriticRatingDTO { RatingValue = cr.RatingValue }).ToList(),
-                    AuthorId = b.AuthorId  // Hozzáadva az authorId
+                    AverageRating = b.ReaderRatings.Any() ? b.ReaderRatings.Average(r => r.RatingValue) : 0,
+                    AuthorId = b.AuthorId // Szerző azonosító hozzáadása
                 })
                 .ToListAsync();
 
             return Ok(books);
         }
-
-
-
 
         [HttpGet("book/{id}")]
         public async Task<ActionResult<Books>> GetBook(int id)

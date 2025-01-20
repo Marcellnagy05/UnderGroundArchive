@@ -10,7 +10,8 @@
         public IEnumerable<CommentDTO> Comments { get; set; }
         public IEnumerable<ReaderRatingDTO> ReaderRatings { get; set; }
         public IEnumerable<CriticRatingDTO> CriticRatings { get; set; }
-        public string AuthorId { get; set; }  // Új mező az authorId-hoz
+        public string AuthorId { get; set; }
+        public double AverageRating { get; set; }
     }
 
 }
