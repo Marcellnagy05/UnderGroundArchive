@@ -243,9 +243,7 @@ const Books = () => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Hiba az értékelés mentése során:", errorText);
-        showToast("Hiba az értékelés mentése során.","error")
+        showToast("Már értékelted ezt a könyvet!","error")
         return;
       }
 
@@ -327,7 +325,7 @@ const Books = () => {
               <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
               <p>Műfaj: {getGenreName(book.genreId)}</p>
               <p>Kategória: {getCategoryName(book.categoryId)}</p>
-              <p>Átlagos értékelés:</p>
+              <p>Átlagos értékelés: {book.averageRating || ""}</p>
               <StarRating rating={book.averageRating || 0} />
               <p>Saját értékelés:</p>
               <div className="rating">
