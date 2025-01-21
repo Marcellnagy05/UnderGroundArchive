@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Books.css";
-import StarRating from "../StarRating/StarRating"
+import StarRating from "../StarRating/StarRating";
+import { useToast } from "../contexts/ToastContext";
 
 interface Books {
   id: number;
@@ -27,6 +28,16 @@ interface User {
   userName: string;
 }
 
+interface CriticRating {
+  ratingId: number;
+  bookId: number;
+  ratingValue: number;
+  raterId: string;
+  bookName: string;
+  genreId: number;
+  categoryId: number;
+}
+
 const Books = () => {
   const [books, setBooks] = useState<Books[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -38,6 +49,8 @@ const Books = () => {
   const [role, setRole] = useState<string | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [ratings, setRatings] = useState<{ [id: number]: number }>({});
+  const [criticRatings, setCriticRatings] = useState<CriticRating[]>([]);
+  const {showToast} = useToast();
 
   useEffect(() => {
     const fetchGenresAndCategories = async () => {
@@ -173,6 +186,23 @@ const Books = () => {
     }
   };
 
+  const fetchCriticRatings = async (bookId: number) => {
+    try {
+      const response = await fetch(
+        `https://localhost:7197/api/User/criticRatings?bookId=${bookId}`
+      );
+
+      if (response.ok) {
+        const data: CriticRating[] = await response.json();
+        setCriticRatings(data);
+      } else {
+        console.error("Hiba a kritikus értékelések lekérése során.");
+      }
+    } catch (err) {
+      console.error("Hiba a kritikus értékelések lekérése során:", err);
+    }
+  };
+
   const saveRating = async (bookId: number, rating: number) => {
     if (!role) {
       alert("Nem rendelkezik jogosultsággal az értékeléshez.");
@@ -215,7 +245,7 @@ const Books = () => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Hiba az értékelés mentése során:", errorText);
-        alert(errorText || "Hiba az értékelés mentése során.");
+        showToast("Hiba az értékelés mentése során.","error")
         return;
       }
 
@@ -223,8 +253,7 @@ const Books = () => {
         ...prevRatings,
         [bookId]: rating,
       }));
-
-      alert("Értékelés mentése sikeres!");
+      showToast("Sikeres értékelés!","success")
     } catch (err) {
       console.error("Hiba az értékelés mentése során:", err);
     }
@@ -232,7 +261,7 @@ const Books = () => {
 
   const deleteRating = async (bookId: number) => {
     if (!user?.id) {
-      alert("Felhasználói azonosító hiányzik.");
+      showToast("Felhasználói azonositó hiányzik!","error")
       return;
     }
 
@@ -245,12 +274,12 @@ const Books = () => {
             Authorization: `Bearer ${localStorage.getItem("jwt")}`,
           },
         }
-      );      
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Hiba az értékelés törlése során:", errorText);
-        alert(errorText || "Hiba az értékelés törlése során.");
+        showToast("Hiba az értékelés törlése során!","error")
         return;
       }
 
@@ -260,7 +289,7 @@ const Books = () => {
         return updatedRatings;
       });
 
-      alert("Értékelés sikeresen törölve!");
+      showToast("Értékelés sikeresen törölve!","success")
     } catch (err) {
       console.error("Hiba az értékelés törlése során:", err);
     }
@@ -268,11 +297,22 @@ const Books = () => {
 
   const handleDetails = (book: Books) => {
     setSelectedBook(book);
+    fetchCriticRatings(book.id);
   };
 
   const handleBackToList = async () => {
     await allBooks();
     setSelectedBook(null);
+    setCriticRatings([]); // Kritikus értékelések állapotának alaphelyzetbe állítása
+  };
+
+  const calculateCriticAverage = () => {
+    if (criticRatings.length === 0) return 0;
+    const total = criticRatings.reduce(
+      (sum, rating) => sum + rating.ratingValue,
+      0
+    );
+    return total / criticRatings.length;
   };
 
   return (
@@ -294,7 +334,9 @@ const Books = () => {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
                     key={star}
-                    className={`star ${ratings[book.id] >= star ? "filled" : ""}`}
+                    className={`star ${
+                      ratings[book.id] >= star ? "filled" : ""
+                    }`}
                   >
                     ★
                   </span>
@@ -305,38 +347,52 @@ const Books = () => {
           ))}
         </div>
       ) : (
-        <div className="bookDetails">
-          <h2>{selectedBook.bookName}</h2>
-          <p>Szerző: {users[selectedBook.authorId]?.userName || "Betöltés..."}</p>
-          <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
-          <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
-          <p>{selectedBook.bookDescription}</p>
-          {role && (
-            <div className="rating">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  className={`star ${
-                    ratings[selectedBook.id] >= star ||
-                    (hoveredRating !== null && hoveredRating >= star)
-                      ? "filled"
-                      : ""
-                  }`}
-                  onMouseEnter={() => setHoveredRating(star)}
-                  onMouseLeave={() => setHoveredRating(null)}
-                  onClick={() => saveRating(selectedBook.id, star)}
-                >
-                  ★
-                </span>
-              ))}
+        <div className="bookDetailsContainer">
+          <div className="bookDetails">
+            <div className="bookInfo">
+              <h2>{selectedBook.bookName}</h2>
+              <p>
+                Szerző:{" "}
+                {users[selectedBook.authorId]?.userName || "Betöltés..."}
+              </p>
+              <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
+              <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
+              <p>Leirás: {selectedBook.bookDescription}</p>
             </div>
-          )}
-          {ratings[selectedBook.id] && (
-            <button onClick={() => deleteRating(selectedBook.id)}>
-              Értékelés törlése
-            </button>
-          )}
-          <button onClick={handleBackToList}>Vissza a listához</button>
+            <div className="ratings">
+              <h3>Értékelés:</h3>
+              {role && (
+                <div className="rating">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      className={`star ${
+                        ratings[selectedBook.id] >= star ||
+                        (hoveredRating !== null && hoveredRating >= star)
+                          ? "filled"
+                          : ""
+                      }`}
+                      onMouseEnter={() => setHoveredRating(star)}
+                      onMouseLeave={() => setHoveredRating(null)}
+                      onClick={() => saveRating(selectedBook.id, star)}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+              )}
+              <h3>Kritikusok értékelték:</h3>
+              <StarRating rating={calculateCriticAverage()} />
+              {ratings[selectedBook.id] && (
+                <button onClick={() => deleteRating(selectedBook.id)}>
+                  Értékelés törlése
+                </button>
+              )}
+            </div>
+          </div>
+          <button className="backToList" onClick={handleBackToList}>
+            Vissza a listához
+          </button>
         </div>
       )}
     </div>
