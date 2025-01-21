@@ -282,11 +282,18 @@ namespace UnderGroundArchive_Backend.Controllers
                 return BadRequest("Book ID is required.");
             }
 
-            // Ellenőrizzük, hogy a BookId létezik-e az adatbázisban
             var book = await _dbContext.Books.FindAsync(criticRatingDTO.BookId);
             if (book == null)
             {
                 return NotFound("Book not found.");
+            }
+
+            var existingCriticRating = await _dbContext.CriticRatings
+                .FirstOrDefaultAsync(cr => cr.BookId == criticRatingDTO.BookId && cr.RaterId == criticRatingDTO.RaterId);
+
+            if (existingCriticRating != null)
+            {
+                return BadRequest("You have already rated this book as a critic.");
             }
 
             var criticRating = new CriticRatings
@@ -302,8 +309,6 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok("Rating saved successfully.");
         }
 
-
-
         [HttpPut("modifyCriticRating/{id}")]
         public async Task<ActionResult> PutCriticRating(int id, CriticRatings modifiedCriticRating)
         {
@@ -318,17 +323,26 @@ namespace UnderGroundArchive_Backend.Controllers
             return NoContent();
         }
 
-        [HttpDelete("deleteCriticRating/{id}")]
-        public async Task<ActionResult> DeleteCriticRating(int id)
+        [HttpDelete("deleteCriticRating/{bookId}")]
+        public async Task<ActionResult> DeleteCriticRating(int bookId)
         {
-            var criticRating = await _dbContext.CriticRatings.FindAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized("Felhasználói azonosító hiányzik.");
+            }
+
+            var criticRating = await _dbContext.CriticRatings
+                .FirstOrDefaultAsync(r => r.BookId == bookId && r.RaterId == userId);
+
             if (criticRating == null)
             {
-                return NotFound();
+                return NotFound("Az értékelés nem található.");
             }
 
             _dbContext.CriticRatings.Remove(criticRating);
             await _dbContext.SaveChangesAsync();
+
             return NoContent();
         }
 
