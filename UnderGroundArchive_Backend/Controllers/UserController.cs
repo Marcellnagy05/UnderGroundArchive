@@ -241,15 +241,10 @@ namespace UnderGroundArchive_Backend.Controllers
         // ReaderRating endpoints
 
         [HttpGet("criticRatings")]
-        public async Task<ActionResult<IEnumerable<CriticRatingDTO>>> GetCriticRatings([FromQuery] string userId)
+        public async Task<ActionResult<IEnumerable<CriticRatingDTO>>> GetCriticRatings([FromQuery] int bookId)
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID is required.");
-            }
-
             var criticRatings = await _dbContext.CriticRatings
-                .Where(c => c.RaterId == userId)
+                .Where(c => c.BookId == bookId) // Szűrés a könyv azonosítójára
                 .Select(c => new CriticRatingDTO
                 {
                     RatingId = c.RatingId,
@@ -264,11 +259,13 @@ namespace UnderGroundArchive_Backend.Controllers
 
             if (!criticRatings.Any())
             {
-                return NotFound("No ratings found for the given user.");
+                return NotFound("No ratings found for the given book.");
             }
 
             return Ok(criticRatings);
         }
+
+
 
         [HttpGet("criticRating/{id}")]
         public async Task<ActionResult<CriticRatings>> GetCriticRating(int id)
