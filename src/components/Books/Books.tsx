@@ -48,9 +48,11 @@ const Books = () => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
-  const [ratings, setRatings] = useState<{ [id: number]: number }>({});
+  const [ratings, setRatings] = useState<{
+    [bookId: number]: { [userId: string]: number };
+  }>({});
   const [criticRatings, setCriticRatings] = useState<CriticRating[]>([]);
-  const {showToast} = useToast();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchGenresAndCategories = async () => {
@@ -96,7 +98,6 @@ const Books = () => {
 
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-
       const roles = decodedToken["roles"] || [];
       const roleFromClaim =
         decodedToken[
@@ -110,17 +111,24 @@ const Books = () => {
         return;
       }
 
-      setUser({
-        id: decodedToken[
+      const userId =
+        decodedToken[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-        ],
-        userName:
-          decodedToken[
-            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-          ],
-      });
+        ];
+      const userName =
+        decodedToken[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+        ];
 
+      setUser({ id: userId, userName });
       setRole(roleFromClaim || "reader");
+
+      // Értékelések frissítése bejelentkezés után
+      fetchReaderRatings(userId);
+      if (roleFromClaim === "Critic") {
+        // Kritikusok értékeléseinek frissítése
+        criticRatings.forEach((rating) => fetchCriticRatings(rating.bookId));
+      }
     } catch (err) {
       console.error("Hiba a token dekódolása során:", err);
       setError("Hiba történt a jogosultságok ellenőrzésekor.");
@@ -134,27 +142,11 @@ const Books = () => {
       setBooks(bookData);
 
       if (user?.id) {
-        const ratingsResponse = await fetch(
-          `https://localhost:7197/api/User/readerRatings?userId=${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            },
-          }
-        );
+        fetchReaderRatings(user.id);
 
-        if (ratingsResponse.ok) {
-          const ratingsData = await ratingsResponse.json();
-
-          const userRatings = ratingsData.reduce(
-            (acc: { [id: number]: number }, rating: any) => {
-              acc[rating.bookId] = rating.ratingValue;
-              return acc;
-            },
-            {}
-          );
-
-          setRatings(userRatings);
+        if (role === "Critic") {
+          // Az összes könyv kritikus értékelésének frissítése
+          bookData.forEach((book) => fetchCriticRatings(book.id));
         }
       }
 
@@ -194,12 +186,54 @@ const Books = () => {
 
       if (response.ok) {
         const data: CriticRating[] = await response.json();
+
         setCriticRatings(data);
+
+        // Minden kritikus értékelés hozzáadása a ratings állapothoz
+        setRatings((prevRatings) => {
+          const newRatings = { ...prevRatings };
+          newRatings[bookId] = data.reduce((acc, rating) => {
+            acc[rating.raterId] = rating.ratingValue;
+            return acc;
+          }, {} as { [userId: string]: number });
+          return newRatings;
+        });
       } else {
         console.error("Hiba a kritikus értékelések lekérése során.");
       }
     } catch (err) {
       console.error("Hiba a kritikus értékelések lekérése során:", err);
+    }
+  };
+
+  const fetchReaderRatings = async (userId: string) => {
+    try {
+      const response = await fetch(
+        `https://localhost:7197/api/User/readerRatings?userId=${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const ratingsData = await response.json();
+        setRatings((prevRatings) => {
+          const updatedRatings = { ...prevRatings };
+          ratingsData.forEach((rating: any) => {
+            if (!updatedRatings[rating.bookId]) {
+              updatedRatings[rating.bookId] = {};
+            }
+            updatedRatings[rating.bookId][userId] = rating.ratingValue;
+          });
+          return updatedRatings;
+        });
+      } else {
+        console.error("Hiba az olvasói értékelések lekérése során.");
+      }
+    } catch (err) {
+      console.error("Hiba az olvasói értékelések lekérése során:", err);
     }
   };
 
@@ -243,15 +277,25 @@ const Books = () => {
       });
 
       if (!response.ok) {
-        showToast("Már értékelted ezt a könyvet!","error")
+        showToast("Már értékelted ezt a könyvet!", "error");
         return;
       }
 
+      // Frissítjük a ratings állapotot az aktuális felhasználóra vonatkozóan
       setRatings((prevRatings) => ({
         ...prevRatings,
-        [bookId]: rating,
+        [bookId]: {
+          ...prevRatings[bookId],
+          [user.id]: rating,
+        },
       }));
-      showToast("Sikeres értékelés!","success")
+
+      // Kritikus esetén frissítjük a kritikus értékeléseket
+      if (role === "Critic") {
+        await fetchCriticRatings(bookId);
+      }
+
+      showToast("Sikeres értékelés!", "success");
     } catch (err) {
       console.error("Hiba az értékelés mentése során:", err);
     }
@@ -259,25 +303,32 @@ const Books = () => {
 
   const deleteRating = async (bookId: number) => {
     if (!user?.id) {
-      showToast("Felhasználói azonositó hiányzik!","error")
+      showToast("Felhasználói azonosító hiányzik!", "error");
       return;
     }
 
+    const apiEndpoint =
+      role === "User"
+        ? `https://localhost:7197/api/User/deleteReaderRating/${bookId}`
+        : `https://localhost:7197/api/User/deleteCriticRating/${bookId}`;
+
     try {
-      const response = await fetch(
-        `https://localhost:7197/api/User/deleteReaderRating/${bookId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-          },
-        }
-      );
+      const response = await fetch(apiEndpoint, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Hiba az értékelés törlése során:", errorText);
-        showToast("Hiba az értékelés törlése során!","error")
+
+        if (response.status === 404) {
+          showToast("Az értékelés nem található!", "error");
+        } else {
+          showToast("Hiba az értékelés törlése során!", "error");
+        }
         return;
       }
 
@@ -287,15 +338,19 @@ const Books = () => {
         return updatedRatings;
       });
 
-      showToast("Értékelés sikeresen törölve!","success")
+      showToast("Értékelés sikeresen törölve!", "success");
     } catch (err) {
       console.error("Hiba az értékelés törlése során:", err);
+      showToast("Váratlan hiba történt az értékelés törlése során.", "error");
     }
   };
 
-  const handleDetails = (book: Books) => {
+  const handleDetails = async (book: Books) => {
     setSelectedBook(book);
-    fetchCriticRatings(book.id);
+    await fetchCriticRatings(book.id);
+    if (user?.id) {
+      await fetchReaderRatings(user.id);
+    }
   };
 
   const handleBackToList = async () => {
@@ -304,14 +359,21 @@ const Books = () => {
     setCriticRatings([]); // Kritikus értékelések állapotának alaphelyzetbe állítása
   };
 
-  const calculateCriticAverage = () => {
-    if (criticRatings.length === 0) return 0;
-    const total = criticRatings.reduce(
-      (sum, rating) => sum + rating.ratingValue,
-      0
-    );
-    return total / criticRatings.length;
-  };
+ const calculateCriticAverage = () => {
+  if (!selectedBook || criticRatings.length === 0) return 0;
+
+  // Szűrjük az adott könyvhöz tartozó kritikus értékeléseket
+  const bookRatings = criticRatings.filter(
+    (rating) => rating.bookId === selectedBook.id
+  );
+
+  if (bookRatings.length === 0) return 0;
+
+  // Számítsuk ki az átlagot
+  const total = bookRatings.reduce((sum, rating) => sum + rating.ratingValue, 0);
+  return total / bookRatings.length;
+};
+
 
   return (
     <div>
@@ -333,13 +395,14 @@ const Books = () => {
                   <span
                     key={star}
                     className={`star ${
-                      ratings[book.id] >= star ? "filled" : ""
+                      ratings[book.id]?.[user?.id || ""] >= star ? "filled" : ""
                     }`}
                   >
                     ★
                   </span>
                 ))}
               </div>
+
               <button onClick={() => handleDetails(book)}>Részletek</button>
             </div>
           ))}
@@ -355,19 +418,34 @@ const Books = () => {
               </p>
               <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
               <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
-              <p>Leirás: {selectedBook.bookDescription}</p>
+              <p>Leírás: {selectedBook.bookDescription}</p>
             </div>
             <div className="ratings">
-              <h3>Értékelés:</h3>
-              {role && (
+              <h3>
+                {role === "Critic"
+                  ? "Kritikus értékelés:"
+                  : "Olvasói értékelés:"}
+              </h3>
+              {selectedBook && (
                 <div className="rating">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <span
                       key={star}
                       className={`star ${
-                        ratings[selectedBook.id] >= star ||
-                        (hoveredRating !== null && hoveredRating >= star)
+                        (role === "Critic" &&
+                          criticRatings.some(
+                            (r) =>
+                              r.bookId === selectedBook.id &&
+                              r.raterId === user?.id &&
+                              r.ratingValue >= star
+                          )) ||
+                        (role !== "Critic" &&
+                          ratings[selectedBook.id]?.[user?.id || ""] >= star)
                           ? "filled"
+                          : ""
+                      } ${
+                        hoveredRating !== null && hoveredRating >= star
+                          ? "hovered"
                           : ""
                       }`}
                       onMouseEnter={() => setHoveredRating(star)}
@@ -379,9 +457,13 @@ const Books = () => {
                   ))}
                 </div>
               )}
-              <h3>Kritikusok értékelték:</h3>
-              <StarRating rating={calculateCriticAverage()} />
-              {ratings[selectedBook.id] && (
+              {role !== "Critic" && (
+                <>
+                  <h3>Kritikusok átlagértékelése:</h3>
+                  <StarRating rating={calculateCriticAverage()} />
+                </>
+              )}
+              {selectedBook && ratings[selectedBook.id]?.[user?.id || ""] && (
                 <button onClick={() => deleteRating(selectedBook.id)}>
                   Értékelés törlése
                 </button>
