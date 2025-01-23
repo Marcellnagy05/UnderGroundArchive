@@ -170,7 +170,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 return BadRequest(new { errorCode = "REGISTRATION_FAILED", errors = errorMessages });
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, "Critic");
 
             return Ok(new { message = "A felhasználó sikeresen regisztrálva." });
         }
