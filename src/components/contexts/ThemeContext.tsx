@@ -21,6 +21,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
       // Mentjük az aktuális témát a localStorage-ba
       localStorage.setItem("theme", theme);
+      const body = document.body;
+      body.classList.remove("light-theme", "dark-theme");
+      body.classList.add(`${theme}-theme`);
   
       // Beállítjuk a CSS változókat a témának megfelelően
       const currentTheme = theme === "light" ? lightTheme : darkTheme;

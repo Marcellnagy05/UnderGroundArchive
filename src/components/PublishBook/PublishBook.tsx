@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "../contexts/ToastContext";
+import "./PublishBook.css"
 
 // Műfaj típus
 interface Genre {
@@ -132,12 +133,12 @@ const PublishBook = () => {
   };
 
   return (
-    <div>
+    <div className="publishContainer">
       <h2>Könyv publikálása</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {isAuthor ? (
-        <form onSubmit={handlePublish}>
-          <div>
+        <form className="publishForm" onSubmit={handlePublish}>
+          <div className="publishFormItem">
             <label>Könyv neve:</label>
             <input
               type="text"
@@ -145,13 +146,14 @@ const PublishBook = () => {
               onChange={(e) => setBookName(e.target.value)}
             />
           </div>
-          <div>
+          <div className="publishFormItem">
             <label>Műfaj:</label>
             <select
+              className="formSelect"
               value={genreId}
               onChange={(e) => setGenreId(e.target.value)}
             >
-              <option value="">Válasszon műfajt</option>
+              <option value=""><strong>Válasszon műfajt</strong></option>
               {genres.map((genre) => (
                 <option key={genre.genreId} value={genre.genreId.toString()}>
                   {genre.genreName}
@@ -159,28 +161,31 @@ const PublishBook = () => {
               ))}
             </select>
           </div>
-          <div>
+          <div className="publishFormItem">
             <label>Kategória:</label>
             <select
+              className="formSelect"
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              onChange={(e) => setCategoryId(e.target.value)
+              }
             >
-              <option value="">Válasszon kategóriát</option>
+              <option value=""><strong>Válasszon kategóriát</strong></option>
               {categories.map((category) => (
-                <option key={category.categoryId} value={category.categoryId.toString()}>
+                <option className="option-item" key={category.categoryId} value={category.categoryId.toString()}>
                   {category.categoryName}
                 </option>
               ))}
             </select>
           </div>
-          <div>
+          <div className="publishFormItem">
             <label>Könyv leírás:</label>
             <textarea
               value={bookDescription}
-              onChange={(e) => setBookDescription(e.target.value)}
+              onChange={(e) => setBookDescription(e.target.value)
+              }
             />
           </div>
-          <button type="submit">Könyv publikálása</button>
+          <button type="submit" className="publishButton">Könyv publikálása</button>
         </form>
       ) : (
         <></>

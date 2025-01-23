@@ -1,7 +1,10 @@
 .allBooks {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(autofill, 1fr);
   gap: 16px;
+  margin-top: 20px;
+  margin-left: 20px;
 }
 
 .bookDetailsContainer {

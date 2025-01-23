@@ -416,7 +416,7 @@ const Books = () => {
                 ))}
               </div>
 
-              <button onClick={() => handleDetails(book)}>Részletek</button>
+              <button className="detailsButton" onClick={() => handleDetails(book)}>Részletek</button>
             </div>
           ))}
         </div>

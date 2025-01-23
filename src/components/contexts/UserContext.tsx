@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from "react";
 import {jwtDecode} from "jwt-decode";
 import { useThemeContext } from "../contexts/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   userName: string;
@@ -23,6 +24,7 @@ export const UserContext = createContext<UserContextType>(defaultUserContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | string>("guest");
   const { setTheme } = useThemeContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -47,11 +49,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   
 
   const logout = () => {
-    localStorage.removeItem("jwt"); // JWT törlése
-    localStorage.removeItem("theme"); // Téma törlése
-    setTheme("light")
-    setUser("guest"); // Felhasználó alapértelmezett állapotra állítása
-    window.location.reload();
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("theme");
+    setUser("guest");
+    navigate("/")
   };
 
   return (

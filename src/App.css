@@ -27,7 +27,7 @@ body {
   --primaryText: #14325A;
   --secondaryText: #1A3E6A;
   --primary: #3A8CC1;
-  --secondary: #3A7FDB;
+  --secondary: #CCD8E0;
   --hover:#3A8CC1;
   --slider: #0056b3;
 };
@@ -85,12 +85,42 @@ body {
 }
 
 .navbar .dropdown-menu .dropdown-item:hover {
-  background-color: var(--hover); /* A hover színe is változik a témától függően */
+  background-color: var(--hover);
+  border-radius: 10px;
+}
+
+/*Books*/
+
+.detailsButton{
+  position: relative;
+  left: 30%;
+  background-color: var(--primary);
+  color: var(--secondaryText);
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  width: 100px;
+  max-width: 80%;
+  cursor: pointer;
+}
+
+.backToList{
+  position: relative;
+  left: 32%;
+  background-color: var(--primary);
+  color: var(--secondaryText);
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  width: 200px;
+  max-width: 80%;
+  cursor: pointer;
 }
 
 /*Login*/
 
-/* Login komponens stílusai */
 .login-container {
   display: flex;
   justify-content: center;
@@ -236,4 +266,72 @@ body {
   font-size: 14px;
   text-align: center;
   margin-bottom: 10px;
+}
+
+/*PublishBook*/
+
+/*Light theme*/
+.light-theme .publishForm{
+  border: 2px solid var(--primary);
+  color: var(--primaryText);
+  background-color: var(--secondary);
+}
+
+.light-theme .formSelect{
+  background-color: var(--background);
+  border: 2px solid var(--primary);
+  color: var(--primaryText);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.light-theme .publishForm textarea{
+  background-color: var(--background);
+  border: 2px solid var(--primary);
+  color: var(--secondaryText);
+}
+
+.light-theme .publishForm input[type = text]{
+  background-color: var(--background);
+  border: 2px solid var(--primary);
+  color: var(--secondaryText);
+}
+
+.light-theme .publishButton{
+  background-color: var(--background);
+  border:2px solid var(--primary);
+  color: var(--secondaryText);
+}
+
+/*Dark Theme*/
+
+.dark-theme .publishForm{
+  border: 2px solid var(--primary);
+  color: var(--primaryText);
+}
+
+.dark-theme .formSelect{
+  background-color: var(--secondary);
+  border: 2px solid var(--primary);
+  color: var(--primaryText);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.dark-theme .publishForm textarea{
+  background-color: var(--secondary);
+  border: 2px solid var(--primary);
+  color: var(--secondaryText);
+}
+
+.dark-theme .publishForm input[type = text]{
+  background-color: var(--secondary);
+  border: 2px solid var(--primary);
+  color: var(--secondaryText);
+}
+
+.dark-theme .publishButton{
+  background-color: var(--secondary);
+  border: 2px solid var(--primary);
+  color: var(--secondaryText);
 }
