@@ -119,6 +119,15 @@ body {
   cursor: pointer;
 }
 
+.removeRating{
+  background-color: var(--background);
+  border: 2px solid var(--primary);
+}
+
+.removeRating:hover {
+  background-color: var(--hover);
+}
+
 /*Login*/
 
 .login-container {

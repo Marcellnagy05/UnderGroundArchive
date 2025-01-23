@@ -472,18 +472,73 @@ return (
                   </span>
                 ))}
               </div>
-            )}
-            {role !== "Critic" && (
-              <>
-                <h3>Kritikusok átlagértékelése:</h3>
-                <StarRating rating={calculateCriticAverage()} />
-              </>
-            )}
-            {selectedBook && ratings[selectedBook.id]?.[user?.id || ""] && (
-              <button onClick={() => deleteRating(selectedBook.id)}>
-                Értékelés törlése
-              </button>
-            )}
+
+              <button className="detailsButton" onClick={() => handleDetails(book)}>Részletek</button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bookDetailsContainer">
+          <div className="bookDetails">
+            <div className="bookInfo">
+              <h2>{selectedBook.bookName}</h2>
+              <p>
+                Szerző:{" "}
+                {users[selectedBook.authorId]?.userName || "Betöltés..."}
+              </p>
+              <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
+              <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
+              <p>Leírás: {selectedBook.bookDescription}</p>
+            </div>
+            <div className="ratings">
+              <h3>
+                {role === "Critic"
+                  ? "Kritikus értékelés:"
+                  : "Olvasói értékelés:"}
+              </h3>
+              {selectedBook && (
+                <div className="rating">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      className={`star ${
+                        (role === "Critic" &&
+                          criticRatings.some(
+                            (r) =>
+                              r.bookId === selectedBook.id &&
+                              r.raterId === user?.id &&
+                              r.ratingValue >= star
+                          )) ||
+                        (role !== "Critic" &&
+                          ratings[selectedBook.id]?.[user?.id || ""] >= star)
+                          ? "filled"
+                          : ""
+                      } ${
+                        hoveredRating !== null && hoveredRating >= star
+                          ? "hovered"
+                          : ""
+                      }`}
+                      onMouseEnter={() => setHoveredRating(star)}
+                      onMouseLeave={() => setHoveredRating(null)}
+                      onClick={() => saveRating(selectedBook.id, star)}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+              )}
+              {role !== "Critic" && (
+                <>
+                  <h3>Kritikusok átlagértékelése:</h3>
+                  <StarRating rating={calculateCriticAverage()} />
+                </>
+              )}
+              {selectedBook && ratings[selectedBook.id]?.[user?.id || ""] && (
+                <button className="removeRating" onClick={() => deleteRating(selectedBook.id)}>
+                  Értékelés törlése
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
