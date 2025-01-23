@@ -60,6 +60,7 @@ namespace UnderGroundArchive_Backend.Controllers
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
             if (result.Succeeded)
             {
+                var theme = user.Theme;
                 // JWT generálása
                 var token = GenerateJwtToken(user);
 
@@ -72,6 +73,34 @@ namespace UnderGroundArchive_Backend.Controllers
             }
         }
 
+        [HttpPut("updateTheme")]
+        public async Task<IActionResult> UpdateTheme([FromBody] ThemeDTO request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Felhasználó ID-jának lekérése
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Felhasználó nem található");
+            }
+
+            user.Theme = request.Theme;  // Téma frissítése
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok("Téma frissítve");
+            }
+            else
+            {
+                return BadRequest("Hiba történt a téma frissítésekor");
+            }
+        }
 
         // JWT generálás
         private async Task<string> GenerateJwtToken(ApplicationUser user)
