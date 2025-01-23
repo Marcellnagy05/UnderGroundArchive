@@ -6,6 +6,7 @@ export const lightTheme = {
     secondary: "#3A7FDB",
     hover: "#3A8CC1",
     slider: "#0056b3",
+    thirdColor: "#B8D1E3",
 };
   
   export const darkTheme = {
@@ -16,5 +17,6 @@ export const lightTheme = {
     secondary: "#343A40",
     hover: "#6A4CBB",
     slider: "#593C9D",
+    thirdColor: "#1E222D",
   };
   

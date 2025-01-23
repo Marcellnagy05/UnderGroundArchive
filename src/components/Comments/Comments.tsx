@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./Comments.css";
 
 interface CommentDTO {
   commentId: number;
@@ -28,10 +29,10 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
   const [editedMessage, setEditedMessage] = useState<string>("");
   const [replyMessage, setReplyMessage] = useState<string>("");
   const [usernames, setUsernames] = useState<{ [key: string]: string }>({});
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
 
   const getAuthToken = () => localStorage.getItem("jwt");
 
-  // Fetch comments from API
   const fetchComments = async () => {
     const token = getAuthToken();
     if (!token) {
@@ -49,7 +50,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
         const data: CommentDTO[] = await response.json();
         setComments(data);
 
-        // Build nested comments
         const nested: Record<number, CommentDTO[]> = {};
         data.forEach((comment) => {
           const parentId = comment.parentCommentId || 0;
@@ -60,7 +60,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
         });
         setNestedComments(nested);
 
-        // Fetch usernames for each commenter
         data.forEach((comment) => {
           if (!usernames[comment.commenterId]) {
             fetchUsername(comment.commenterId);
@@ -74,7 +73,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
   };
 
-  // Fetch username by ID
   const fetchUsername = async (userId: string) => {
     try {
       const response = await fetch(`https://localhost:7197/api/User/user/${userId}`);
@@ -92,7 +90,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
   };
 
-  // Handle editing a comment
   const handleEditComment = async (commentId: number) => {
     if (!editedMessage.trim()) {
       alert("Comment cannot be empty!");
@@ -127,7 +124,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
   };
 
-  // Handle deleting a comment
   const handleDeleteComment = async (commentId: number) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
     if (!confirmDelete) return;
@@ -156,7 +152,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
   };
 
-  // Handle creating a comment
   const handleCreateComment = async () => {
     if (!newComment.trim()) {
       alert("Comment cannot be empty!");
@@ -201,7 +196,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
   };
 
-  // Handle creating a reply
   const handleCreateReply = async (parentCommentId: number) => {
     if (!replyMessage.trim()) {
       alert("Reply cannot be empty!");
@@ -251,67 +245,92 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
   }, [bookId]);
 
   const renderComments = (parentId: number = 0, depth: number = 0) => {
+    const replies = nestedComments[parentId] || [];
+    const isExpanded = expandedComments.has(parentId);
+
     return (
-      nestedComments[parentId]?.map((comment) => (
-        <div key={comment.commentId} style={{ marginLeft: depth * 20 }}>
-          {editingComment === comment.commentId ? (
-            <>
-              <textarea
-                value={editedMessage}
-                onChange={(e) => setEditedMessage(e.target.value)}
-              />
-              <button onClick={() => handleEditComment(comment.commentId)}>Save</button>
-              <button onClick={() => setEditingComment(null)}>Cancel</button>
-            </>
-          ) : (
-            <>
-              <p>
-                <strong>{usernames[comment.commenterId] || "Loading..."}</strong>:{" "}
-                {comment.commentMessage}
-              </p>
-              <button onClick={() => setParentCommentId(comment.commentId)}>Reply</button>
-              {currentUser.id === comment.commenterId && (
-                <>
-                  <button
-                    onClick={() => {
-                      setEditingComment(comment.commentId);
-                      setEditedMessage(comment.commentMessage);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button onClick={() => handleDeleteComment(comment.commentId)}>Delete</button>
-                </>
-              )}
-              {parentCommentId === comment.commentId && (
-                <div style={{ marginLeft: 20 }}>
-                  <textarea
-                    value={replyMessage}
-                    onChange={(e) => setReplyMessage(e.target.value)}
-                  />
-                  <button onClick={() => handleCreateReply(comment.commentId)}>
-                    Submit Reply
-                  </button>
-                  <button onClick={() => setParentCommentId(null)}>Cancel</button>
+      replies.slice(0, isExpanded ? replies.length : 2).map((comment) => (
+        <div key={comment.commentId} className="comment" style={{ marginLeft: depth * 20 }}>
+          {/* <div className="vote-section">
+            <button className="vote-button">▲</button>
+            <div className="vote-count">0</div>
+            <button className="vote-button">▼</button>
+          </div> */}
+          <div className="content">
+            {editingComment === comment.commentId ? (
+              <div>
+                <textarea
+                  className="edit-comment-textarea"
+                  value={editedMessage}
+                  onChange={(e) => setEditedMessage(e.target.value)}
+                />
+                <button className="save-comment-button" onClick={() => handleEditComment(comment.commentId)}>Save</button>
+                <button className="cancel-edit-button" onClick={() => setEditingComment(null)}>Cancel</button>
+              </div>
+            ) : (
+              <div>
+                <p>
+                  <strong>{usernames[comment.commenterId] || "Loading..."}</strong>: <br /> <span className="commentMessage">{comment.commentMessage}</span>
+                </p>
+                <div className="actions">
+                  <button className="reply-button" onClick={() => setParentCommentId(comment.commentId)}>Reply</button>
+                  {currentUser.id === comment.commenterId && (
+                    <>
+                      <button
+                        className="edit-button"
+                        onClick={() => {
+                          setEditingComment(comment.commentId);
+                          setEditedMessage(comment.commentMessage);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button className="delete-button" onClick={() => handleDeleteComment(comment.commentId)}>Delete</button>
+                    </>
+                  )}
                 </div>
-              )}
-              {renderComments(comment.commentId, depth + 1)}
-            </>
-          )}
+                {parentCommentId === comment.commentId && (
+                  <div className="reply-container">
+                    <textarea
+                      className="reply-textarea"
+                      value={replyMessage}
+                      onChange={(e) => setReplyMessage(e.target.value)}
+                    />
+                    <button className="submit-reply-button" onClick={() => handleCreateReply(comment.commentId)}>
+                      Submit Reply
+                    </button>
+                    <button className="cancel-reply-button" onClick={() => setParentCommentId(null)}>Cancel</button>
+                  </div>
+                )}
+                {renderComments(comment.commentId, depth + 1)}
+              </div>
+            )}
+          </div>
         </div>
-      )) || null
+      ))
+    ).concat(
+      replies.length > 2 && !isExpanded ? (
+        <button
+          key={`expand-${parentId}`}
+          className="expand-button"
+          onClick={() => setExpandedComments((prev) => new Set(prev).add(parentId))}
+        >
+          ...Szó, szót követ
+        </button>
+      ) : []
     );
   };
 
   return (
-    <div>
-      <h2>Comments</h2>
+    <div className="comments-container">
+      <h2 className="comments-title">Comments</h2>
       {renderComments()}
       <textarea
+        className="new-comment-textarea"
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
       />
-      <button onClick={handleCreateComment}>Submit</button>
+      <button className="submit-comment-button" onClick={handleCreateComment}>Submit</button>
     </div>
   );
 };
