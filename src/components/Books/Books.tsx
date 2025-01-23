@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./Books.css";
 import StarRating from "../StarRating/StarRating";
 import { useToast } from "../contexts/ToastContext";
+import Comments from "../Comments/Comments";
 
 interface Books {
   id: number;
@@ -388,108 +389,114 @@ const Books = () => {
 };
 
 
-  return (
-    <div>
-      {/* <button onClick={() => allBooks()}>Összes könyv lekérése</button> */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {!selectedBook ? (
-        <div className="allBooks">
-          {books.map((book) => (
-            <div key={book.id} className="bookCard">
-              <h3>{book.bookName}</h3>
-              <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
-              <p>Műfaj: {getGenreName(book.genreId)}</p>
-              <p>Kategória: {getCategoryName(book.categoryId)}</p>
-              <p>Átlagos értékelés: {book.averageRating || ""}</p>
-              <StarRating rating={book.averageRating || 0} />
-              <p>Saját értékelés:</p>
+return (
+  <div>
+    {/* <button onClick={() => allBooks()}>Összes könyv lekérése</button> */}
+    {error && <p style={{ color: "red" }}>{error}</p>}
+    {!selectedBook ? (
+      <div className="allBooks">
+        {books.map((book) => (
+          <div key={book.id} className="bookCard">
+            <h3>{book.bookName}</h3>
+            <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
+            <p>Műfaj: {getGenreName(book.genreId)}</p>
+            <p>Kategória: {getCategoryName(book.categoryId)}</p>
+            <p>Átlagos értékelés: {book.averageRating || ""}</p>
+            <StarRating rating={book.averageRating || 0} />
+            <p>Saját értékelés:</p>
+            <div className="rating">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${
+                    ratings[book.id]?.[user?.id || ""] >= star ? "filled" : ""
+                  }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+
+            <button className="detailsButton" onClick={() => handleDetails(book)}>
+              Részletek
+            </button>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="bookDetailsContainer">
+        <div className="bookDetails">
+          <div className="bookInfo">
+            <h2>{selectedBook.bookName}</h2>
+            <p>
+              Szerző:{" "}
+              {users[selectedBook.authorId]?.userName || "Betöltés..."}
+            </p>
+            <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
+            <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
+            <p>Leírás: {selectedBook.bookDescription}</p>
+          </div>
+          <div className="ratings">
+            <h3>
+              {role === "Critic"
+                ? "Kritikus értékelés:"
+                : "Olvasói értékelés:"}
+            </h3>
+            {selectedBook && (
               <div className="rating">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
                     key={star}
                     className={`star ${
-                      ratings[book.id]?.[user?.id || ""] >= star ? "filled" : ""
+                      (role === "Critic" &&
+                        criticRatings.some(
+                          (r) =>
+                            r.bookId === selectedBook.id &&
+                            r.raterId === user?.id &&
+                            r.ratingValue >= star
+                        )) ||
+                      (role !== "Critic" &&
+                        ratings[selectedBook.id]?.[user?.id || ""] >= star)
+                        ? "filled"
+                        : ""
+                    } ${
+                      hoveredRating !== null && hoveredRating >= star
+                        ? "hovered"
+                        : ""
                     }`}
+                    onMouseEnter={() => setHoveredRating(star)}
+                    onMouseLeave={() => setHoveredRating(null)}
+                    onClick={() => saveRating(selectedBook.id, star)}
                   >
                     ★
                   </span>
                 ))}
               </div>
-
-              <button className="detailsButton" onClick={() => handleDetails(book)}>Részletek</button>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bookDetailsContainer">
-          <div className="bookDetails">
-            <div className="bookInfo">
-              <h2>{selectedBook.bookName}</h2>
-              <p>
-                Szerző:{" "}
-                {users[selectedBook.authorId]?.userName || "Betöltés..."}
-              </p>
-              <p>Műfaj: {getGenreName(selectedBook.genreId)}</p>
-              <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
-              <p>Leírás: {selectedBook.bookDescription}</p>
-            </div>
-            <div className="ratings">
-              <h3>
-                {role === "Critic"
-                  ? "Kritikus értékelés:"
-                  : "Olvasói értékelés:"}
-              </h3>
-              {selectedBook && (
-                <div className="rating">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <span
-                      key={star}
-                      className={`star ${
-                        (role === "Critic" &&
-                          criticRatings.some(
-                            (r) =>
-                              r.bookId === selectedBook.id &&
-                              r.raterId === user?.id &&
-                              r.ratingValue >= star
-                          )) ||
-                        (role !== "Critic" &&
-                          ratings[selectedBook.id]?.[user?.id || ""] >= star)
-                          ? "filled"
-                          : ""
-                      } ${
-                        hoveredRating !== null && hoveredRating >= star
-                          ? "hovered"
-                          : ""
-                      }`}
-                      onMouseEnter={() => setHoveredRating(star)}
-                      onMouseLeave={() => setHoveredRating(null)}
-                      onClick={() => saveRating(selectedBook.id, star)}
-                    >
-                      ★
-                    </span>
-                  ))}
-                </div>
-              )}
-              {role !== "Critic" && (
-                <>
-                  <h3>Kritikusok átlagértékelése:</h3>
-                  <StarRating rating={calculateCriticAverage()} />
-                </>
-              )}
-              {selectedBook && ratings[selectedBook.id]?.[user?.id || ""] && (
-                <button onClick={() => deleteRating(selectedBook.id)}>
-                  Értékelés törlése
-                </button>
-              )}
-            </div>
+            )}
+            {role !== "Critic" && (
+              <>
+                <h3>Kritikusok átlagértékelése:</h3>
+                <StarRating rating={calculateCriticAverage()} />
+              </>
+            )}
+            {selectedBook && ratings[selectedBook.id]?.[user?.id || ""] && (
+              <button onClick={() => deleteRating(selectedBook.id)}>
+                Értékelés törlése
+              </button>
+            )}
           </div>
-          <button className="backToList" onClick={handleBackToList}>
-            Vissza a listához
-          </button>
         </div>
-      )}
-    </div>
-  );
+        {/* Add the Comments component here */}
+        <Comments bookId={selectedBook.id} currentUser={user} />
+        <button className="backToList" onClick={handleBackToList}>
+          Vissza a listához
+        </button>
+      </div>
+    )}
+  </div>
+);
+
+
 };
 
 export default Books;
