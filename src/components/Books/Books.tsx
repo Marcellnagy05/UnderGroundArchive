@@ -487,11 +487,12 @@ return (
           </div>
         </div>
 
-        {user && <Comments bookId={selectedBook.id} currentUser={user} />}
+
 
         <button className="backToList" onClick={handleBackToList}>
           Vissza a listához
         </button>
+        {user && <Comments bookId={selectedBook.id} currentUser={user} />}
       </div>
     )}
   </div>
