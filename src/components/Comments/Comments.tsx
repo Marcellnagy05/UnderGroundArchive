@@ -1,162 +1,312 @@
-import React, { useState, useEffect } from "react";
-import "./Comments.css";
-import { useToast } from "../contexts/ToastContext";
+import React, { useEffect, useState } from "react";
 
-interface Comment {
-  id: number;
+interface CommentDTO {
+  commentId: number; 
+  commenterId: string;
   bookId: number;
-  userId: string;
+  commentMessage: string;
+  parentCommentId?: number | null;
+  threadId: number;
+}
+
+interface User {
+  id: string;
   userName: string;
-  CommentMessage: string;
-  createdAt: string;
 }
 
 interface CommentsProps {
   bookId: number;
-  currentUser: { id: string; userName: string } | null;
+  currentUser: User;
 }
 
-const Comments: React.FC<CommentsProps> = ({ bookId, currentUser }) => {
-  const [comments, setComments] = useState<Comment[]>([]);
+const Comments = ({ bookId, currentUser }: CommentsProps) => {
+  const [comments, setComments] = useState<CommentDTO[]>([]);
   const [newComment, setNewComment] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const { showToast } = useToast();
+  const [parentCommentId, setParentCommentId] = useState<number | null>(null);
+  const [editingComment, setEditingComment] = useState<number | null>(null);
+  const [editedMessage, setEditedMessage] = useState<string>("");
+  const [replyMessage, setReplyMessage] = useState<string>("");
+  const [usernames, setUsernames] = useState<{ [key: string]: string }>({});
+
+  const getAuthToken = () => localStorage.getItem("jwt");
+
+  const fetchUsername = async (userId: string) => {
+    try {
+      const response = await fetch(`https://localhost:7197/api/User/user/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUsernames((prevUsernames) => ({
+          ...prevUsernames,
+          [userId]: data.userName,
+        }));
+      } else {
+        console.error("Failed to fetch username");
+      }
+    } catch (error) {
+      console.error("Error fetching username:", error);
+    }
+  };
+
+  const fetchComments = async () => {
+    const token = getAuthToken();
+    if (!token) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://localhost:7197/api/User/comments/${bookId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data: CommentDTO[] = await response.json();
+        setComments(data);
+
+        // Fetch usernames for each commenter
+        data.forEach((comment) => {
+          if (!usernames[comment.commenterId]) {
+            fetchUsername(comment.commenterId);
+          }
+        });
+      } else {
+        console.error("Failed to fetch comments");
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  const handleCreateComment = async () => {
+    if (!newComment.trim()) {
+      alert("Comment cannot be empty!");
+      return;
+    }
+
+    const token = getAuthToken();
+    if (!token) {
+      alert("You must be logged in to comment.");
+      return;
+    }
+
+    const commentDto: Omit<CommentDTO, "commenterId" | "commentId"> = {
+      bookId,
+      commentMessage: newComment,
+      parentCommentId,
+      threadId: 0,
+    };
+
+    try {
+      const response = await fetch(`https://localhost:7197/api/User/createComment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...commentDto,
+          commenterId: currentUser.id,
+        }),
+      });
+
+      if (response.ok) {
+        await fetchComments();
+        setNewComment("");
+        setParentCommentId(null);
+      } else {
+        console.error("Failed to create comment");
+      }
+    } catch (error) {
+      console.error("Error creating comment:", error);
+    }
+  };
+
+  const handleCreateReply = async (parentCommentId: number) => {
+    if (!replyMessage.trim()) {
+      alert("Reply cannot be empty!");
+      return;
+    }
+
+    const token = getAuthToken();
+    if (!token) {
+      alert("You must be logged in to reply.");
+      return;
+    }
+
+    const replyDto: Omit<CommentDTO, "commenterId" | "commentId"> = {
+      bookId,
+      commentMessage: replyMessage,
+      parentCommentId,
+      threadId: parentCommentId,
+    };
+
+    try {
+      const response = await fetch(`https://localhost:7197/api/User/createComment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...replyDto,
+          commenterId: currentUser.id,
+        }),
+      });
+
+      if (response.ok) {
+        await fetchComments();
+        setReplyMessage("");
+        setParentCommentId(null);
+      } else {
+        console.error("Failed to create reply");
+      }
+    } catch (error) {
+      console.error("Error creating reply:", error);
+    }
+  };
+
+  const handleEditComment = async (commentId: number) => {
+    if (!editedMessage.trim()) {
+      alert("Edited comment cannot be empty!");
+      return;
+    }
+
+    const token = getAuthToken();
+    if (!token) {
+      alert("You must be logged in to edit comments.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://localhost:7197/api/User/modifyComment/${commentId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ commentMessage: editedMessage, commenterId: currentUser.id }),
+      });
+
+      if (response.ok) {
+        await fetchComments();
+        setEditingComment(null);
+        setEditedMessage("");
+      } else {
+        console.error("Failed to edit comment");
+      }
+    } catch (error) {
+      console.error("Error editing comment:", error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    const token = getAuthToken();
+    if (!token) {
+      alert("You must be logged in to delete comments.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://localhost:7197/api/User/deleteComment/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        await fetchComments();
+      } else {
+        console.error("Failed to delete comment");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
 
   useEffect(() => {
     fetchComments();
   }, [bookId]);
 
-  const fetchComments = async () => {
-    try {
-      const response = await fetch(
-        `https://localhost:7197/api/User/comments/${bookId}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Hiba a hozzászólások lekérése során.");
-      }
-
-      const data: Comment[] = await response.json();
-      setComments(data);
-    } catch (err) {
-      console.error("Hiba a hozzászólások lekérése során:", err);
-      setError("Nem sikerült betölteni a hozzászólásokat.");
-    }
-  };
-
-  const handleAddComment = async () => {
-    if (!currentUser) {
-      showToast("Be kell jelentkeznie a hozzászóláshoz!", "error");
-      return;
-    }
-
-    if (newComment.trim() === "") {
-      showToast("A hozzászólás nem lehet üres!", "error");
-      return;
-    }
-
-    try {
-      const requestData = {
-        bookId,
-        userId: currentUser.id,
-        userName: currentUser.userName,
-        CommentMessage: newComment,
-      };
-
-      const response = await fetch("https://localhost:7197/api/User/createComment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Nem sikerült hozzáadni a hozzászólást.");
-      }
-
-      const addedComment: Comment = await response.json();
-      setComments((prevComments) => [addedComment, ...prevComments]);
-      setNewComment("");
-      showToast("Hozzászólás sikeresen hozzáadva!", "success");
-    } catch (err) {
-      console.error("Hiba a hozzászólás hozzáadása során:", err);
-      showToast("Nem sikerült hozzáadni a hozzászólást.", "error");
-    }
-  };
-
-  const handleDeleteComment = async (commentId: number) => {
-    if (!currentUser) {
-      showToast("Be kell jelentkeznie a törléshez!", "error");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://localhost:7197/api/Comments/${commentId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Nem sikerült törölni a hozzászólást.");
-      }
-
-      setComments((prevComments) =>
-        prevComments.filter((comment) => comment.id !== commentId)
-      );
-      showToast("Hozzászólás sikeresen törölve!", "success");
-    } catch (err) {
-      console.error("Hiba a hozzászólás törlése során:", err);
-      showToast("Nem sikerült törölni a hozzászólást.", "error");
-    }
-  };
-
   return (
-    <div className="commentsSection">
-      <h3>Hozzászólások</h3>
-
-      {currentUser && (
-        <div className="addComment">
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Írj egy hozzászólást..."
-          />
-          <button onClick={handleAddComment}>Hozzászólás</button>
-        </div>
-      )}
-
-      {error && <p className="errorMessage">{error}</p>}
-
-      <ul className="commentsList">
-        {comments.map((comment) => (
-          <li key={comment.id} className="comment">
-            <div className="commentHeader">
-              <span className="commentAuthor">{comment.userName}</span>
-              <span className="commentDate">
-                {new Date(comment.createdAt).toLocaleString()}
-              </span>
-            </div>
-            <p className="commentContent">{comment.CommentMessage}</p>
-            {currentUser && currentUser.id === comment.userId && (
-              <button
-                className="deleteCommentButton"
-                onClick={() => handleDeleteComment(comment.id)}
-              >
-                Törlés
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {comments.length === 0 && <p>Még nincsenek hozzászólások.</p>}
+    <div>
+      <h2>Comments</h2>
+      <div>
+        {comments.length > 0 ? (
+          comments.map((comment) => {
+            return (
+              <div key={comment.commentId} style={{ marginLeft: comment.parentCommentId ? 20 : 0 }}>
+                {editingComment === comment.commentId ? (
+                  <>
+                    <textarea
+                      value={editedMessage}
+                      onChange={(e) => setEditedMessage(e.target.value)}
+                    />
+                    <button onClick={() => handleEditComment(comment.commentId)}>
+                      Save
+                    </button>
+                    <button onClick={() => setEditingComment(null)}>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      <strong>{usernames[comment.commenterId] || "Loading..."}</strong>:{" "}
+                      {comment.commentMessage}
+                    </p>
+                    {comment.commenterId === currentUser.id && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditingComment(comment.commentId);
+                            setEditedMessage(comment.commentMessage);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteComment(comment.commentId)}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                    {comment.parentCommentId === null && (
+                      <button onClick={() => setParentCommentId(comment.commentId)}>
+                        Reply
+                      </button>
+                    )}
+                    {parentCommentId === comment.commentId && (
+                      <div>
+                        <textarea
+                          value={replyMessage}
+                          onChange={(e) => setReplyMessage(e.target.value)}
+                          placeholder="Write your reply..."
+                        />
+                        <button onClick={() => handleCreateReply(comment.commentId)}>
+                          Submit Reply
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <p>No comments yet.</p>
+        )}
+      </div>
+      <div>
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Write a comment..."
+        />
+        <button onClick={handleCreateComment}>Submit Comment</button>
+      </div>
     </div>
   );
 };

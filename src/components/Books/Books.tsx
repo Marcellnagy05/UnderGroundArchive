@@ -486,8 +486,9 @@ return (
             )}
           </div>
         </div>
-        {/* Add the Comments component here */}
-        <Comments bookId={selectedBook.id} currentUser={user} />
+
+        {user && <Comments bookId={selectedBook.id} currentUser={user} />}
+
         <button className="backToList" onClick={handleBackToList}>
           Vissza a listához
         </button>
