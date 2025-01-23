@@ -37,8 +37,6 @@ const Settings = () => {
         if (!response.ok) {
           // Ha nem sikerült a kérés, próbáljuk meg lekérni a válasz szöveget
           const errorText = await response.text();  // Próbáljuk meg szöveges választ is kezelni
-          console.error("API hiba: ", errorText);
-          alert("Hiba történt a téma frissítésekor.");
           return;
         }
 
@@ -46,7 +44,7 @@ const Settings = () => {
         const data = await response.json();
         console.log("Téma frissítve:", data);
       } catch (error) {
-        console.error("Hiba az API hívás során:", error);
+        
       }
     }
   };

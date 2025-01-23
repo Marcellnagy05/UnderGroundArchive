@@ -370,7 +370,7 @@ const Books = () => {
   const handleBackToList = async () => {
     await allBooks();
     setSelectedBook(null);
-    setCriticRatings([]); // Kritikus értékelések állapotának alaphelyzetbe állítása
+    setCriticRatings([]);
   };
 
  const calculateCriticAverage = () => {

@@ -108,9 +108,9 @@ body {
 .backToList{
   position: relative;
   left: 32%;
-  background-color: var(--primary);
+  background-color: var(--background);
+  border: 2px solid var(--primary);
   color: var(--secondaryText);
-  border: none;
   border-radius: 10px;
   margin-top: 10px;
   padding: 10px;
@@ -119,9 +119,14 @@ body {
   cursor: pointer;
 }
 
-.removeRating{
+.backToList:hover{
+  background-color: var(--hover);
+}
+
+.removeRating {
   background-color: var(--background);
   border: 2px solid var(--primary);
+  color: var(--primaryText);
 }
 
 .removeRating:hover {
