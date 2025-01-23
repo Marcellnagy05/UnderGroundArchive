@@ -354,14 +354,15 @@ namespace UnderGroundArchive_Backend.Controllers
             var comments = await _dbContext.Comments
                 .Where(c => c.BookId == bookId)
                 .OrderBy(c => c.CreatedAt)
-                .Include(c => c.Users)
+                .Include(c => c.Users) // Ensure Users are included for accessing commenterId
                 .Select(c => new CommentDTO
                 {
-                    CommentId = c.CommentId,  // Include CommentId
+                    CommentId = c.CommentId,
                     BookId = c.BookId,
                     CommentMessage = c.CommentMessage,
                     ParentCommentId = c.ParentCommentId,
-                    ThreadId = c.ThreadId
+                    ThreadId = c.ThreadId,
+                    CommenterId = c.CommenterId // Add the CommenterId here
                 })
                 .ToListAsync();
 
@@ -373,7 +374,7 @@ namespace UnderGroundArchive_Backend.Controllers
         public async Task<ActionResult<CommentDTO>> GetComment(int id)
         {
             var comment = await _dbContext.Comments
-                .Include(c => c.Users)
+                .Include(c => c.Users) // Ensure Users are included for accessing commenterId
                 .FirstOrDefaultAsync(c => c.CommentId == id);
 
             if (comment == null)
@@ -387,7 +388,8 @@ namespace UnderGroundArchive_Backend.Controllers
                 BookId = comment.BookId,
                 CommentMessage = comment.CommentMessage,
                 ParentCommentId = comment.ParentCommentId,
-                ThreadId = comment.ThreadId
+                ThreadId = comment.ThreadId,
+                CommenterId = comment.CommenterId // Include the CommenterId here
             };
         }
 
@@ -457,6 +459,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
 
 
+
         [HttpPut("modifyComment/{id}")]
         public async Task<ActionResult> PutComment(int id, [FromBody] CommentDTO modifiedCommentDto)
         {
@@ -487,6 +490,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
 
+
         [HttpDelete("deleteComment/{id}")]
         public async Task<ActionResult> DeleteComment(int id)
         {
@@ -512,6 +516,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return NoContent(); // Return successful response
         }
+
 
         // Favorite endpoints
 

@@ -7,5 +7,6 @@
         public string CommentMessage { get; set; }
         public int? ParentCommentId { get; set; }
         public int ThreadId { get; set; }
+        public string CommenterId { get; set; }
     }
 }
