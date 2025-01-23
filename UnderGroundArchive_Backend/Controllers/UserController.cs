@@ -351,13 +351,13 @@ namespace UnderGroundArchive_Backend.Controllers
         [HttpGet("comments/{bookId}")]
         public async Task<ActionResult<IEnumerable<CommentDTO>>> GetComments(int bookId)
         {
-            // Fetch all comments for a specific book, including replies
             var comments = await _dbContext.Comments
                 .Where(c => c.BookId == bookId)
                 .OrderBy(c => c.CreatedAt)
-                .Include(c => c.Users) // Ensure that Users are included to access UserName
+                .Include(c => c.Users)
                 .Select(c => new CommentDTO
                 {
+                    CommentId = c.CommentId,  // Include CommentId
                     BookId = c.BookId,
                     CommentMessage = c.CommentMessage,
                     ParentCommentId = c.ParentCommentId,
@@ -367,6 +367,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return Ok(comments);
         }
+
 
         [HttpGet("comment/{id}")]
         public async Task<ActionResult<CommentDTO>> GetComment(int id)
@@ -382,6 +383,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return new CommentDTO
             {
+                CommentId = id,
                 BookId = comment.BookId,
                 CommentMessage = comment.CommentMessage,
                 ParentCommentId = comment.ParentCommentId,
@@ -401,7 +403,6 @@ namespace UnderGroundArchive_Backend.Controllers
 
             // Retrieve the commenter ID from the current user's claims
             var commenterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (string.IsNullOrEmpty(commenterId))
             {
                 return Unauthorized("User is not authenticated.");
@@ -409,7 +410,6 @@ namespace UnderGroundArchive_Backend.Controllers
 
             // Check if the comment is a reply or a new thread
             int threadId;
-
             if (commentDto.ParentCommentId == null)
             {
                 // First comment in the thread
@@ -439,7 +439,6 @@ namespace UnderGroundArchive_Backend.Controllers
                 ThreadId = threadId
             };
 
-            // Add the comment to the database and save
             _dbContext.Comments.Add(comment);
             await _dbContext.SaveChangesAsync();
 
@@ -452,9 +451,9 @@ namespace UnderGroundArchive_Backend.Controllers
                 await _dbContext.SaveChangesAsync();
             }
 
-            // Return the newly created comment
             return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
         }
+
 
 
 
