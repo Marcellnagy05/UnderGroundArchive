@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../contexts/UserContext";
 import Loading from "../Loading/Loading";
-import {jwtDecode} from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useToast } from "../contexts/ToastContext";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 const Login = () => {
   const [login, setLogin] = useState("");
@@ -11,14 +12,15 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser } = useUserContext(); // Context használata
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
+  const {showToast} = useToast();
+  const { setTheme } = useThemeContext();
 
   const checkIfLoggedIn = () => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       try {
         const decoded: any = jwtDecode(jwt);
-        const currentTime = Date.now() / 1000; // Idő másodpercben
+        const currentTime = Date.now() / 1000;
         if (decoded.exp > currentTime) {
           setIsLoggedIn(true);
           return;
@@ -28,12 +30,12 @@ const Login = () => {
       }
     }
     setIsLoggedIn(false);
-    localStorage.removeItem("jwt"); // Érvénytelen token eltávolítása
+    localStorage.removeItem("jwt");
   };
 
   useEffect(() => {
     checkIfLoggedIn();
-  }, [user]); // Figyeli a context változásait is
+  }, [user]);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -43,7 +45,6 @@ const Login = () => {
     const startTime = Date.now();
   
     try {
-      // API hívás a bejelentkezéshez
       const response = await fetch("https://localhost:7197/api/Account/login", {
         method: "POST",
         mode: "cors",
@@ -58,6 +59,7 @@ const Login = () => {
         if (data.jwt) {
           localStorage.setItem("jwt", data.jwt.result);
   
+          // Betöltjük a felhasználó választott témáját (ha van)
           const userResponse = await fetch("https://localhost:7197/api/User/me", {
             method: "GET",
             headers: {
@@ -67,35 +69,40 @@ const Login = () => {
   
           if (userResponse.ok) {
             const userData = await userResponse.json();
-            setUser(userData); // Felhasználói adatokat frissítjük
+            setUser(userData);
+  
+            // Téma lekérése a user adatokból és beállítása
+            if (userData.theme) {
+              localStorage.setItem("theme", userData.theme); // Téma tárolása
+              setTheme(userData.theme as "light" | "dark");  // Téma alkalmazása
+            }
           } else {
             setUser("guest");
           }
-  
-          // navigate("/publish"); // Navigáció
         } else {
-          setError("Nincs token a válaszban.");
+          showToast("Nincs token a válaszban.", "error");
         }
       } else {
         const errorData = await response.json();
-        setError(errorData || "Hiba történt a bejelentkezés során.");
+        showToast("Hibás felhasználónév vagy jelszó!", "error");
+        setIsLoading(false);
+        return;
       }
     } catch (err) {
       console.error("Hiba a bejelentkezés során:", err);
-      setError("Hiba történt a bejelentkezés során.");
+      showToast("Hiba történt a bejelentkezés során.", "error");
+      setIsLoading(false);
+      return;
     } finally {
-      const elapsedTime = Date.now() - startTime; // Eltelt idő
+      const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-      console.log("remaning:", remainingTime);
-      console.log("elapsed:", elapsedTime);
-           
-      // Várakozás a minimum idő biztosításához
+  
       setTimeout(() => {
-        navigate("/")
         setIsLoading(false);
       }, remainingTime);
     }
   };
+  
   
 
   if (isLoading) {
@@ -103,14 +110,14 @@ const Login = () => {
   }
 
   return (
-    <div>
+    <div className="login-container">
       {isLoggedIn ? (
-        <p>Már be vagy jelentkezve!</p>
+        <p className="logged-in-message">Már be vagy jelentkezve!</p>
       ) : (
-        <div>
+        <div className="login-form">
           <h2>Bejelentkezés</h2>
           <form onSubmit={handleLogin}>
-            <div>
+            <div className="form-group">
               <label>Email vagy Felhasználónév:</label>
               <input
                 type="text"
@@ -119,7 +126,7 @@ const Login = () => {
                 required
               />
             </div>
-            <div>
+            <div className="form-group">
               <label>Jelszó:</label>
               <input
                 type="password"
@@ -128,7 +135,7 @@ const Login = () => {
                 required
               />
             </div>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p className="error-message">{error}</p>}
             <button type="submit">Bejelentkezés</button>
           </form>
         </div>

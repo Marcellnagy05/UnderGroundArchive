@@ -1,0 +1,86 @@
+.settings-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .setting-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .setting-icon {
+    font-size: 30px;
+    margin-right: 15px;
+  }
+  
+  .setting-content {
+    flex: 1;
+  }
+  
+  .setting-button {
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  /* Switch stílusok */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 80px;  /* Megnövelt kapcsoló */
+    height: 40px; /* Megnövelt kapcsoló */
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;  /* Világos háttér a kapcsolón, ha világos a téma */
+    transition: 0.4s;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;  /* Jobb illeszkedés */
+  }
+  
+  .switch .slider .icon {
+    font-size: 25px;  /* Nagyobb ikonok */
+    transition: 0.3s;
+  }
+  
+  .switch .slider .sun {
+    transform: translateX(0);
+    color: #fff; /* Nap ikon világos színű */
+  }
+  
+  .switch .slider .moon {
+    transform: translateX(22px);
+    color: transparent; /* Hold ikon ne jelenjen meg világos témában */
+  }
+  
+  .switch input:checked + .slider .sun {
+    transform: translateX(22px);
+    color: transparent;  /* Nap ikon ne jelenjen meg sötét témában */
+  }
+  
+  .switch input:checked + .slider .moon {
+    transform: translateX(0);
+    color: #fff;  /* Hold ikon világos színű sötét témában */
+  }
+  

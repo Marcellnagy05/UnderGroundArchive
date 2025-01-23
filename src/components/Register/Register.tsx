@@ -16,7 +16,7 @@ const Register = () => {
       setError("Minden mezőt ki kell tölteni.");
       return;
     }
-
+  
     const newUser = {
       Name: name,
       Email: email,
@@ -25,7 +25,7 @@ const Register = () => {
       Country: country,
       PhoneNumber: phoneNumber,
     };
-
+  
     try {
       const response = await fetch("https://localhost:7197/api/Account/register", {
         method: "POST",
@@ -34,27 +34,35 @@ const Register = () => {
         },
         body: JSON.stringify(newUser),
       });
-    
-      const responseText = await response.text();
-      console.log("Raw response:", responseText);
-    
+  
+      // Check if the response is a valid JSON (application/json)
+      const contentType = response.headers.get("Content-Type");
+      let responseData;
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await response.json();
+      } else {
+        // Handle unexpected response types (like HTML or plain text)
+        const responseText = await response.text();
+        console.error("Unexpected response:", responseText);
+        setError("Ismeretlen hiba történt a regisztráció során.");
+        return;
+      }
+  
       if (response.ok) {
-        const data = JSON.parse(responseText); // Parse the successful response
-        console.log("Sikeres regisztráció:", data.message);
+        console.log("Sikeres regisztráció:", responseData.message);
         setError(""); // Clear error
       } else {
-        const errorData = JSON.parse(responseText); // Parse error response
-        console.error("Hiba:", errorData);
-    
+        console.error("Hiba:", responseData);
+        
         // Specifikus hibaüzenetek kezelése
-        if (errorData.errorCode === "MISSING_FIELDS") {
+        if (responseData.errorCode === "MISSING_FIELDS") {
           setError("Kérjük, töltsön ki minden mezőt.");
-        } else if (errorData.errorCode === "EMAIL_ALREADY_EXISTS") {
+        } else if (responseData.errorCode === "EMAIL_ALREADY_EXISTS") {
           setError("Ez az email cím már regisztrálva van.");
-        } else if (errorData.errorCode === "USERNAME_ALREADY_EXISTS") {
+        } else if (responseData.errorCode === "USERNAME_ALREADY_EXISTS") {
           setError("Ez a felhasználónév már regisztrálva van.");
-        } else if (errorData.errorCode === "REGISTRATION_FAILED") {
-          setError(`A regisztráció sikertelen: ${errorData.errors.join(", ")}`);
+        } else if (responseData.errorCode === "REGISTRATION_FAILED") {
+          setError(`A regisztráció sikertelen: ${responseData.errors.join(", ")}`);
         } else {
           setError("Ismeretlen hiba történt a regisztráció során.");
         }
@@ -64,67 +72,74 @@ const Register = () => {
       setError("Hiba történt a regisztráció során.");
     }    
   };
+  
 
   return (
-    <div>
-      <h2>Regisztráció</h2>
-      <form onSubmit={handleRegister}>
-        <div>
-          <label>Név:</label>
+    <div className="register-container">
+      <form className="register-form" onSubmit={handleRegister}>
+      <h2 className="register-title">Regisztráció</h2>
+        <div className="register-input-group">
+          <label className="register-label">Név:</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="register-input"
             required
           />
         </div>
-        <div>
-          <label>Email:</label>
+        <div className="register-input-group">
+          <label className="register-label">Email:</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="register-input"
             required
           />
         </div>
-        <div>
-          <label>Jelszó:</label>
+        <div className="register-input-group">
+          <label className="register-label">Jelszó:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="register-input"
             required
           />
         </div>
-        <div>
-          <label>Születési dátum:</label>
+        <div className="register-input-group">
+          <label className="register-label">Születési dátum:</label>
           <input
             type="date"
             value={birthDate}
             onChange={(e) => setBirthDate(e.target.value)}
+            className="register-input"
             required
           />
         </div>
-        <div>
-          <label>Ország:</label>
+        <div className="register-input-group">
+          <label className="register-label">Ország:</label>
           <input
             type="text"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
+            className="register-input"
             required
           />
         </div>
-        <div>
-          <label>Telefonszám:</label>
+        <div className="register-input-group">
+          <label className="register-label">Telefonszám:</label>
           <input
             type="text"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
+            className="register-input"
             required
           />
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Regisztráció</button>
+        {error && <p className="error-message">{error}</p>}
+        <button type="submit" className="register-button">Regisztráció</button>
       </form>
     </div>
   );

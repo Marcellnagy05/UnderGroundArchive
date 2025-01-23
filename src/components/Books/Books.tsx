@@ -55,6 +55,19 @@ const Books = () => {
   const { showToast } = useToast();
 
   useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        await allBooks(); // Összes könyv automatikus lekérése
+      } catch (err) {
+        console.error("Hiba a kezdeti adatok betöltése során:", err);
+      }
+    };
+  
+    fetchInitialData();
+  }, []);
+  
+
+  useEffect(() => {
     const fetchGenresAndCategories = async () => {
       try {
         const genreResponse = await fetch(
@@ -377,7 +390,7 @@ const Books = () => {
 
   return (
     <div>
-      <button onClick={() => allBooks()}>Összes könyv lekérése</button>
+      {/* <button onClick={() => allBooks()}>Összes könyv lekérése</button> */}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {!selectedBook ? (
         <div className="allBooks">

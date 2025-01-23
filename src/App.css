@@ -1,8 +1,239 @@
-.App {
-  position: relative;
-  min-height: 100vh;
-  padding-top: 20px;
+/* Általános alapértelmezett stílusok */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--primaryText); /* Betűszín beállítása */
 }
-.appContent{
-  position: relative;
+
+/* Navbar */
+.navbar {
+  background-color: var(--primary);
+}
+
+.navbar .dropdown-menu {
+  background-color: var(--background);
+}
+.nav-link:hover {
+  background-color: var(--secondary);
+}
+
+/* Téma specifikus stílusok */
+
+/* Light theme */
+.light-theme {
+  --background: #E3F0F9;
+  --primaryText: #14325A;
+  --secondaryText: #1A3E6A;
+  --primary: #3A8CC1;
+  --secondary: #3A7FDB;
+  --hover:#3A8CC1;
+  --slider: #0056b3;
+};
+
+/* Dark theme */
+.dark-theme {
+  --background: #2C2F3F; /* Sötétebb háttér */
+  --primaryText: #ffffff;
+  --secondaryText: #ffffff;
+  --primary: #6A4CBB; /* Lila árnyalat */
+  --secondary: #343a40;
+  --hover: #6A4CBB;
+  --slider: #593C9D;
+}
+
+.switch .slider {
+  background-color: var(--primary);
+}
+
+.switch .slider:hover{
+  background-color: var(--slider);
+}
+
+.setting-button{
+  background-color: var(--primary);
+  color: var(--secondaryText);
+}
+
+.setting-button:hover {
+  background-color: var(--slider);
+}
+
+.navbar .user-name {
+  cursor: pointer;
+  padding: 5px 10px;
+  background-color: var(--background);
+  color: var(--secondaryText);
+  border-radius: 5px;
+}
+
+.navbar .dropdown-item {
+  padding: 10px 15px;
+  color: var(--secondaryText);
+  text-align: left;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Navbar */
+.navbar .navbar-links .nav-link {
+  color: var(--primaryText);
+}
+
+.navbar .dropdown-menu .dropdown-item:hover {
+  background-color: var(--hover); /* A hover színe is változik a témától függően */
+}
+
+/*Login*/
+
+/* Login komponens stílusai */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-form {
+  background-color: var(--background);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+.login-form h2 {
+  text-align: center;
+  color: var(--primaryText);
+  margin-bottom: 20px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primaryText);
+}
+
+.login-form input {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  font-size: 16px;
+  color: var(--primaryText);
+  background-color: var(--background);
+}
+
+.login-form input:focus {
+  border-color: var(--secondary);
+  outline: none;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary);
+  color: var(--secondaryText);
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: var(--secondary);
+}
+
+.login-form .error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Register */
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.register-title {
+  text-align: center;
+  color: var(--primaryText);
+  margin-bottom: 20px;
+}
+
+.register-form {
+  background-color: var(--background);
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  margin-top: 60px;
+}
+
+.register-input-group {
+  margin-bottom: 15px;
+}
+
+.register-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--primaryText);
+}
+
+.register-input {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  font-size: 16px;
+  color: var(--primaryText);
+  background-color: var(--background);
+}
+
+.register-input:focus {
+  border-color: var(--secondary);
+  outline: none;
+}
+
+.register-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary);
+  color: var(--secondaryText);
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+  background-color: var(--secondary);
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
 }
