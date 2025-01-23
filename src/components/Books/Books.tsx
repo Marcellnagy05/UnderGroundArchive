@@ -477,7 +477,7 @@ const Books = () => {
                 </>
               )}
               {selectedBook && ratings[selectedBook.id]?.[user?.id || ""] && (
-                <button onClick={() => deleteRating(selectedBook.id)}>
+                <button className="removeRating" onClick={() => deleteRating(selectedBook.id)}>
                   Értékelés törlése
                 </button>
               )}
