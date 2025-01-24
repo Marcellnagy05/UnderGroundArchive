@@ -42,6 +42,8 @@ namespace UnderGroundArchive_Backend.Controllers
                 return BadRequest("Email és jelszó szükséges.");
             }
 
+       
+
             ApplicationUser user = null;
             if (loginDto.Login.Contains("@")) // Ha email formátumban van
             {
@@ -58,6 +60,10 @@ namespace UnderGroundArchive_Backend.Controllers
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
+            if (user.IsBanned)
+            {
+                return Unauthorized("Ez a felhasználó ki van tiltva");
+            }
             if (result.Succeeded)
             {
                 var theme = user.Theme;

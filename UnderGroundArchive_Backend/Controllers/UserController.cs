@@ -405,11 +405,22 @@ namespace UnderGroundArchive_Backend.Controllers
 
             // Retrieve the commenter ID from the current user's claims
             var commenterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(commenterId))
             {
                 return Unauthorized("User is not authenticated.");
             }
 
+
+            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == commenterId);
+            if (user == null)
+            {
+                return Unauthorized("User does not exist.");
+            }
+            if (user.IsMuted)
+            {
+                return Unauthorized("Ez a felhasználó el van tiltva kommenteléstől");
+            }
             // Check if the comment is a reply or a new thread
             int threadId;
             if (commentDto.ParentCommentId == null)

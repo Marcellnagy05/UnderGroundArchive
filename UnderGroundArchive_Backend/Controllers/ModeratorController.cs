@@ -23,36 +23,36 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpGet("reports")]
-        public async Task<ActionResult<IEnumerable<CriticRatingDTO>>> GetCriticRatings([FromQuery] int bookId)
+        public async Task<ActionResult<IEnumerable<ReportDTO>>> GetReports()
         {
-            var criticRatings = await _dbContext.CriticRatings
-                .Where(c => c.BookId == bookId) // Szűrés a könyv azonosítójára
-                .Select(c => new CriticRatingDTO
+            var reports = await _dbContext.Reports
+                .Select(c => new ReportDTO
                 {
-                    RatingId = c.RatingId,
-                    BookId = c.BookId,
-                    RatingValue = c.RatingValue,
-                    RaterId = c.RaterId,
-                    BookName = c.Books.BookName,
-                    GenreId = c.Books.GenreId,
-                    CategoryId = c.Books.CategoryId
+                    ReportId = c.ReportId,
+                    ReporterId = c.ReporterId,
+                    ReportedId = c.ReportedId,
+                    ReportMessage = c.ReportMessage,
+                    ReportTypeId = c.ReportTypeId,
+                    CreatedAt = c.CreatedAt,
+                    IsHandled = c.IsHandled
                 })
+                .OrderBy(c => c.CreatedAt)
                 .ToListAsync();
 
-            if (!criticRatings.Any())
+            if (!reports.Any())
             {
-                return NotFound("No ratings found for the given book.");
+                return NotFound("No reports found");
             }
-            return Ok(criticRatings);
+            return Ok(reports);
         }
 
 
 
         [HttpGet("report/{id}")]
-        public async Task<ActionResult<CriticRatings>> GetCriticRating(int id)
+        public async Task<ActionResult<ReportDTO>> GetCriticRating(int id)
         {
-            var criticRating = await _dbContext.CriticRatings.Include(j => j.Books).FirstOrDefaultAsync(j => j.RatingId == id);
-            return criticRating == null ? NotFound() : criticRating;
+            var report = await _dbContext.Reports.FirstOrDefaultAsync(j => j.ReportId == id);
+            return report == null ? NotFound() : Ok(report);
         }
 
         [HttpPut("muteStatusChange")]
