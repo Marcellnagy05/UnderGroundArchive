@@ -367,6 +367,7 @@ namespace UnderGroundArchive_Backend.Controllers
         // CriticRating endpoints
 
         [HttpGet("criticRatings")]
+        [Authorize(Roles = "Critic")]
         public async Task<ActionResult<IEnumerable<CriticRatingDTO>>> GetCriticRatings([FromQuery] int bookId)
         {
             var criticRatings = await _dbContext.CriticRatings
@@ -394,6 +395,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
 
         [HttpGet("criticRating/{id}")]
+        [Authorize(Roles = "Critic")]
         public async Task<ActionResult<CriticRatings>> GetCriticRating(int id)
         {
             var criticRating = await _dbContext.CriticRatings.Include(j => j.Books).FirstOrDefaultAsync(j => j.RatingId == id);
@@ -401,6 +403,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPost("createCriticRating")]
+        [Authorize(Roles = "Critic")]
         public async Task<ActionResult> CreateCriticRating(CriticRatingDTO criticRatingDTO)
         {
             if (criticRatingDTO == null || criticRatingDTO.BookId == 0)
@@ -436,6 +439,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPut("modifyCriticRating/{id}")]
+        [Authorize(Roles = "Critic")]
         public async Task<ActionResult> PutCriticRating(int id, CriticRatings modifiedCriticRating)
         {
             if (id != modifiedCriticRating.RatingId)
@@ -450,6 +454,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpDelete("deleteCriticRating/{bookId}")]
+        [Authorize(Roles = "Critic")]
         public async Task<ActionResult> DeleteCriticRating(int bookId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

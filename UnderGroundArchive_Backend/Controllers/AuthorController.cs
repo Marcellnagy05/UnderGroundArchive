@@ -12,6 +12,7 @@ namespace UnderGroundArchive_Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Author")]
     public class AuthorController : ControllerBase
     {
         private readonly IBookService _bookService;
@@ -26,7 +27,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPost("publish")]
-        [Authorize(Roles = "Author")]
+
         public async Task<IActionResult> PublishBook([FromBody] PublishBookDTO bookDto)
         {
             if (bookDto == null || string.IsNullOrEmpty(bookDto.BookName) || bookDto.GenreId <= 0 || bookDto.CategoryId <= 0)
@@ -67,7 +68,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPut("modify/{bookId}")]
-        [Authorize(Roles = "Author")]
+
         public async Task<IActionResult> ModifyBook(int bookId, [FromBody] ModifyBookDTO bookDto)
         {
             if (bookDto == null || string.IsNullOrEmpty(bookDto.BookName) || bookDto.GenreId <= 0 || bookDto.CategoryId <= 0)
@@ -113,7 +114,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
 
         [HttpDelete("delete/{bookId}")]
-        [Authorize(Roles = "Author")]
+
         public async Task<IActionResult> DeleteBook(int bookId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
