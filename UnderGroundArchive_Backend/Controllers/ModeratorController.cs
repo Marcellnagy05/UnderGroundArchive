@@ -21,21 +21,45 @@ namespace UnderGroundArchive_Backend.Controllers
             _dbContext = dBContext;
             _userManager = userManager;
         }
+
         //request endpoints
 
         [HttpGet("requests")]
-        public async Task<ActionResult<IEnumerable<Requests>>> GetRequests()
+        public async Task<IActionResult> GetAllRequests()
         {
+            var requests = await _dbContext.Requests
+                .Select(r => new
+                {
+                    r.RequestId,
+                    r.RequesterId,
+                    r.RequestMessage,
+                    r.RequestDate,
+                    r.IsApproved,
+                    r.RequestType
+                })
+                .ToListAsync();
 
-
-            return await _dbContext.Requests.ToListAsync();
+            return Ok(requests);
         }
 
+
         [HttpGet("request/{id}")]
-        public async Task<ActionResult<Requests>> GetRequest(int id)
+        public async Task<IActionResult> GetRequest(int id)
         {
-            var request = await _dbContext.Requests.FirstOrDefaultAsync(j => j.RequestId == id);
-            return request == null ? NotFound() : request;
+            var request = await _dbContext.Requests
+                .Where(j => j.RequestId == id)
+                .Select(r => new
+                {
+                    r.RequestId,
+                    r.RequesterId,
+                    r.RequestMessage,
+                    r.RequestDate,
+                    r.IsApproved,
+                    r.RequestType
+                })
+                .FirstOrDefaultAsync();
+
+            return request == null ? NotFound("Request not found.") : Ok(request);
         }
 
         //report endpoints
@@ -78,6 +102,29 @@ namespace UnderGroundArchive_Backend.Controllers
                 .FirstOrDefaultAsync();
 
             return report == null ? NotFound("Report not found.") : Ok(report);
+        }
+
+        [HttpPut("handleReport")]
+        public async Task<ActionResult> HandleReport(int reportId)
+        {
+            // Fetch the report by ID
+            var report = await _dbContext.Reports.FirstOrDefaultAsync(r => r.ReportId == reportId);
+
+            // If the report is not found, return a 404
+            if (report == null)
+            {
+                return NotFound("Report not found.");
+            }
+
+            // Update the IsHandled status to true
+            report.IsHandled = true;
+
+            // Save changes to the database
+            _dbContext.Reports.Update(report);
+            await _dbContext.SaveChangesAsync();
+
+            // Return success response
+            return Ok("Report status updated to handled.");
         }
         //status change endpoints
 

@@ -6,6 +6,7 @@ using UnderGroundArchive_Backend.DTO;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace UnderGroundArchive_Backend.Controllers
 {
@@ -93,10 +94,15 @@ namespace UnderGroundArchive_Backend.Controllers
 
         // Request endpoints
 
-        [HttpGet("requests")]
-        public async Task<IActionResult> GetAllRequests()
+        [HttpGet("myrequests")]
+        public async Task<IActionResult> GetAllRequests([FromQuery] string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
             var requests = await _dbContext.Requests
+                .Where(r => r.RequesterId == userId)
                 .Select(r => new
                 {
                     r.RequestId,
@@ -112,10 +118,15 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
 
-        [HttpGet("request/{id}")]
-        public async Task<IActionResult> GetRequest(int id)
+        [HttpGet("myrequest/{id}")]
+        public async Task<IActionResult> GetRequest(int id, [FromQuery] string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
             var request = await _dbContext.Requests
+                .Where(r => r.RequesterId == userId)
                 .Where(j => j.RequestId == id)
                 .Select(r => new
                 {
@@ -161,10 +172,15 @@ namespace UnderGroundArchive_Backend.Controllers
 
         //report endpoints
 
-        [HttpGet("reports")]
-        public async Task<IActionResult> GetAllReports()
+        [HttpGet("myreports")]
+        public async Task<IActionResult> GetAllReports([FromQuery] string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
             var reports = await _dbContext.Reports
+                 .Where(r => r.ReporterId == userId)
                 .Select(r => new
                 {
                     r.ReportId,
@@ -175,16 +191,22 @@ namespace UnderGroundArchive_Backend.Controllers
                     r.IsHandled,
                     r.CreatedAt
                 })
+               
                 .ToListAsync();
 
             return Ok(reports);
         }
 
 
-        [HttpGet("report/{id}")]
-        public async Task<IActionResult> GetReport(int id)
+        [HttpGet("myreport/{id}")]
+        public async Task<IActionResult> GetReport(int id, [FromQuery] string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
             var report = await _dbContext.Reports
+                .Where(r => r.ReporterId == userId)
                 .Where(r => r.ReportId == id)
                 .Select(r => new
                 {
