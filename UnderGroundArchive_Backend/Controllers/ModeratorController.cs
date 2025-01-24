@@ -62,6 +62,24 @@ namespace UnderGroundArchive_Backend.Controllers
             return request == null ? NotFound("Request not found.") : Ok(request);
         }
 
+        [HttpPut("approveRequest")]
+        public async Task<ActionResult> ApproveRequest(int requestId)
+        {
+            var request = await _dbContext.Requests.FirstOrDefaultAsync(r => r.RequestId == requestId);
+
+            if (request == null)
+            {
+                return NotFound("Request not found.");
+            }
+
+            request.IsApproved = true;
+
+            _dbContext.Requests.Update(request);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Request status updated to accepted.");
+        }
+
         //report endpoints
 
         [HttpGet("reports")]
@@ -107,25 +125,21 @@ namespace UnderGroundArchive_Backend.Controllers
         [HttpPut("handleReport")]
         public async Task<ActionResult> HandleReport(int reportId)
         {
-            // Fetch the report by ID
             var report = await _dbContext.Reports.FirstOrDefaultAsync(r => r.ReportId == reportId);
 
-            // If the report is not found, return a 404
             if (report == null)
             {
                 return NotFound("Report not found.");
             }
 
-            // Update the IsHandled status to true
             report.IsHandled = true;
 
-            // Save changes to the database
             _dbContext.Reports.Update(report);
             await _dbContext.SaveChangesAsync();
 
-            // Return success response
             return Ok("Report status updated to handled.");
         }
+
         //status change endpoints
 
         [HttpPut("muteStatusChange")]
