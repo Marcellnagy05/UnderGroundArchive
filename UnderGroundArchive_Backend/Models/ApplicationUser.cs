@@ -13,6 +13,8 @@ namespace UnderGroundArchive_Backend.Models
         public decimal Balance { get; set; } = 0;
         public string Favourites { get; set; } = "";
         public string Theme { get; set; } = "light";
+        public bool IsMuted { get; set; } = false;
+        public bool IsBanned { get; set; } = false;
         public virtual ICollection<Books> Books { get; set; } = new List<Books>();
         public virtual ICollection<Requests> Requests { get; set; } = new List<Requests>();
         public virtual ICollection<CompletedAchievements> CompletedAchievements { get; set; } = new List<CompletedAchievements>();

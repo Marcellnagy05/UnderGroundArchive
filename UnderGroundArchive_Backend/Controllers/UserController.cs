@@ -239,7 +239,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
 
-        // ReaderRating endpoints
+        // CriticRating endpoints
 
         [HttpGet("criticRatings")]
         public async Task<ActionResult<IEnumerable<CriticRatingDTO>>> GetCriticRatings([FromQuery] int bookId)
