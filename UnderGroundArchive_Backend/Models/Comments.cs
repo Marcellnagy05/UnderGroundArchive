@@ -10,7 +10,7 @@
         public DateTime? ModifiedAt { get; set; }
         public int? ParentCommentId { get; set; }
         public int ThreadId { get; set; }
-        public Books Books { get; set; }
-        public ApplicationUser Users { get; set; }
+        public virtual Books Books { get; set; }
+        public virtual ApplicationUser Users { get; set; }
     }
 }

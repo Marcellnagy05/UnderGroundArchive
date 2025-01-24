@@ -9,6 +9,6 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? ModifiedAt { get; set; }
         public string?  RatingDescription { get; set; }
-        public Books? Books { get; set; }
+        public virtual Books? Books { get; set; }
     }
 }

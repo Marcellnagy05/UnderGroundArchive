@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public int AchievementId { get; set; }
         public string CompleterId { get; set; }
-        public Achievements Achievements { get; set; }
-        public ApplicationUser Users { get; set; }
+        public virtual Achievements Achievements { get; set; }
+        public virtual ApplicationUser Users { get; set; }
     }
 }

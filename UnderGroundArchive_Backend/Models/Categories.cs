@@ -8,6 +8,6 @@ namespace UnderGroundArchive_Backend.Models
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public bool IsAgeRestricted { get; set; }
-        public ICollection <Books> Books { get; set; }
+        public virtual ICollection <Books> Books { get; set; }
     }
 }

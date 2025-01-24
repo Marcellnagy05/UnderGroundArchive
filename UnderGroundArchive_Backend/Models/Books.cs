@@ -8,11 +8,11 @@
         public int GenreId { get; set; }
         public int CategoryId { get; set; }
         public string? BookDescription { get; set; }
-        public Genre Genre { get; set; }
-        public Categories Categories { get; set; }
-        public ICollection<Achievements> Achievements { get; set; }
-        public ICollection<Comments> Comments { get; set; }
-        public ICollection<ReaderRatings> ReaderRatings { get; set; }
-        public ICollection<CriticRatings> CriticRatings { get;set; }
+        public virtual Genre Genre { get; set; }
+        public virtual Categories Categories { get; set; }
+        public virtual ICollection<Achievements> Achievements { get; set; }
+        public virtual ICollection<Comments> Comments { get; set; }
+        public virtual ICollection<ReaderRatings> ReaderRatings { get; set; }
+        public virtual ICollection<CriticRatings> CriticRatings { get;set; }
     }
 }

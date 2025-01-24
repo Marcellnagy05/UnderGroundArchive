@@ -6,6 +6,6 @@
         public string GenreName { get; set; }
         public bool? IsAgeRestricted { get; set; }
 
-        public ICollection<Books> Books { get; set; }
+        public virtual ICollection<Books> Books { get; set; }
     }
 }

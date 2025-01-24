@@ -13,9 +13,11 @@ namespace UnderGroundArchive_Backend.Models
         public decimal Balance { get; set; } = 0;
         public string Favourites { get; set; } = "";
         public string Theme { get; set; } = "light";
-        public ICollection<Books> Books { get; set; } = new List<Books>();
-        public ICollection<Requests> Requests { get; set; } = new List<Requests>();
-        public ICollection<CompletedAchievements> CompletedAchievements { get; set; } = new List<CompletedAchievements>();
-        public ICollection<Comments> Comments { get; set; } = new List<Comments>();
+        public virtual ICollection<Books> Books { get; set; } = new List<Books>();
+        public virtual ICollection<Requests> Requests { get; set; } = new List<Requests>();
+        public virtual ICollection<CompletedAchievements> CompletedAchievements { get; set; } = new List<CompletedAchievements>();
+        public virtual ICollection<Comments> Comments { get; set; } = new List<Comments>();
+        public virtual ICollection<Reports> ReportSender { get; set; } = new List<Reports>();
+        public virtual ICollection<Reports> ReportSubject { get; set; } = new List<Reports>();
     }
 }

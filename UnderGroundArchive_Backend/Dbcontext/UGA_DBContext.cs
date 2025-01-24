@@ -30,7 +30,12 @@ namespace UnderGroundArchive_Backend.Dbcontext
         public DbSet<Subscription> Subscription { get; set; }
 
         public DbSet<ReaderRatings> ReaderRatings { get; set; }
+
         public DbSet<CriticRatings> CriticRatings { get; set; }
+
+        public DbSet<Reports> Reports { get; set; }
+
+        public DbSet<ReportTypes> ReportTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,6 +66,8 @@ namespace UnderGroundArchive_Backend.Dbcontext
             modelBuilder.Entity<Subscription>().HasKey(s => s.SubscriptionId);
             modelBuilder.Entity<ReaderRatings>().HasKey(rr => new { rr.RatingId });
             modelBuilder.Entity<CriticRatings>().HasKey(cr => new { cr.RatingId });
+            modelBuilder.Entity<Reports>().HasKey(c => c.ReportId);
+            modelBuilder.Entity<ReportTypes>().HasKey(s => s.ReportTypeId);
 
             // Foreign Keys
 
@@ -126,6 +133,22 @@ namespace UnderGroundArchive_Backend.Dbcontext
                 .HasOne(cr => cr.Books)
                 .WithMany(b => b.CriticRatings)
                 .HasForeignKey(cr => cr.BookId);
+
+            // Reports Table
+            modelBuilder.Entity<Reports>()
+                .HasOne(cr => cr.ReportTypes)
+                .WithMany(b => b.Reports)
+                .HasForeignKey(cr => cr.ReportTypeId);
+
+            modelBuilder.Entity<Reports>()
+                .HasOne(rp => rp.ReporterPeople)
+                .WithMany(b => b.ReportSender)
+                .HasForeignKey(cr => cr.ReporterId);
+
+            modelBuilder.Entity<Reports>()
+             .HasOne(rp => rp.ReportedPeople)
+             .WithMany(b => b.ReportSubject)
+             .HasForeignKey(cr => cr.ReportedId);
         }
     }
 }

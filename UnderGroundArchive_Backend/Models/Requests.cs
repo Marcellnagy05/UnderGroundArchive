@@ -7,6 +7,6 @@
         public DateTime RequestDate { get; set; }
         public bool IsApproved { get; set; }
         public int RequestType { get; set; }
-        public ApplicationUser Users { get; set; }
+        public virtual ApplicationUser Users { get; set; }
     }
 }
