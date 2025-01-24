@@ -59,7 +59,7 @@ const PublishBook = () => {
       const roleFromClaim = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
       // Ha egyik kulcsban sem találunk "Author" szerepkört, akkor nem engedjük az oldalt
-      if (!(roles.includes("Author") && roleFromClaim === "Author")) {
+      if (!(roleFromClaim === "Author")) {
         setError("Nem rendelkezik megfelelő jogosultságokkal az oldal eléréséhez.");
         setIsAuthor(false);
       } else {
