@@ -94,39 +94,142 @@ namespace UnderGroundArchive_Backend.Controllers
         // Request endpoints
 
         [HttpGet("requests")]
-        public async Task<ActionResult<IEnumerable<Requests>>> GetRequests()
+        public async Task<IActionResult> GetAllRequests()
         {
+            var requests = await _dbContext.Requests
+                .Select(r => new
+                {
+                    r.RequestId,
+                    r.RequesterId,
+                    r.RequestMessage,
+                    r.RequestDate,
+                    r.IsApproved,
+                    r.RequestType
+                })
+                .ToListAsync();
 
-
-            return await _dbContext.Requests.ToListAsync();
+            return Ok(requests);
         }
 
+
         [HttpGet("request/{id}")]
-        public async Task<ActionResult<Requests>> GetRequest(int id)
+        public async Task<IActionResult> GetRequest(int id)
         {
-            var request = await _dbContext.Requests.FirstOrDefaultAsync(j => j.RequestId == id);
-            return request == null ? NotFound() : request;
+            var request = await _dbContext.Requests
+                .Where(j => j.RequestId == id)
+                .Select(r => new
+                {
+                    r.RequestId,
+                    r.RequesterId,
+                    r.RequestMessage,
+                    r.RequestDate,
+                    r.IsApproved,
+                    r.RequestType
+                })
+                .FirstOrDefaultAsync();
+
+            return request == null ? NotFound("Request not found.") : Ok(request);
         }
 
         [HttpPost("createRequest")]
-        public async Task<IActionResult> CreateRequest(Requests request)
+        public async Task<IActionResult> CreateRequest(RequestDTO request)
         {
-            if (request.RequestType <= 0)
+            // Get the authenticated user's ID
+            var requesterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(requesterId))
             {
-                return BadRequest("Invalid RequestType specified.");
+                return Unauthorized("User is not authenticated.");
             }
 
-            if (string.IsNullOrEmpty(request.RequesterId))
+            // Create a new request
+            var newRequest = new Requests
             {
-                return BadRequest("RequesterId is required.");
-            }
+                RequesterId = requesterId,
+                RequestMessage = request.RequestMessage,
+                RequestType = request.RequestType,
+                RequestDate = DateTime.Now, 
+                IsApproved = false   
+            };
 
- 
-            _dbContext.Requests.Add(request);
+            // Add and save the request
+            _dbContext.Requests.Add(newRequest);
             await _dbContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetRequest", new { id = request.RequestId }, request);
+            return Ok(new { Message = "Request created successfully", RequestId = newRequest.RequestId });
         }
+
+        //report endpoints
+
+        [HttpGet("reports")]
+        public async Task<IActionResult> GetAllReports()
+        {
+            var reports = await _dbContext.Reports
+                .Select(r => new
+                {
+                    r.ReportId,
+                    r.ReporterId,
+                    r.ReportedId,
+                    r.ReportTypeId,
+                    r.ReportMessage,
+                    r.IsHandled,
+                    r.CreatedAt
+                })
+                .ToListAsync();
+
+            return Ok(reports);
+        }
+
+
+        [HttpGet("report/{id}")]
+        public async Task<IActionResult> GetReport(int id)
+        {
+            var report = await _dbContext.Reports
+                .Where(r => r.ReportId == id)
+                .Select(r => new
+                {
+                    r.ReportId,
+                    r.ReporterId,
+                    r.ReportedId,
+                    r.ReportTypeId,
+                    r.ReportMessage,
+                    r.IsHandled,
+                    r.CreatedAt
+                })
+                .FirstOrDefaultAsync();
+
+            return report == null ? NotFound("Report not found.") : Ok(report);
+        }
+
+        [HttpPost("createReport")]
+        public async Task<IActionResult> CreateReport([FromBody] ReportDTO reportDto)
+        {
+            // Get the authenticated user's ID (reporter)
+            var reporterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(reporterId))
+            {
+                return Unauthorized("User is not authenticated.");
+            }
+
+            // Create a new report
+            var newReport = new Reports
+            {
+                ReporterId = reporterId,
+                ReportedId = reportDto.ReportedId,
+                ReportTypeId = reportDto.ReportTypeId,
+                ReportMessage = reportDto.ReportMessage,
+                CreatedAt = DateTime.Now,
+                IsHandled = false
+            };
+
+            // Add and save the report
+            _dbContext.Reports.Add(newReport);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { Message = "Report created successfully", ReportId = newReport.ReportId });
+        }
+
 
         // ReaderRating endpoints
 

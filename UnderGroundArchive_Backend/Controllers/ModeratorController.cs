@@ -21,39 +21,65 @@ namespace UnderGroundArchive_Backend.Controllers
             _dbContext = dBContext;
             _userManager = userManager;
         }
+        //request endpoints
+
+        [HttpGet("requests")]
+        public async Task<ActionResult<IEnumerable<Requests>>> GetRequests()
+        {
+
+
+            return await _dbContext.Requests.ToListAsync();
+        }
+
+        [HttpGet("request/{id}")]
+        public async Task<ActionResult<Requests>> GetRequest(int id)
+        {
+            var request = await _dbContext.Requests.FirstOrDefaultAsync(j => j.RequestId == id);
+            return request == null ? NotFound() : request;
+        }
+
+        //report endpoints
 
         [HttpGet("reports")]
-        public async Task<ActionResult<IEnumerable<ReportDTO>>> GetReports()
+        public async Task<IActionResult> GetAllReports()
         {
             var reports = await _dbContext.Reports
-                .Select(c => new ReportDTO
+                .Select(r => new
                 {
-                    ReportId = c.ReportId,
-                    ReporterId = c.ReporterId,
-                    ReportedId = c.ReportedId,
-                    ReportMessage = c.ReportMessage,
-                    ReportTypeId = c.ReportTypeId,
-                    CreatedAt = c.CreatedAt,
-                    IsHandled = c.IsHandled
+                    r.ReportId,
+                    r.ReporterId,
+                    r.ReportedId,
+                    r.ReportTypeId,
+                    r.ReportMessage,
+                    r.IsHandled,
+                    r.CreatedAt
                 })
-                .OrderBy(c => c.CreatedAt)
                 .ToListAsync();
 
-            if (!reports.Any())
-            {
-                return NotFound("No reports found");
-            }
             return Ok(reports);
         }
 
 
-
         [HttpGet("report/{id}")]
-        public async Task<ActionResult<ReportDTO>> GetCriticRating(int id)
+        public async Task<IActionResult> GetReport(int id)
         {
-            var report = await _dbContext.Reports.FirstOrDefaultAsync(j => j.ReportId == id);
-            return report == null ? NotFound() : Ok(report);
+            var report = await _dbContext.Reports
+                .Where(r => r.ReportId == id)
+                .Select(r => new
+                {
+                    r.ReportId,
+                    r.ReporterId,
+                    r.ReportedId,
+                    r.ReportTypeId,
+                    r.ReportMessage,
+                    r.IsHandled,
+                    r.CreatedAt
+                })
+                .FirstOrDefaultAsync();
+
+            return report == null ? NotFound("Report not found.") : Ok(report);
         }
+        //status change endpoints
 
         [HttpPut("muteStatusChange")]
         public async Task<ActionResult> ChangeMuteStatus(string userId)
