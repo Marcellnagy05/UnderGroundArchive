@@ -542,3 +542,8 @@ button:disabled {
 .reply-container button {
   margin-top: 15px;
 }
+
+.reader-rating, .critic-rating{
+  position: absolute;
+  left:60%;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Comments.css";
+import StarRating from "../StarRating/StarRating";
 
 interface CommentDTO {
   commentId: number;
@@ -13,6 +14,7 @@ interface CommentDTO {
 interface User {
   id: string;
   userName: string;
+  role: string;
 }
 
 interface CommentsProps {
@@ -22,14 +24,25 @@ interface CommentsProps {
 
 const Comments = ({ bookId, currentUser }: CommentsProps) => {
   const [comments, setComments] = useState<CommentDTO[]>([]);
-  const [nestedComments, setNestedComments] = useState<Record<number, CommentDTO[]>>({});
+  const [nestedComments, setNestedComments] = useState<
+    Record<number, CommentDTO[]>
+  >({});
   const [newComment, setNewComment] = useState<string>("");
   const [parentCommentId, setParentCommentId] = useState<number | null>(null);
   const [editingComment, setEditingComment] = useState<number | null>(null);
   const [editedMessage, setEditedMessage] = useState<string>("");
   const [replyMessage, setReplyMessage] = useState<string>("");
   const [usernames, setUsernames] = useState<{ [key: string]: string }>({});
-  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(
+    new Set()
+  );
+  const [ratings, setRatings] = useState<Record<number, number>>({});
+  const [readerRatings, setReaderRatings] = useState<Record<number, number>>(
+    {}
+  );
+  const [criticRatings, setCriticRatings] = useState<Record<number, number>>(
+    {}
+  );
 
   const getAuthToken = () => localStorage.getItem("jwt");
 
@@ -41,11 +54,14 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
 
     try {
-      const response = await fetch(`https://localhost:7197/api/User/comments/${bookId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `https://localhost:7197/api/User/comments/${bookId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.ok) {
         const data: CommentDTO[] = await response.json();
         setComments(data);
@@ -81,9 +97,77 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
   };
 
+  useEffect(() => {
+    const fetchRatings = async () => {
+      const token = getAuthToken();
+      if (!token) {
+        console.error("User is not authenticated");
+        return;
+      }
+
+      try {
+        const [readerResponse, criticResponse] = await Promise.all([
+          fetch(
+            `https://localhost:7197/api/User/readerRatingsForBook/${bookId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+          fetch(
+            `https://localhost:7197/api/User/criticRatingsForBook/${bookId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+        ]);
+
+        if (readerResponse.ok) {
+          const readerData = await readerResponse.json();
+          const readerRatingsMap: Record<string, number> = {};
+          readerData.forEach(
+            (rating: {
+              raterId: string;
+              bookId: number;
+              ratingValue: number;
+            }) => {
+              const key = `${rating.bookId}_${rating.raterId}`;
+              readerRatingsMap[key] = rating.ratingValue;
+            }
+          );
+          setReaderRatings(readerRatingsMap);
+        } else {
+          console.warn("Failed to fetch reader ratings");
+        }
+
+        if (criticResponse.ok) {
+          const criticData = await criticResponse.json();
+          const criticRatingsMap: Record<string, number> = {};
+          criticData.forEach(
+            (rating: {
+              raterId: string;
+              bookId: number;
+              ratingValue: number;
+            }) => {
+              const key = `${rating.bookId}_${rating.raterId}`;
+              criticRatingsMap[key] = rating.ratingValue;
+            }
+          );
+          setCriticRatings(criticRatingsMap);
+        } else {
+          console.warn("Failed to fetch critic ratings");
+        }
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+    fetchRatings();
+  }, [bookId, currentUser.role]);
+
   const fetchUsername = async (userId: string) => {
     try {
-      const response = await fetch(`https://localhost:7197/api/User/user/${userId}`);
+      const response = await fetch(
+        `https://localhost:7197/api/User/user/${userId}`
+      );
       if (response.ok) {
         const text = await response.text(); // A választ először textként dolgozzuk fel
         if (text) {
@@ -96,7 +180,9 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
           console.warn(`Empty response for userId: ${userId}`);
         }
       } else {
-        console.error(`Failed to fetch username for userId: ${userId}. Status: ${response.status}`);
+        console.error(
+          `Failed to fetch username for userId: ${userId}. Status: ${response.status}`
+        );
       }
     } catch (error) {
       console.error(`Error fetching username for userId: ${userId}`, error);
@@ -116,25 +202,30 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
 
     try {
-      const originalComment = comments.find((comment) => comment.commentId === commentId);
+      const originalComment = comments.find(
+        (comment) => comment.commentId === commentId
+      );
       if (!originalComment) {
         console.error("Original comment not found");
         return;
       }
 
-      const response = await fetch(`https://localhost:7197/api/User/modifyComment/${commentId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          commentMessage: editedMessage,
-          commenterId: currentUser.id,
-          parentCommentId: originalComment.parentCommentId,
-          threadId: originalComment.threadId,
-        }),
-      });
+      const response = await fetch(
+        `https://localhost:7197/api/User/modifyComment/${commentId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            commentMessage: editedMessage,
+            commenterId: currentUser.id,
+            parentCommentId: originalComment.parentCommentId,
+            threadId: originalComment.threadId,
+          }),
+        }
+      );
 
       if (response.ok) {
         await fetchComments();
@@ -149,7 +240,9 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
   };
 
   const handleDeleteComment = async (commentId: number) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this comment?"
+    );
     if (!confirmDelete) return;
 
     const token = getAuthToken();
@@ -159,12 +252,15 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
 
     try {
-      const response = await fetch(`https://localhost:7197/api/User/deleteComment/${commentId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `https://localhost:7197/api/User/deleteComment/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         await fetchComments();
@@ -196,17 +292,20 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     };
 
     try {
-      const response = await fetch(`https://localhost:7197/api/User/createComment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...commentDto,
-          commenterId: currentUser.id,
-        }),
-      });
+      const response = await fetch(
+        `https://localhost:7197/api/User/createComment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...commentDto,
+            commenterId: currentUser.id,
+          }),
+        }
+      );
 
       if (response.ok) {
         await fetchComments();
@@ -232,7 +331,9 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       return;
     }
 
-    const parentComment = comments.find((comment) => comment.commentId === parentCommentId);
+    const parentComment = comments.find(
+      (comment) => comment.commentId === parentCommentId
+    );
     if (!parentComment) {
       alert("Parent comment not found.");
       return;
@@ -246,17 +347,20 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     };
 
     try {
-      const response = await fetch(`https://localhost:7197/api/User/createComment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...replyDto,
-          commenterId: currentUser.id,
-        }),
-      });
+      const response = await fetch(
+        `https://localhost:7197/api/User/createComment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...replyDto,
+            commenterId: currentUser.id,
+          }),
+        }
+      );
 
       if (response.ok) {
         await fetchComments();
@@ -275,10 +379,11 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
   }, [bookId]);
 
   const findParentCommenterId = (threadId: number): string | null => {
-    const parentComment = comments.find((comment) => comment.commentId === threadId);
+    const parentComment = comments.find(
+      (comment) => comment.commentId === threadId
+    );
     return parentComment ? parentComment.commenterId : null;
   };
-
 
   const renderComments = () => {
     return comments
@@ -286,6 +391,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       .map((comment) => {
         const replies = nestedComments[comment.commentId] || []; // A reply-ket a threadId alapján gyűjtjük
         const isExpanded = expandedComments.has(comment.commentId);
+        const ratingKey = `${comment.bookId}_${comment.commenterId}`;
 
         return (
           <div key={comment.commentId} className="comment">
@@ -298,29 +404,62 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                     value={editedMessage}
                     onChange={(e) => setEditedMessage(e.target.value)}
                   />
-                  <button className="save-comment-button" onClick={() => handleEditComment(comment.commentId)}>
+                  <button
+                    className="save-comment-button"
+                    onClick={() => handleEditComment(comment.commentId)}
+                  >
                     Save
                   </button>
-                  <button className="cancel-edit-button" onClick={() => setEditingComment(null)}>
+                  <button
+                    className="cancel-edit-button"
+                    onClick={() => setEditingComment(null)}
+                  >
                     Cancel
                   </button>
                 </div>
               ) : (
                 <div>
                   <p>
-                    <strong>{usernames[comment.commenterId] || "Loading..."}</strong>: <br />
-                    <span className="commentMessage">{comment.commentMessage}</span>
+                    <strong>
+                      {usernames[comment.commenterId] || "Loading..."}
+                    </strong>
+                    : <br />
+                    <span className="commentMessage">
+                      {comment.commentMessage}
+                    </span>
                   </p>
+                  <div className="ratings">
+                    {readerRatings[ratingKey] && (
+                      <div className="reader-rating">
+                        <StarRating rating={readerRatings[ratingKey]} />
+                      </div>
+                    )}
+                    {criticRatings[ratingKey] && (
+                      <div className="critic-rating">
+                        <span>Critic Rating:</span>
+                        <StarRating rating={criticRatings[ratingKey]} />
+                      </div>
+                    )}
+                  </div>
                   <div className="actions">
-                    <button className="reply-button" onClick={() => setParentCommentId(comment.commentId)}>
+                    <button
+                      className="reply-button"
+                      onClick={() => setParentCommentId(comment.commentId)}
+                    >
                       Reply
                     </button>
                     {currentUser.id === comment.commenterId && (
                       <>
-                        <button className="edit-button" onClick={() => setEditingComment(comment.commentId)}>
+                        <button
+                          className="edit-button"
+                          onClick={() => setEditingComment(comment.commentId)}
+                        >
                           Edit
                         </button>
-                        <button className="delete-button" onClick={() => handleDeleteComment(comment.commentId)}>
+                        <button
+                          className="delete-button"
+                          onClick={() => handleDeleteComment(comment.commentId)}
+                        >
                           Delete
                         </button>
                       </>
@@ -333,10 +472,16 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                         value={replyMessage}
                         onChange={(e) => setReplyMessage(e.target.value)}
                       />
-                      <button className="submit-reply-button" onClick={() => handleCreateReply(comment.commentId)}>
+                      <button
+                        className="submit-reply-button"
+                        onClick={() => handleCreateReply(comment.commentId)}
+                      >
                         Submit Reply
                       </button>
-                      <button className="cancel-reply-button" onClick={() => setParentCommentId(null)}>
+                      <button
+                        className="cancel-reply-button"
+                        onClick={() => setParentCommentId(null)}
+                      >
                         Cancel
                       </button>
                     </div>
@@ -344,49 +489,94 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
 
                   {/* Reply-k megjelenítése */}
                   <div className="replies">
-                    {(isExpanded ? replies : replies.slice(0, 1)).map((reply) => {
-                      const parentCommenterId = findParentCommenterId(reply.threadId); // Parent commenter ID meghatározása
-                      const parentUsername = parentCommenterId ? usernames[parentCommenterId] || "Loading..." : "Unknown";
+                    {(isExpanded ? replies : replies.slice(0, 1)).map(
+                      (reply) => {
+                        const replyRatingKey = `${reply.bookId}_${reply.commenterId}`; // Egyedi kulcs a reply-hez
+                        const parentCommenterId = findParentCommenterId(
+                          reply.threadId
+                        ); // Parent commenter ID meghatározása
+                        const parentUsername = parentCommenterId
+                          ? usernames[parentCommenterId] || "Loading..."
+                          : "Unknown";
 
-                      return (
-                        <div key={reply.commentId} className="reply" style={{ marginLeft: 20 }}>
-                          <div>
-                            <p>
-                              <strong>{usernames[reply.commenterId] || "Loading..."}</strong>: válaszolt{" "}
-                              <strong>{parentUsername}</strong>-nak/nek <br />
-                              {!editingComment || editingComment !== reply.commentId ? (
-                                <span className="commentMessage">{reply.commentMessage}</span>
-                              ) : null}
-                            </p>
-                            {editingComment === reply.commentId && (
+                        return (
+                          <div
+                            key={reply.commentId}
+                            className="reply"
+                            style={{ marginLeft: 20 }}
+                          >
+                            <div>
                               <div>
-                                <textarea
-                                  className="edit-comment-textarea"
-                                  value={editedMessage}
-                                  onChange={(e) => setEditedMessage(e.target.value)}
-                                />
-                                <button
-                                  className="save-comment-button"
-                                  onClick={() => handleEditComment(reply.commentId)}
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  className="cancel-edit-button"
-                                  onClick={() => setEditingComment(null)}
-                                >
-                                  Cancel
-                                </button>
+                                <p>
+                                  <strong>
+                                    {usernames[reply.commenterId] ||
+                                      "Loading..."}
+                                  </strong>
+                                  : válaszolt <strong>{parentUsername}</strong>
+                                  -nak/nek <br />
+                                  {!editingComment ||
+                                  editingComment !== reply.commentId ? (
+                                    <span className="commentMessage">
+                                      {reply.commentMessage}
+                                    </span>
+                                  ) : null}
+                                </p>
+                                {/* Reply saját értékelése */}
+                                <div className="ratings">
+                                  {readerRatings[replyRatingKey] && (
+                                    <div className="reader-rating">
+                                      <StarRating
+                                        rating={readerRatings[replyRatingKey]}
+                                      />
+                                    </div>
+                                  )}
+                                  {criticRatings[replyRatingKey] && (
+                                    <div className="critic-rating">
+                                      <StarRating
+                                        rating={criticRatings[replyRatingKey]}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            )}
-                          </div>
-                          <div className="actions">
 
-                            {currentUser.id === reply.commenterId && (
+                              {editingComment === reply.commentId && (
+                                <div>
+                                  <textarea
+                                    className="edit-comment-textarea"
+                                    value={editedMessage}
+                                    onChange={(e) =>
+                                      setEditedMessage(e.target.value)
+                                    }
+                                  />
+                                  <button
+                                    className="save-comment-button"
+                                    onClick={() =>
+                                      handleEditComment(reply.commentId)
+                                    }
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    className="cancel-edit-button"
+                                    onClick={() => setEditingComment(null)}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            <div className="actions">
                               <>
-                                {!editingComment || editingComment !== reply.commentId ? (
+                                {!editingComment ||
+                                editingComment !== reply.commentId ? (
                                   <>
-                                    <button className="reply-button" onClick={() => setParentCommentId(reply.commentId)}>
+                                    <button
+                                      className="reply-button"
+                                      onClick={() =>
+                                        setParentCommentId(reply.commentId)
+                                      }
+                                    >
                                       Reply
                                     </button>
                                     <button
@@ -400,45 +590,55 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                     </button>
                                     <button
                                       className="delete-button"
-                                      onClick={() => handleDeleteComment(reply.commentId)}
+                                      onClick={() =>
+                                        handleDeleteComment(reply.commentId)
+                                      }
                                     >
                                       Delete
                                     </button>
                                   </>
                                 ) : null}
                               </>
+                            </div>
+                            {parentCommentId === reply.commentId && (
+                              <div className="reply-container">
+                                <textarea
+                                  className="reply-textarea"
+                                  value={replyMessage}
+                                  onChange={(e) =>
+                                    setReplyMessage(e.target.value)
+                                  }
+                                />
+                                <button
+                                  className="submit-reply-button"
+                                  onClick={() =>
+                                    handleCreateReply(reply.commentId)
+                                  }
+                                >
+                                  Submit Reply
+                                </button>
+                                <button
+                                  className="cancel-reply-button"
+                                  onClick={() => setParentCommentId(null)}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
                             )}
                           </div>
-                          {parentCommentId === reply.commentId && (
-                            <div className="reply-container">
-                              <textarea
-                                className="reply-textarea"
-                                value={replyMessage}
-                                onChange={(e) => setReplyMessage(e.target.value)}
-                              />
-                              <button
-                                className="submit-reply-button"
-                                onClick={() => handleCreateReply(reply.commentId)}
-                              >
-                                Submit Reply
-                              </button>
-                              <button
-                                className="cancel-reply-button"
-                                onClick={() => setParentCommentId(null)}
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                        );
+                      }
+                    )}
 
                     {/* Expand/collapse gombok */}
                     {replies.length > 1 && !isExpanded && (
                       <button
                         className="expand-button"
-                        onClick={() => setExpandedComments((prev) => new Set(prev).add(comment.commentId))}
+                        onClick={() =>
+                          setExpandedComments((prev) =>
+                            new Set(prev).add(comment.commentId)
+                          )
+                        }
                       >
                         ...szó, szót követ
                       </button>
@@ -475,7 +675,9 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
       />
-      <button className="submit-comment-button" onClick={handleCreateComment}>Submit</button>
+      <button className="submit-comment-button" onClick={handleCreateComment}>
+        Submit
+      </button>
     </div>
   );
 };
