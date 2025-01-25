@@ -39,7 +39,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       console.error("User is not authenticated");
       return;
     }
-  
+
     try {
       const response = await fetch(`https://localhost:7197/api/User/comments/${bookId}`, {
         headers: {
@@ -49,7 +49,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       if (response.ok) {
         const data: CommentDTO[] = await response.json();
         setComments(data);
-  
+
         // Csoportosítás threadId alapján, csak reply-k esetén
         const nested: Record<number, CommentDTO[]> = {};
         data.forEach((comment) => {
@@ -62,7 +62,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
           }
         });
         setNestedComments(nested);
-  
+
         // Felhasználónevek betöltése (hozzáadjuk a parentCommentId-hoz is)
         data.forEach((comment) => {
           if (!usernames[comment.commenterId]) {
@@ -80,7 +80,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       console.error("Error fetching comments:", error);
     }
   };
-  
+
   const fetchUsername = async (userId: string) => {
     try {
       const response = await fetch(`https://localhost:7197/api/User/user/${userId}`);
@@ -102,7 +102,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       console.error(`Error fetching username for userId: ${userId}`, error);
     }
   };
-  
+
   const handleEditComment = async (commentId: number) => {
     if (!editedMessage.trim()) {
       alert("Comment cannot be empty!");
@@ -262,14 +262,14 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
         await fetchComments();
         setReplyMessage("");
         setParentCommentId(null);
-      } else  {
+      } else {
         console.error("Failed to create reply");
       }
     } catch (error) {
       console.error("Error creating reply:", error);
     }
-  };  
-  
+  };
+
   useEffect(() => {
     fetchComments();
   }, [bookId]);
@@ -278,7 +278,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     const parentComment = comments.find((comment) => comment.commentId === threadId);
     return parentComment ? parentComment.commenterId : null;
   };
-  
+
 
   const renderComments = () => {
     return comments
@@ -286,7 +286,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       .map((comment) => {
         const replies = nestedComments[comment.commentId] || []; // A reply-ket a threadId alapján gyűjtjük
         const isExpanded = expandedComments.has(comment.commentId);
-  
+
         return (
           <div key={comment.commentId} className="comment">
             <div className="content">
@@ -341,33 +341,71 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                       </button>
                     </div>
                   )}
-  
+
                   {/* Reply-k megjelenítése */}
                   <div className="replies">
                     {(isExpanded ? replies : replies.slice(0, 1)).map((reply) => {
                       const parentCommenterId = findParentCommenterId(reply.threadId); // Parent commenter ID meghatározása
                       const parentUsername = parentCommenterId ? usernames[parentCommenterId] || "Loading..." : "Unknown";
-                      
-  
+
                       return (
                         <div key={reply.commentId} className="reply" style={{ marginLeft: 20 }}>
-                          <p>
-                            <strong>{usernames[reply.commenterId] || "Loading..."}</strong>: válaszolt{" "}
-                            <strong>{parentUsername}</strong>-nak/nek <br />
-                            <span className="commentMessage">{reply.commentMessage}</span>
-                          </p>
+                          <div>
+                            <p>
+                              <strong>{usernames[reply.commenterId] || "Loading..."}</strong>: válaszolt{" "}
+                              <strong>{parentUsername}</strong>-nak/nek <br />
+                              {!editingComment || editingComment !== reply.commentId ? (
+                                <span className="commentMessage">{reply.commentMessage}</span>
+                              ) : null}
+                            </p>
+                            {editingComment === reply.commentId && (
+                              <div>
+                                <textarea
+                                  className="edit-comment-textarea"
+                                  value={editedMessage}
+                                  onChange={(e) => setEditedMessage(e.target.value)}
+                                />
+                                <button
+                                  className="save-comment-button"
+                                  onClick={() => handleEditComment(reply.commentId)}
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  className="cancel-edit-button"
+                                  onClick={() => setEditingComment(null)}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            )}
+                          </div>
                           <div className="actions">
-                            <button className="reply-button" onClick={() => setParentCommentId(reply.commentId)}>
-                              Reply
-                            </button>
+
                             {currentUser.id === reply.commenterId && (
                               <>
-                                <button className="edit-button" onClick={() => setEditingComment(reply.commentId)}>
-                                  Edit
-                                </button>
-                                <button className="delete-button" onClick={() => handleDeleteComment(reply.commentId)}>
-                                  Delete
-                                </button>
+                                {!editingComment || editingComment !== reply.commentId ? (
+                                  <>
+                                    <button className="reply-button" onClick={() => setParentCommentId(reply.commentId)}>
+                                      Reply
+                                    </button>
+                                    <button
+                                      className="edit-button"
+                                      onClick={() => {
+                                        setEditingComment(reply.commentId);
+                                        setEditedMessage(reply.commentMessage);
+                                      }}
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      className="delete-button"
+                                      onClick={() => handleDeleteComment(reply.commentId)}
+                                    >
+                                      Delete
+                                    </button>
+                                  </>
+                                ) : null}
                               </>
                             )}
                           </div>
@@ -378,10 +416,16 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                 value={replyMessage}
                                 onChange={(e) => setReplyMessage(e.target.value)}
                               />
-                              <button className="submit-reply-button" onClick={() => handleCreateReply(reply.commentId)}>
+                              <button
+                                className="submit-reply-button"
+                                onClick={() => handleCreateReply(reply.commentId)}
+                              >
                                 Submit Reply
                               </button>
-                              <button className="cancel-reply-button" onClick={() => setParentCommentId(null)}>
+                              <button
+                                className="cancel-reply-button"
+                                onClick={() => setParentCommentId(null)}
+                              >
                                 Cancel
                               </button>
                             </div>
@@ -389,7 +433,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                         </div>
                       );
                     })}
-  
+
                     {/* Expand/collapse gombok */}
                     {replies.length > 1 && !isExpanded && (
                       <button
@@ -421,7 +465,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
         );
       });
   };
-  
+
   return (
     <div className="comments-container">
       <h2 className="comments-title">Comments</h2>
