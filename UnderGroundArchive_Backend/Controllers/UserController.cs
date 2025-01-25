@@ -92,7 +92,7 @@ namespace UnderGroundArchive_Backend.Controllers
                         .Select(s => s.SubscriptionName)
                         .FirstOrDefault()
         })
-                .ToListAsync();
+                .SingleOrDefaultAsync();
 
             if (user == null)
             {
@@ -115,8 +115,29 @@ namespace UnderGroundArchive_Backend.Controllers
                 return Unauthorized(); // Ha nincs ID, akkor 401-es válasz
             }
 
-            // Felhasználó lekérése az ID alapján
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            // Felhasználó lekérése az ID alapján, csatlakoztatva a szerepköröket
+            var user = await _dbContext.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.UserName,
+                    u.Email,
+                    u.PhoneNumber,
+                    u.Country,
+                    u.BirthDate,
+                    u.RankId,
+                    u.RankPoints,
+                    u.SubscriptionId,
+                    Role = _dbContext.UserRoles
+                        .Where(ur => ur.UserId == u.Id)
+                        .Join(_dbContext.Roles,
+                              ur => ur.RoleId,
+                              r => r.Id,
+                              (ur, r) => r.Name)
+                        .FirstOrDefault()
+                })
+                .FirstOrDefaultAsync();
 
             if (user == null)
             {
@@ -125,6 +146,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return Ok(user); // A felhasználó adatainak visszaadása
         }
+
 
 
         [HttpGet("books")]

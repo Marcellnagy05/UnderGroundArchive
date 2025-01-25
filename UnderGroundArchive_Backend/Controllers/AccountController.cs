@@ -119,6 +119,10 @@ namespace UnderGroundArchive_Backend.Controllers
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim("PhoneNumber:", user.PhoneNumber),
+                new Claim("Country:", user.Country),
+                new Claim("Email:", user.Email),
+                new Claim("BirthDate:", user.BirthDate.ToString())
             };
             
             // Szerepkörök hozzáadása a tokenhez
