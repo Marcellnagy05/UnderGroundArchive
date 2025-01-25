@@ -391,7 +391,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       .map((comment) => {
         const replies = nestedComments[comment.commentId] || []; // A reply-ket a threadId alapján gyűjtjük
         const isExpanded = expandedComments.has(comment.commentId);
-        const ratingKey = `${comment.bookId}_${comment.commenterId}`;
+        const ratingKey:any = `${comment.bookId}_${comment.commenterId}`;
 
         return (
           <div key={comment.commentId} className="comment">
@@ -491,7 +491,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                   <div className="replies">
                     {(isExpanded ? replies : replies.slice(0, 1)).map(
                       (reply) => {
-                        const replyRatingKey = `${reply.bookId}_${reply.commenterId}`; // Egyedi kulcs a reply-hez
+                        const replyRatingKey:any = `${reply.bookId}_${reply.commenterId}`; // Egyedi kulcs a reply-hez
                         const parentCommenterId = findParentCommenterId(
                           reply.threadId
                         ); // Parent commenter ID meghatározása
