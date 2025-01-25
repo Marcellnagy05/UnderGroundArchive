@@ -285,6 +285,24 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok(readerRatings);
         }
 
+        [HttpGet("readerRatingsForBook/{bookId}")]
+        public async Task<ActionResult<IEnumerable<ReaderRatingDTO>>> GetReaderRatingsForBook(int bookId)
+        {
+            var readerRatings = await _dbContext.ReaderRatings
+                .Where(r => r.BookId == bookId)
+                .Select(r => new ReaderRatingDTO
+                {
+                    RatingId = r.RatingId,
+                    BookId = r.BookId,
+                    RatingValue = r.RatingValue,
+                    RaterId = r.RaterId,
+                    BookName = r.Books.BookName
+                })
+                .ToListAsync();
+
+            return Ok(readerRatings);
+        }
+
 
 
         [HttpGet("readerRating/{id}")]
@@ -400,6 +418,24 @@ namespace UnderGroundArchive_Backend.Controllers
         {
             var criticRating = await _dbContext.CriticRatings.Include(j => j.Books).FirstOrDefaultAsync(j => j.RatingId == id);
             return criticRating == null ? NotFound() : criticRating;
+        }
+
+        [HttpGet("criticRatingsForBook/{bookId}")]
+        public async Task<ActionResult<IEnumerable<CriticRatingDTO>>> GetCriticRatingsForBook(int bookId)
+        {
+            var criticRatings = await _dbContext.CriticRatings
+                .Where(r => r.BookId == bookId)
+                .Select(r => new CriticRatingDTO
+                {
+                    RatingId = r.RatingId,
+                    BookId = r.BookId,
+                    RatingValue = r.RatingValue,
+                    RaterId = r.RaterId,
+                    BookName = r.Books.BookName
+                })
+                .ToListAsync();
+
+            return Ok(criticRatings);
         }
 
         [HttpPost("createCriticRating")]
