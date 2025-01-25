@@ -27,6 +27,7 @@ interface Category {
 interface User {
   id: string;
   userName: string;
+  role: string;
 }
 
 interface CriticRating {
@@ -127,7 +128,7 @@ const Books = () => {
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
         ];
 
-      setUser({ id: userId, userName });
+      setUser({ id: userId, userName, role: roleFromClaim});
       setRole(roleFromClaim || "reader");
 
       // Értékelések frissítése bejelentkezés után
@@ -188,7 +189,7 @@ const Books = () => {
   const fetchCriticRatings = async (bookId: number) => {
     try {
       const response = await fetch(
-        `https://localhost:7197/api/User/criticRatings?bookId=${bookId}`
+        `https://localhost:7197/api/User/criticRatingsForBook/${bookId}`
       );
 
       if (response.ok) {
