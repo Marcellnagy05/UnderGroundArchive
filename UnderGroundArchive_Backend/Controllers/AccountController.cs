@@ -188,5 +188,55 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok(new { message = "Sikeres kijelentkezés." });
         }
 
+
+        [HttpPut("user/password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            // Validate request
+            if (string.IsNullOrWhiteSpace(request.CurrentPassword) || string.IsNullOrWhiteSpace(request.NewPassword))
+            {
+                return BadRequest(new { Message = "Both current and new passwords are required." });
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { Message = "User is not authenticated." });
+            }
+
+            // Retrieve the user from the database
+            var user = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found." });
+            }
+
+            // Verify the current password
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.CurrentPassword);
+
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            {
+                return BadRequest(new { Message = "Current password is incorrect." });
+            }
+
+            // Validate the new password (you can adjust this validation as needed)
+            if (request.NewPassword.Length < 8)
+            {
+                return BadRequest(new { Message = "New password must be at least 8 characters long." });
+            }
+
+            // Hash the new password and update the user's password
+            user.PasswordHash = passwordHasher.HashPassword(user, request.NewPassword);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { Message = "Password changed successfully." });
+        }
+
+
     }
 }
