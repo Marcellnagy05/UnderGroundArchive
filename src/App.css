@@ -508,18 +508,20 @@ button:disabled {
 }
 
 /* Expand/Collapse gombok */
-.expand-button {
+.expand-button, .collapse-button{
   background: none;
   border: none;
   color: var(--primaryText);
   cursor: pointer;
   font-size: 14px;
   margin: 10px 0;
-  padding: 0;
+  padding: 8px;
+  border: 2px solid var(--primary);
 }
 
-.expand-button:hover {
+.expand-button:hover, .collapse-button:hover {
   text-decoration: underline;
+  border: 2px solid var(--thirdColor);
 }
 
 /* Válasz mezők */
