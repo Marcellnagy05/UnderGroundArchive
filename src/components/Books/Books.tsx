@@ -129,7 +129,8 @@ const Books = () => {
         ];
 
       setUser({ id: userId, userName, role: roleFromClaim});
-      setRole(roleFromClaim || "reader");
+      setRole(roleFromClaim || "guest");
+      console.log(roleFromClaim);
 
       // Értékelések frissítése bejelentkezés után
       fetchReaderRatings(userId);
@@ -263,7 +264,7 @@ const Books = () => {
     }
 
     const apiEndpoint =
-      role === "User"
+      role !== "Critic"
         ? "https://localhost:7197/api/User/createReaderRating"
         : "https://localhost:7197/api/User/createCriticRating";
 
@@ -316,7 +317,7 @@ const Books = () => {
     }
 
     const apiEndpoint =
-      role === "User"
+      role !== "Critic"
         ? `https://localhost:7197/api/User/deleteReaderRating/${bookId}`
         : `https://localhost:7197/api/User/deleteCriticRating/${bookId}`;
 

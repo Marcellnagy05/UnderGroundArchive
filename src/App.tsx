@@ -13,6 +13,7 @@ import { ThemeProvider } from "./components/contexts/ThemeContext";  // Importá
 import Navbar from "./components/Navbar/Navbar";
 import "./App.css";
 import Settings from "./components/Settings/Setting";
+import Profile from "./components/Profile/Profile";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
                 <Route path="/publish" element={<PublishBook />} />
                 <Route path="/books" element={<Books />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/profile" element={<Profile />} />
               </Routes>
             </div>
           </ThemeProvider>
