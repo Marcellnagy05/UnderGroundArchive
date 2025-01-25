@@ -579,7 +579,9 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                     >
                                       Reply
                                     </button>
-                                    <button
+                                    {currentUser.id === reply.commenterId && (
+                                      <div>
+                                        <button
                                       className="edit-button"
                                       onClick={() => {
                                         setEditingComment(reply.commentId);
@@ -596,6 +598,8 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                     >
                                       Delete
                                     </button>
+                                      </div>
+                                    )}
                                   </>
                                 ) : null}
                               </>
