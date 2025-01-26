@@ -42,7 +42,7 @@ const Login = () => {
     event.preventDefault();
     setIsLoading(true);
   
-    const MIN_LOADING_TIME = 1800;
+    const MIN_LOADING_TIME = 2500;
     const startTime = Date.now();
   
     try {

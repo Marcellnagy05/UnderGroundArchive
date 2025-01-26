@@ -4,18 +4,10 @@ import "./Loading.css";
 const Loading: React.FC = () => {
   return (
     <div className="loading-container">
-      <div className="book-loader">
-        <div className="book">
-          <div className="page"></div>
-          <div className="page"></div>
-          <div className="page"></div>
-          <div className="page"></div>
-          <div className="page"></div>
-          <div className="page"></div>
-          <div className="page"></div>
-          <div className="page"></div>
-          <div className="page"></div>
-        </div>
+      <div className="loader book">
+        <figure className="page"></figure>
+        <figure className="page"></figure>
+        <figure className="page"></figure>
       </div>
       <h1>Betöltés...</h1>
     </div>
