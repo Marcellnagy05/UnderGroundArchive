@@ -1,0 +1,198 @@
+/* Általános stílusok */
+.comments-container {
+    padding: 20px;
+    background-color: var(--background);
+    color: var(--primaryText);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .comments-container h2 {
+    color: var(--primaryText);
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .comment {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: var(--secondary);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    color: var(--primaryText);
+    border: 1px solid var(--thirdColor);
+  }
+  
+  .comment:hover {
+    background-color: var(--thirdColor);
+    color: var(--primaryText);
+    border: 1px solid var(--secondary);
+  }
+  
+  .comment .vote-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  .vote-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--primaryText);
+    margin: 5px 0;
+    transition: color 0.3s;
+  }
+  
+  .vote-button:hover {
+    color: var(--thirdColor);
+  }
+  
+  .vote-count {
+    font-size: 14px;
+    color: var(--primaryText);
+  }
+  
+  .comment .content {
+    flex: 1;
+    padding-left: 10px;
+  }
+  
+  .comment p {
+    margin: 5px 0;
+    color: var(--primaryText);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .comment .commentMessage{
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+  
+  .comment strong {
+    color: var(--primaryText);
+    font-size: 15px;
+  }
+  
+  .comment-reply {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: var(--thirdColor);
+    border-radius: 8px;
+    border: 1px solid var(--primary);
+    color: var(--primaryText);
+  }
+  
+  .comment-reply:hover {
+    background-color: var(--secondary);
+    color: var(--primaryText);
+  }
+  
+  .comment .actions {
+    display: flex;
+    gap: 0.2vw;
+    margin-top: 10px;
+  }
+  
+  .actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--primaryText);
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+  
+  .actions button:hover {
+    color: var(--thirdColor);
+  }
+  
+  /* Textarea és gombok */
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--primary);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--primaryText);
+    background-color: var(--thirdColor);
+    margin-bottom: 15px;
+  }
+  
+  textarea:focus {
+    outline: none;
+    border-color: var(--hover);
+  }
+  
+  button {
+    padding: 12px 24px;
+    background-color: var(--secondary);
+    color: var(--primaryText);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+  }
+  
+  button:hover {
+    background-color: var(--hover);
+    color: var(--secondaryText);
+  }
+  
+  button:disabled {
+    background-color: var(--secondary);
+    cursor: not-allowed;
+  }
+  
+  /* Expand/Collapse gombok */
+  .expand-button, .collapse-button{
+    background: var(--primary);
+    border: 2px solid var(--primary);
+    color: var(--primaryText);
+    cursor: pointer;
+    font-size: 14px;
+    margin: 10px 0;
+    padding: 8px;
+  }
+  
+  .expand-button:hover, .collapse-button:hover {
+    text-decoration: underline;
+    border: 2px solid var(--secondary);
+    background-color: var(--thirdColor);
+    color: var(--secondaryText);
+  }
+  
+  /* Válasz mezők */
+  .reply-container {
+    margin-top: 15px;
+    background-color: var(--thirdColor);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--primary);
+  }
+  
+  .reply-container textarea {
+    margin-top: 10px;
+    background-color: var(--thirdColor);
+    color: var(--primaryText);
+  }
+  
+  .reply-container button {
+    margin-top: 15px;
+  }
+  
+  .reader-rating, .critic-rating{
+    position: absolute;
+    left:60%;
+  }
+  

@@ -52,28 +52,26 @@ body {
 
 /* Light Theme */
 .light-theme {
-  --background: #F3F4F6;
-  --primaryText: #2D3A59;
-  --secondaryText: #5B6B8A;
-  --primary: #9B4DFF;
-  --secondary: #D1B2FF;
-  --hover: #7C33CC;
-  --slider: #9D4EDD;
-  --thirdColor: #E6E7F3;
+  --background: #fdf3e7; /* Világos homok szín */
+  --primaryText: #9a3508; /* Erőteljes narancsbarna */
+  --secondaryText: #d06d39; /* Lágyabb narancs */
+  --primary: #e27227; /* Melegebb narancs árnyalat */
+  --secondary: #f1842d; /* Élénk narancs */
+  --hover: #f5a056; /* Pasztell narancs hover */
+  --slider: #9a3508; /* Erősebb szín a csúszkán */
+  --thirdColor: #fde8d1; /* Világosabb háttérszín */
 }
 
-/* Dark Theme */
 .dark-theme {
-  --background: #1F1F2E;
-  --primaryText: #F1F5F9;
-  --secondaryText: #E4E7F2;
-  --primary: #9B4DFF;
-  --secondary: #7A5BFF;
-  --hover: #7C33CC;
-  --slider: #B4A0FF;
-  --thirdColor: #27274D;
+  --background: #0f0407; /* Még sötétebb borvörös */
+  --primaryText: #e0aab5; /* Lágyabb rózsaszín text */
+  --secondaryText: #a44b63; /* Halványabb bordó árnyalat */
+  --primary: #7b1b4d; /* Mély mályva szín */
+  --secondary: #8d234f; /* Sötétebb rózsaszín */
+  --hover: #c04d66; /* Lágyabb hover rózsaszín */
+  --slider: #a43458; /* Halvány bordó a csúszkához */
+  --thirdColor: #1c0a11; /* Még sötétebb bordó árnyék */
 }
-
 
 .switch .slider {
   background-color: var(--primary);
@@ -91,52 +89,6 @@ body {
 .setting-button:hover {
   background-color: var(--slider);
 }
-
-/*Books*/
-
-.detailsButton{
-  position: relative;
-  left: 30%;
-  background-color: var(--primary);
-  color: var(--secondaryText);
-  border: none;
-  border-radius: 10px;
-  margin-top: 10px;
-  padding: 10px;
-  width: 100px;
-  max-width: 80%;
-  cursor: pointer;
-}
-
-.backToList{
-  position: relative;
-  left: 32%;
-  background-color: var(--background);
-  border: 2px solid var(--primary);
-  color: var(--secondaryText);
-  border-radius: 10px;
-  margin-top: 10px;
-  padding: 10px;
-  width: 200px;
-  max-width: 80%;
-  cursor: pointer;
-}
-
-.backToList:hover{
-  background-color: var(--hover);
-}
-
-.removeRating {
-  background-color: var(--background);
-  border: 2px solid var(--primary);
-  color: var(--primaryText);
-}
-
-.removeRating:hover {
-  background-color: var(--hover);
-}
-
-/*PublishBook*/
 
 /*Light theme*/
 .light-theme .publishForm{
@@ -204,198 +156,3 @@ body {
   color: var(--secondaryText);
 }
 
-/* Általános stílusok */
-.comments-container {
-  padding: 20px;
-  background-color: var(--background);
-  color: var(--primaryText);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.comments-container h2 {
-  color: var(--primaryText);
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 24px;
-}
-
-.comment {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-  padding: 10px;
-  background-color: var(--secondary);
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-  color: var(--primaryText);
-  border: 1px solid var(--thirdColor);
-}
-
-.comment:hover {
-  background-color: var(--thirdColor);
-  color: var(--primaryText);
-  border: 1px solid var(--secondary);
-}
-
-.comment .vote-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
-.vote-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: var(--primaryText);
-  margin: 5px 0;
-  transition: color 0.3s;
-}
-
-.vote-button:hover {
-  color: var(--thirdColor);
-}
-
-.vote-count {
-  font-size: 14px;
-  color: var(--primaryText);
-}
-
-.comment .content {
-  flex: 1;
-  padding-left: 10px;
-}
-
-.comment p {
-  margin: 5px 0;
-  color: var(--primaryText);
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.comment .commentMessage{
-  margin-left: 20px;
-  margin-top: 10px;
-}
-
-.comment strong {
-  color: var(--primary);
-  font-size: 15px;
-}
-
-.comment-reply {
-  margin-top: 15px;
-  padding: 15px;
-  background-color: var(--thirdColor);
-  border-radius: 8px;
-  border: 1px solid var(--primary);
-  color: var(--primaryText);
-}
-
-.comment-reply:hover {
-  background-color: var(--secondary);
-  color: var(--primaryText);
-}
-
-.comment .actions {
-  display: flex;
-  gap: 0.2vw;
-  margin-top: 10px;
-}
-
-.actions button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--primaryText);
-  font-size: 14px;
-  transition: color 0.3s;
-}
-
-.actions button:hover {
-  color: var(--thirdColor);
-}
-
-/* Textarea és gombok */
-textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--primary);
-  border-radius: 6px;
-  font-size: 14px;
-  color: var(--primaryText);
-  background-color: var(--thirdColor);
-  margin-bottom: 15px;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: var(--hover);
-}
-
-button {
-  padding: 12px 24px;
-  background-color: var(--primary);
-  color: var(--secondaryText);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 14px;
-}
-
-button:hover {
-  background-color: var(--hover);
-}
-
-button:disabled {
-  background-color: var(--secondary);
-  cursor: not-allowed;
-}
-
-/* Expand/Collapse gombok */
-.expand-button, .collapse-button{
-  background: none;
-  border: none;
-  color: var(--primaryText);
-  cursor: pointer;
-  font-size: 14px;
-  margin: 10px 0;
-  padding: 8px;
-  border: 2px solid var(--primary);
-}
-
-.expand-button:hover, .collapse-button:hover {
-  text-decoration: underline;
-  border: 2px solid var(--thirdColor);
-}
-
-/* Válasz mezők */
-.reply-container {
-  margin-top: 15px;
-  background-color: var(--thirdColor);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid var(--primary);
-}
-
-.reply-container textarea {
-  margin-top: 10px;
-  background-color: var(--thirdColor);
-  color: var(--primaryText);
-}
-
-.reply-container button {
-  margin-top: 15px;
-}
-
-.reader-rating, .critic-rating{
-  position: absolute;
-  left:60%;
-}

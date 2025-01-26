@@ -4,6 +4,7 @@ import Loading from "../Loading/Loading";
 import { jwtDecode } from "jwt-decode";
 import { useToast } from "../contexts/ToastContext";
 import { useThemeContext } from "../contexts/ThemeContext";
+import "./Login.css"
 
 const Login = () => {
   const [login, setLogin] = useState("");

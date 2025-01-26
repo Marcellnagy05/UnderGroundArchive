@@ -1,21 +1,22 @@
 export const lightTheme = {
-  background: "#F3F4F6",
-  primaryText: "#2D3A59",
-  secondaryText: "#5B6B8A",
-  primary: "#9B4DFF",
-  secondary: "#D1B2FF",
-  hover: "#7C33CC",
-  slider: "#9D4EDD",
-  thirdColor: "#E6E7F3",
+  background: "#fdf3e7", // Világos homokszín
+  primaryText: "#9a3508", // Erőteljes narancsbarna
+  secondaryText: "#d06d39", // Lágyabb narancs
+  primary: "#e27227", // Melegebb narancs
+  secondary: "#f1842d", // Élénk narancs
+  hover: "#f5a056", // Pasztell narancs hover
+  slider: "#9a3508", // Erősebb szín a csúszkán
+  thirdColor: "#fde8d1", // Világosabb háttérszín
 };
-  
+
 export const darkTheme = {
-  background: "#1F1F2E",
-  primaryText: "#F1F5F9",
-  secondaryText: "#E4E7F2",
-  primary: "#9B4DFF",
-  secondary: "#7A5BFF",
-  hover: "#7C33CC",
-  slider: "#B4A0FF",
-  thirdColor: "#27274D",
+  background: "#0f0407", // Még sötétebb borvörös
+  primaryText: "#e0aab5", // Lágyabb rózsaszín text
+  secondaryText: "#a44b63", // Halványabb bordó árnyalat
+  primary: "#7b1b4d", // Mély mályva szín
+  secondary: "#8d234f", // Sötétebb rózsaszín
+  hover: "#c04d66", // Lágyabb hover rózsaszín
+  slider: "#a43458", // Halvány bordó a csúszkához
+  thirdColor: "#1c0a11", // Még sötétebb bordó árnyék
 };
+

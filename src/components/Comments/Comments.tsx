@@ -680,7 +680,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
         onChange={(e) => setNewComment(e.target.value)}
       />
       <button className="submit-comment-button" onClick={handleCreateComment}>
-        Submit
+        <strong>Submit</strong>
       </button>
     </div>
   );

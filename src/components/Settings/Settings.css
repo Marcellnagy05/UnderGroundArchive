@@ -6,7 +6,9 @@
   h1 {
     font-size: 24px;
     margin-bottom: 20px;
+    color: var(--primaryText);
   }
+
   
   .setting-item {
     display: flex;

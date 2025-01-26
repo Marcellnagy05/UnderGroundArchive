@@ -104,3 +104,54 @@
   pointer-events: none;
   opacity: 0.5;
 }
+
+
+.detailsButton{
+  position: relative;
+  left: 30%;
+  background-color: var(--primary);
+  color: var(--primaryText);
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  width: 100px;
+  max-width: 80%;
+  cursor: pointer;
+}
+
+.detailsButton:hover{
+  background-color: var(--background);
+  color: var(--secondaryText);
+  border: 2px solid var(--primary);
+}
+
+.backToList{
+  position: relative;
+  left: 32%;
+  background-color: var(--primary);
+  border: 2px solid var(--primary);
+  color: var(--primaryText);
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  width: 200px;
+  max-width: 80%;
+  cursor: pointer;
+}
+
+.backToList:hover{
+  background-color: var(--background);
+  color: var(--secondaryText);
+}
+
+.removeRating {
+  background-color: var(--primary);
+  border: 2px solid var(--primary);
+  color: var(--primaryText);
+}
+
+.removeRating:hover {
+  background-color: var(--background);
+}
+

@@ -11,7 +11,7 @@
   overflow: hidden;
   z-index: 1000;
   background: var(--primary);
-  background: linear-gradient(176deg, var(--primary) 6%, var(--secondary) 20%, var(--thirdColor)70%);
+  background: linear-gradient(176deg, var(--primary) 6%, var(--secondary) 20%, var(--background)97%);
   border-radius: 0px 10px 10px 0px;
 }
 
@@ -31,7 +31,7 @@
   padding: 10px 15px;
   gap: 5px;
   text-decoration: none;
-  color: var(--primaryText);
+  color: var(--thirdColor);
   font-size: 16px;
   transition: background-color 0.5s ease, color 0.5s ease;
   white-space: nowrap;
@@ -41,7 +41,7 @@
 
 .nav-item:hover {
   background-color: var(--hover);
-  color: var(--thirdColor);
+  color: var(--primaryText);
   filter: opacity(1);
   cursor: pointer;
   transition: filter 0.5s;

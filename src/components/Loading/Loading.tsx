@@ -4,10 +4,20 @@ import "./Loading.css";
 const Loading: React.FC = () => {
   return (
     <div className="loading-container">
-      <h1>Bejelentkezés folyamatban...</h1>
-      <div className="loading-bar">
-        <div className="progress"></div>
+      <div className="book-loader">
+        <div className="book">
+          <div className="page"></div>
+          <div className="page"></div>
+          <div className="page"></div>
+          <div className="page"></div>
+          <div className="page"></div>
+          <div className="page"></div>
+          <div className="page"></div>
+          <div className="page"></div>
+          <div className="page"></div>
+        </div>
       </div>
+      <h1>Betöltés...</h1>
     </div>
   );
 };
