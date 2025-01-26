@@ -255,7 +255,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
       const response = await fetch(
         `https://localhost:7197/api/User/deleteComment/${commentId}`,
         {
-          method: "DELETE",
+          method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
           },
