@@ -1,6 +1,6 @@
-/*Login*/
+/* Register */
 
-.login-container {
+.register-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,29 +9,34 @@
     box-sizing: border-box;
   }
   
-  .login-form {
-    background-color: var(--background);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    box-sizing: border-box;
-  }
-  
-  .login-form h2 {
+  .register-title {
     text-align: center;
     color: var(--primaryText);
     margin-bottom: 20px;
   }
   
-  .login-form label {
+  .register-form {
+    background-color: var(--background);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    margin-top: 60px;
+  }
+  
+  .register-input-group {
+    margin-bottom: 15px;
+  }
+  
+  .register-label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     color: var(--primaryText);
   }
   
-  .login-form input {
+  .register-input {
     width: 95%;
     padding: 10px;
     margin-bottom: 15px;
@@ -42,12 +47,12 @@
     background-color: var(--background);
   }
   
-  .login-form input:focus {
+  .register-input:focus {
     border-color: var(--secondary);
     outline: none;
   }
   
-  .login-form button {
+  .register-button {
     width: 100%;
     padding: 12px;
     background-color: var(--primary);
@@ -59,11 +64,11 @@
     transition: background-color 0.3s ease;
   }
   
-  .login-form button:hover {
+  .register-button:hover {
     background-color: var(--secondary);
   }
   
-  .login-form .error-message {
+  .error-message {
     color: red;
     font-size: 14px;
     text-align: center;
