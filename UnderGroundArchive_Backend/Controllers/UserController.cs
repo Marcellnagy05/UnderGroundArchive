@@ -128,6 +128,7 @@ namespace UnderGroundArchive_Backend.Controllers
                     u.BirthDate,
                     u.RankId,
                     u.RankPoints,
+                    u.Theme,
                     u.SubscriptionId,
                     Role = _dbContext.UserRoles
                         .Where(ur => ur.UserId == u.Id)
@@ -146,8 +147,6 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return Ok(user); // A felhasználó adatainak visszaadása
         }
-
-
 
         [HttpGet("books")]
         public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
