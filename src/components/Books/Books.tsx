@@ -378,7 +378,6 @@ const Books = () => {
 
   if (bookRatings.length === 0) return 0;
 
-  // Számítsuk ki az átlagot
   const total = bookRatings.reduce((sum, rating) => sum + rating.ratingValue, 0);
   return total / bookRatings.length;
 };
@@ -386,7 +385,6 @@ const Books = () => {
 
   return (
     <div>
-      {/* <button onClick={() => allBooks()}>Összes könyv lekérése</button> */}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {!selectedBook ? (
         <div className="allBooks">
@@ -396,7 +394,7 @@ const Books = () => {
               <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
               <p>Műfaj: {getGenreName(book.genreId)}</p>
               <p>Kategória: {getCategoryName(book.categoryId)}</p>
-              <p>Átlagos értékelés: {book.averageRating || ""}</p>
+              <p>Átlagos értékelés: {parseFloat(book.averageRating.toString()).toFixed(2) || ""}</p>
               <StarRating rating={book.averageRating || 0} />
               <p>Saját értékelés:</p>
               <div className="rating">
