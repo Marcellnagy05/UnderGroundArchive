@@ -176,7 +176,9 @@ namespace UnderGroundArchive_Backend.Controllers
                 new Claim("PhoneNumber:", user.PhoneNumber),
                 new Claim("Country:", user.Country),
                 new Claim("Email:", user.Email),
-                new Claim("BirthDate:", user.BirthDate.ToString())
+                new Claim("BirthDate:", user.BirthDate.ToString()),
+                new Claim("RankId:", user.RankId.ToString()),
+                new Claim("SubscriptionId:", user.SubscriptionId.ToString())
             };
             
             // Szerepkörök hozzáadása a tokenhez
