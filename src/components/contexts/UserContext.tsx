@@ -3,9 +3,18 @@ import {jwtDecode} from "jwt-decode";
 import { useThemeContext } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
-interface User {
-  userName: string;
+export interface User {
+  userId:string,
+  userName: string,
+  role: string,
+  phoneNumber: string,
+  country: string,
+  email: string,
+  birthDate: string,
+  rankId: string,
+  subscriptionId: string
 }
+
 
 interface UserContextType {
   user: User | string;
@@ -28,14 +37,34 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
-  
+    
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
-  
-        // Módosítjuk a userName helyett name-t keresve
+        const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]
+        const userName = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]
+        const role = decoded["http://schemas.xmlsoap.org/ws/2008/06/identity/claims/role"]
+        const phoneNumber = decoded["PhoneNumber"]
+        const country = decoded["Country"]
+        const email = decoded["Email"]
+        const birthDate = decoded["BirthDate"]
+        const rankId = decoded["RankId"]
+        const subscriptionId = decoded["SubscriptionId"]
+
+        
         if (decoded?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]) {
-          setUser({ userName: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] });
+          setUser({ 
+            userId: userId,
+            userName: userName,
+            role: role,
+            phoneNumber: phoneNumber,
+            country: country,
+            email: email,
+            birthDate: birthDate,
+            rankId: rankId,
+            subscriptionId: subscriptionId
+          });
+          console.log("birthdate:", birthDate);
         } else {
           console.error("Invalid token structure - missing name");
           logout();  // Ha nincs name, kijelentkeztetjük a felhasználót

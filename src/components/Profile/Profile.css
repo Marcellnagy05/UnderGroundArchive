@@ -1,14 +1,106 @@
+:root {
+  --newborn-color-start: #d1d5db;
+  --newborn-color-mid: #6b7280;
+  --newborn-color-end: #9ca3af;
+
+  --sloth-color-start: #34d399;
+  --sloth-color-mid: #065f46;
+  --sloth-color-end: #059669;
+
+  --envy-color-start: #60a5fa;
+  --envy-color-mid: #1e3a8a;
+  --envy-color-end: #2563eb;
+
+  --greed-color-start: #facc15;
+  --greed-color-mid: #854d0e;
+  --greed-color-end: #ca8a04;
+
+  --lust-color-start: #f472b6;
+  --lust-color-mid: #9d174d;
+  --lust-color-end: #ec4899;
+
+  --wrath-color-start: #f87171;
+  --wrath-color-mid: #7f1d1d;
+  --wrath-color-end: #dc2626;
+
+  --pride-color-start: #c084fc;
+  --pride-color-mid: #581c87;
+  --pride-color-end: #9333ea;
+}
+
 .profileContainer {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  height: 100vh;
+  background-color: transparent;
+  font-family: Arial, sans-serif;
+}
+
+.username {
+  padding: 16px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  background-image: linear-gradient(
+    to right,
+    var(--color-start),
+    var(--color-mid),
+    var(--color-end)
+  );
+  background-size: 200% 100%; /* Fontos: nagyobb háttér a mozgáshoz */
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: flowingGradient 3s linear infinite;
+}
+@keyframes flowingGradient {
+  0% {
+    background-position: 200% 0;
   }
-  
-  
-  .profileContainer p {
-    margin: 0;
+  100% {
+    background-position: -200% 0;
   }
-  
+}
+
+.Newborn {
+  color: var(--primaryText);
+}
+
+.Sloth {
+  --color-start: var(--sloth-color-start);
+  --color-mid: var(--sloth-color-mid);
+  --color-end: var(--sloth-color-end);
+}
+
+.Envy {
+  --color-start: var(--envy-color-start);
+  --color-mid: var(--envy-color-mid);
+  --color-end: var(--envy-color-end);
+}
+
+.Greed {
+  --color-start: var(--greed-color-start);
+  --color-mid: var(--greed-color-mid);
+  --color-end: var(--greed-color-end);
+}
+
+.Lust {
+  --color-start: var(--lust-color-start);
+  --color-mid: var(--lust-color-mid);
+  --color-end: var(--lust-color-end);
+}
+
+.Wrath {
+  --color-start: var(--wrath-color-start);
+  --color-mid: var(--wrath-color-mid);
+  --color-end: var(--wrath-color-end);
+}
+
+.Pride {
+  --color-start: var(--pride-color-start);
+  --color-mid: var(--pride-color-mid);
+  --color-end: var(--pride-color-end);
+}

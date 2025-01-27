@@ -34,17 +34,17 @@ const Navbar = () => {
       <div className="sidebar-content">
         <NavLink to="/" className="nav-item">
           <FaHome className="nav-icon" />
-          <span className="nav-text">Home</span>
+          <span className="nav-text">Főoldal</span>
         </NavLink>
         {user !== "guest" && (
           <>
             <NavLink to="/publish" className="nav-item">
               <FaUpload className="nav-icon" />
-              <span className="nav-text">Publish</span>
+              <span className="nav-text">Publikálás</span>
             </NavLink>
             <NavLink to="/books" className="nav-item">
               <FaBook className="nav-icon" />
-              <span className="nav-text">Books</span>
+              <span className="nav-text">Könyvek</span>
             </NavLink>
           </>
         )}
@@ -52,22 +52,22 @@ const Navbar = () => {
           <>
             <NavLink to="/login" className="nav-item">
               <FaLock className="nav-icon" />
-              <span className="nav-text">Login</span>
+              <span className="nav-text">Bejelentkezés</span>
             </NavLink>
             <NavLink to="/register" className="nav-item">
               <FaAddressCard className="nav-icon" />
-              <span className="nav-text">Register</span>
+              <span className="nav-text">Regisztáció</span>
             </NavLink>
           </>
         ) : (
           <>
             <NavLink to="/profile" className="nav-item">
               <FaUser className="nav-icon" />
-              <span className="nav-text">Profile</span>
+              <span className="nav-text">Profil</span>
             </NavLink>
             <NavLink to="/settings" className="nav-item">
               <FaCog className="nav-icon" />
-              <span className="nav-text">Settings</span>
+              <span className="nav-text">Beállitások</span>
             </NavLink>
             <NavLink to="/faq" className="nav-item">
               <FaQuestionCircle className="nav-icon" />
@@ -75,7 +75,7 @@ const Navbar = () => {
             </NavLink>
             <button onClick={handleLogout} className="nav-item logout">
               <FaSignOutAlt className="nav-icon" />
-              <span className="nav-text">Logout</span>
+              <span className="nav-text">Kijelentkezés</span>
             </button>
           </>
         )}
