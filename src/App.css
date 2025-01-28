@@ -73,23 +73,6 @@ body {
   --thirdColor: #1c0a11; /* Még sötétebb bordó árnyék */
 }
 
-.switch .slider {
-  background-color: var(--primary);
-}
-
-.switch .slider:hover{
-  background-color: var(--slider);
-}
-
-.setting-button{
-  background-color: var(--primary);
-  color: var(--secondaryText);
-}
-
-.setting-button:hover {
-  background-color: var(--slider);
-}
-
 /*Light theme*/
 .light-theme .publishForm{
   border: 2px solid var(--primary);

@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import StarRating from "../StarRating/StarRating";
 import { useToast } from "../contexts/ToastContext";
 import { useProfileContext } from "../contexts/ProfileContext";
+import ProfileMenu from "../ProfileMenu/ProfileMenu";
 
 interface Ranks {
   rankId: number;
@@ -437,17 +438,7 @@ const Profile = () => {
   return (
     <div className="profileContainer">
       <div className="profileSidebar">
-        <button onClick={() => handleMenuClick("adatok")}>Adatok</button>
-        <button onClick={() => handleMenuClick("jelszo")}>
-          Jelszó változtatás
-        </button>
-        <button onClick={() => handleMenuClick("elofizetes")}>
-          Előfizetés
-        </button>
-        <button onClick={() => handleMenuClick("ertekelt")}>
-          Értékelt könyvek
-        </button>
-        <button onClick={() => handleMenuClick("konyveim")}>Könyveim</button>
+        <ProfileMenu onMenuClick={handleMenuClick} />
       </div>
       <div className="profileContent">
         {activeTab === "adatok" && (

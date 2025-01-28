@@ -1,31 +1,65 @@
 :root {
-  --newborn-color-start: #d1d5db;
-  --newborn-color-mid: #6b7280;
-  --newborn-color-end: #9ca3af;
+  --sloth-color-start: #FFD633;
+  --sloth-color-mid: #ffcc00;
+  --sloth-color-end: #e6b800;
+  
+  --envy-color-start: #FFB733; 
+  --envy-color-mid: #FFA477;
+  --envy-color-end: #e68a00;
+  
+  --greed-color-start: #FF884D;
+  --greed-color-mid: #ED7855;
+  --greed-color-end: #cc6600;
+  
+  --lust-color-start: #A66733;
+  --lust-color-mid: #B85C4F;
+  --lust-color-end: #7A3E0B;
+  
+  --wrath-color-start: #FD9C8C;
+  --wrath-color-mid: #AC6D7E;
+  --wrath-color-end: #e6766a; 
+  
+  --pride-color-start: #F57A7A;
+  --pride-color-mid: #63465A;
+  --pride-color-end: #cc3f3f;
+  
+  --gluttony-color-start: #A66733;
+  --gluttony-color-mid: #533D40;
+  --gluttony-color-end: #7A3E0B;
+  
+}
 
-  --sloth-color-start: #34d399;
-  --sloth-color-mid: #065f46;
-  --sloth-color-end: #059669;
-
-  --envy-color-start: #60a5fa;
-  --envy-color-mid: #1e3a8a;
-  --envy-color-end: #2563eb;
-
-  --greed-color-start: #facc15;
-  --greed-color-mid: #854d0e;
-  --greed-color-end: #ca8a04;
-
-  --lust-color-start: #f472b6;
-  --lust-color-mid: #9d174d;
-  --lust-color-end: #ec4899;
-
-  --wrath-color-start: #f87171;
-  --wrath-color-mid: #7f1d1d;
-  --wrath-color-end: #dc2626;
-
-  --pride-color-start: #c084fc;
-  --pride-color-mid: #581c87;
-  --pride-color-end: #9333ea;
+@media (prefers-color-scheme: dark-theme) {
+  :root {
+    --sloth-color-start: #c6accd; /* világosabb #C99E74 */
+    --sloth-color-mid: #b39eb5;
+    --sloth-color-end: #8e7a8d; /* sötétebb #C99E74 */
+    
+    --envy-color-start: #E6A895; /* világosabb #C6876B */
+    --envy-color-mid: #C6876B;
+    --envy-color-end: #A56758; /* sötétebb #C6876B */
+    
+    --greed-color-start: #7a1414; /* világosabb #A7604E */
+    --greed-color-mid: #540804;
+    --greed-color-end: #3f0202; /* sötétebb #A7604E */
+    
+    --lust-color-start: #B56A60; /* világosabb #944C46 */
+    --lust-color-mid: #944C46;
+    --lust-color-end: #743832; /* sötétebb #944C46 */
+    
+    --wrath-color-start: #A87A90; /* világosabb #8A6679 */
+    --wrath-color-mid: #8A6679;
+    --wrath-color-end: #704D61; /* sötétebb #8A6679 */
+    
+    --pride-color-start: #684764; /* világosabb #4C334B */
+    --pride-color-mid: #4C334B;
+    --pride-color-end: #35223A; /* sötétebb #4C334B */
+    
+    --gluttony-color-start: #5A3D42; /* világosabb #422B2F */
+    --gluttony-color-mid: #422B2F;
+    --gluttony-color-end: #2E1C21; /* sötétebb #422B2F */
+    
+  }
 }
 
 .profileContainer {
@@ -103,6 +137,12 @@
   --color-start: var(--pride-color-start);
   --color-mid: var(--pride-color-mid);
   --color-end: var(--pride-color-end);
+}
+
+.Gluttony {
+  --color-start: var(--gluttony-color-start);
+  --color-mid: var(--gluttony-color-mid);
+  --color-end: var(--gluttony-color-end);
 }
 
 
