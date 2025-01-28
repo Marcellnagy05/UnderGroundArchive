@@ -12,6 +12,7 @@ import Settings from "./components/Settings/Setting";
 import Profile from "./components/Profile/Profile";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
+import { ProfileProvider } from './components/contexts/ProfileContext';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
       <ToastProvider>
         <UserProvider>
           <ThemeProvider>
+            <ProfileProvider>
             <div className="appContent">
               <Navbar />
               <SimpleBar style={{maxHeight: '100vh'}} className="main-content" autoHide={true}>
@@ -32,6 +34,7 @@ const App = () => {
                 </Routes>
               </SimpleBar>
             </div>
+            </ProfileProvider>
           </ThemeProvider>
         </UserProvider>
       </ToastProvider>

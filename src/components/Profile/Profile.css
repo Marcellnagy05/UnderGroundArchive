@@ -104,3 +104,18 @@
   --color-mid: var(--pride-color-mid);
   --color-end: var(--pride-color-end);
 }
+
+
+.UserInfo{
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(7,1fr);
+  gap: 1.5rem;
+}
+
+
+.UserInfo p:nth-child(2n){
+  padding: 20px;
+  border: 2px solid var(--secondary);
+}

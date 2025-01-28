@@ -64,7 +64,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             rankId: rankId,
             subscriptionId: subscriptionId
           });
-          console.log("birthdate:", birthDate);
         } else {
           console.error("Invalid token structure - missing name");
           logout();  // Ha nincs name, kijelentkeztetjük a felhasználót

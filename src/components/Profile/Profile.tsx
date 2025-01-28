@@ -5,7 +5,7 @@ import "./Profile.css";
 import { jwtDecode } from "jwt-decode";
 import StarRating from "../StarRating/StarRating";
 import { useToast } from "../contexts/ToastContext";
-import { User } from "../contexts/UserContext";
+import { useProfileContext } from "../contexts/ProfileContext";
 
 interface Ranks {
   rankId: number;
@@ -41,7 +41,7 @@ interface Books {
 }
 
 const Profile = () => {
-  const { user, setUser } = useUserContext();
+  const { userProfile, setUserProfile } = useProfileContext();
   const [ranks, setRanks] = useState<Ranks[] | undefined>(undefined);
   const [subscriptions, setSubscriptions] = useState<
     Subscriptions[] | undefined
@@ -93,13 +93,83 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (typeof user !== "string") {
-      fetch("https://localhost:7197/api/User/books")
-        .then((res) => res.json())
-        .then((data) => setBooks(data))
-        .catch((error) => console.error("Könyvek betöltési hiba:", error));
+    const fetchBooks = async () => {
+      if (userProfile) {
+        try {
+          let allBooks = [];
+
+          // Döntés a fetch típusáról
+          if (activeTab === "ertekelt") {
+            const response = await fetch(
+              "https://localhost:7197/api/User/books",
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+                },
+              }
+            );
+
+            if (response.ok) {
+              allBooks = await response.json();
+            } else {
+              console.error("Hiba a könyvek lekérésekor.");
+              return;
+            }
+          } else if (
+            activeTab === "konyveim" &&
+            userProfile.role === "Author"
+          ) {
+            const response = await fetch(
+              "https://localhost:7197/api/User/books",
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+                },
+              }
+            );
+
+            if (response.ok) {
+              const allBooksResponse = await response.json();
+              allBooks = allBooksResponse.filter(
+                (book: any) => book.authorId === userProfile.id
+              );
+            } else {
+              console.error("Hiba a könyvek lekérésekor.");
+              return;
+            }
+          }
+
+          setBooks(allBooks);
+        } catch (err) {
+          console.error("Váratlan hiba a könyvek lekérése során:", err);
+        }
+      }
+    };
+
+    fetchBooks();
+  }, [userProfile, activeTab]);
+
+  useEffect(() => {
+    if (activeTab === "ertekelt" && books.length > 0 && userProfile) {
+      const fetchAllRatings = async () => {
+        const token = localStorage.getItem("jwt");
+        const decoded: any = jwtDecode(token ? token : "N/A");
+
+        for (const book of books) {
+          await fetchRatingsForUserOrCritic(
+            book.id,
+            decoded[
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+            ]
+          );
+        }
+      };
+
+      fetchAllRatings().catch((error) =>
+        console.error("Error fetching ratings:", error)
+      );
     }
-  }, [user]);
+  }, [activeTab, books, userProfile]);
 
   const fetchCriticRatings = async (bookId: number) => {
     try {
@@ -120,10 +190,10 @@ const Profile = () => {
           return newRatings;
         });
       } else {
-        console.error("Hiba a kritikus értékelések lekérése során.");
+        console.error("Error fetching critic ratings for bookId:", bookId);
       }
     } catch (err) {
-      console.error("Hiba a kritikus értékelések lekérése során:", err);
+      console.error("Unexpected error fetching critic ratings:", err);
     }
   };
 
@@ -151,17 +221,17 @@ const Profile = () => {
           return updatedRatings;
         });
       } else {
-        console.error("Hiba az olvasói értékelések lekérése során.");
+        console.error("Error fetching reader ratings for userId:", userId);
       }
     } catch (err) {
-      console.error("Hiba az olvasói értékelések lekérése során:", err);
+      console.error("Unexpected error fetching reader ratings:", err);
     }
   };
 
   // Segédfüggvények
 
   const isCritic = (): boolean => {
-    return user.role === "Critic";
+    return userProfile?.role === "Critic";
   };
 
   const fetchRatingsForUserOrCritic = async (
@@ -169,9 +239,9 @@ const Profile = () => {
     userId: string
   ) => {
     if (isCritic()) {
-      await fetchCriticRatings(bookId); // Kritikus értékelések
+      await fetchCriticRatings(bookId);
     } else {
-      await fetchReaderRatings(userId); // Felhasználói értékelések
+      await fetchReaderRatings(userId);
     }
   };
 
@@ -190,21 +260,29 @@ const Profile = () => {
 
           if (response.ok) {
             const userData = await response.json();
-            setUser(userData); // Frissítjük a felhasználót
+
+            setUserProfile({
+              id: userData?.id,
+              userName: userData?.userName,
+              role: userData?.role,
+              phoneNumber: userData?.phoneNumber,
+              country: userData?.country,
+              email: userData?.email,
+              birthDate: userData?.birthDate,
+              rankId: userData?.rankId.toString(),
+              subscriptionId: userData?.subscriptionId.toString(),
+            });
           } else {
-            setUser("guest");
+            console.error("Failed to fetch user data");
           }
         } catch (err) {
-          console.error("Hiba a felhasználói adatok betöltésekor:", err);
-          setUser("guest");
+          console.error("Error during fetch:", err);
         }
-      } else {
-        setUser("guest");
       }
     };
 
     fetchUser();
-  }, [setUser]);
+  }, [setUserProfile]);
 
   useEffect(() => {
     const fetchRanks = async () => {
@@ -284,11 +362,11 @@ const Profile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
-    const decoded: any = jwtDecode(token);
+    const decoded: any = jwtDecode(token ? token : "N/A");
     if (
       activeTab === "ertekelt" &&
       books.length > 0 &&
-      typeof user !== "string"
+      typeof userProfile !== "string"
     ) {
       books.forEach((book) => {
         fetchRatingsForUserOrCritic(
@@ -299,25 +377,27 @@ const Profile = () => {
         ); // Fetch ratings for each book
       });
     }
-  }, [activeTab, books, user]);
+  }, [activeTab, books, userProfile]);
 
   const deleteRating = async (bookId: number) => {
     const { user } = useUserContext(); // Hozzáférés a user contexthez
-  
-    if (typeof user === "object" && user !== null && 'userId' in user && 'role' in user) {
-      const userId = (user as User).userId;
-      const role = (user as User).role;
-  
-      if (!userId) {
+
+    if (
+      typeof user === "object" &&
+      user !== null &&
+      "userId" in user &&
+      "role" in user
+    ) {
+      if (!userProfile?.id) {
         showToast("Felhasználói azonosító hiányzik!", "error");
         return;
       }
-  
+
       const apiEndpoint =
-        role !== "Critic"
+        userProfile.role !== "Critic"
           ? `https://localhost:7197/api/User/deleteReaderRating/${bookId}`
           : `https://localhost:7197/api/User/deleteCriticRating/${bookId}`;
-  
+
       try {
         const response = await fetch(apiEndpoint, {
           method: "DELETE",
@@ -325,11 +405,11 @@ const Profile = () => {
             Authorization: `Bearer ${localStorage.getItem("jwt")}`,
           },
         });
-  
+
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Hiba az értékelés törlése során:", errorText);
-  
+
           if (response.status === 404) {
             showToast("Az értékelés nem található!", "error");
           } else {
@@ -337,13 +417,13 @@ const Profile = () => {
           }
           return;
         }
-  
+
         setRatings((prevRatings) => {
           const updatedRatings = { ...prevRatings };
           delete updatedRatings[bookId];
           return updatedRatings;
         });
-  
+
         showToast("Értékelés sikeresen törölve!", "success");
       } catch (err) {
         console.error("Hiba az értékelés törlése során:", err);
@@ -353,7 +433,6 @@ const Profile = () => {
       showToast("Felhasználói azonosító vagy szerepkör hiányzik!", "error");
     }
   };
-  
 
   return (
     <div className="profileContainer">
@@ -374,37 +453,55 @@ const Profile = () => {
         {activeTab === "adatok" && (
           <motion.div
             className={`username ${getSubscriptionStyle(
-              parseInt(user.subscriptionId)
+              parseInt(userProfile?.subscriptionId || "N/A")
             )}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             <h2>Felhasználói adatok</h2>
-            <p>
-              <strong>Felhasználónév:</strong> {user.userName}
-            </p>
-            <p>
-              <strong>Szerepkör:</strong> {user.role}
-            </p>
-            <p>
-              <strong>Email:</strong> {user.email}
-            </p>
-            <p>
-              <strong>Szül. idő:</strong> {user.birthDate}
-            </p>
-            <p>
-              <strong>Ország:</strong> {user.country}
-            </p>
-            <p>
-              <strong>Telefonszám:</strong> {user.phoneNumber}
-            </p>
+            <div className="UserInfo">
+              <p>
+                <strong>Felhasználónév:</strong>{" "}
+              </p>
+              <p>{userProfile?.userName || "N/A"}</p>
+              <p>
+                <strong>Szerepkör:</strong>
+              </p>
+              <p>{userProfile?.role || "N/A"}</p>
+              <p>
+                <strong>Email:</strong>
+              </p>
+              <p>{userProfile?.email || "N/A"}</p>
+              <p>
+                <strong>Szül. idő:</strong>{" "}
+              </p>
+              <p>
+                {userProfile?.birthDate
+                  ? `${userProfile.birthDate.substring(
+                      0,
+                      4
+                    )}.${userProfile.birthDate.substring(
+                      5,
+                      7
+                    )}.${userProfile.birthDate.substring(8, 10)}`
+                  : "N/A"}
+              </p>
+              <p>
+                <strong>Ország:</strong>
+              </p>
+              <p>{userProfile?.country || "N/A"}</p>
+              <p>
+                <strong>Telefonszám:</strong>
+              </p>
+              <p>{userProfile?.phoneNumber || "N/A"}</p>
+            </div>
           </motion.div>
         )}
         {activeTab === "jelszo" && (
           <motion.div
             className={`username ${getSubscriptionStyle(
-              parseInt(user.subscriptionId)
+              parseInt(userProfile?.subscriptionId || "N/A")
             )}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -431,7 +528,7 @@ const Profile = () => {
         {activeTab === "elofizetes" && (
           <motion.div
             className={`username ${getSubscriptionStyle(
-              parseInt(user.subscriptionId)
+              parseInt(userProfile?.subscriptionId || "N/A")
             )}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -442,7 +539,8 @@ const Profile = () => {
               {subscriptions?.map((sub) => (
                 <li key={sub.subscriptionId}>
                   {sub.subscriptionName}{" "}
-                  {sub.subscriptionId === parseInt(user.subscriptionId) && (
+                  {sub.subscriptionId ===
+                    parseInt(userProfile?.subscriptionId || "N/A") && (
                     <strong>(Aktív)</strong>
                   )}
                 </li>
@@ -452,9 +550,9 @@ const Profile = () => {
         )}
         {activeTab === "ertekelt" && (
           <motion.div
-          className={`username ${getSubscriptionStyle(
-            parseInt(user.subscriptionId)
-          )}`}
+            className={`username ${getSubscriptionStyle(
+              parseInt(userProfile?.subscriptionId || "N/A")
+            )}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -470,15 +568,7 @@ const Profile = () => {
                   <h4>{bookName}</h4>
                   {Object.keys(ratings[parseInt(bookId)]).map((userId) => (
                     <div key={userId}>
-                      {typeof user === "object" &&
-                      user !== null &&
-                      "userName" in user ? (
-                        <>
-                          <StarRating rating={ratings[parseInt(bookId)][userId]}/>
-                        </>
-                      ) : (
-                        "Felhasználó adatai nem elérhetőek"
-                      )}
+                      <StarRating rating={ratings[parseInt(bookId)][userId]} />
                     </div>
                   ))}
                 </div>
@@ -489,19 +579,19 @@ const Profile = () => {
         {activeTab === "konyveim" && (
           <motion.div
             className={`username ${getSubscriptionStyle(
-              parseInt(user.subscriptionId)
+              parseInt(userProfile?.subscriptionId || "N/A")
             )}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             <h2>Könyveim</h2>
-            {user.role !== "Author" ? (
+            {userProfile?.role !== "Author" ? (
               <button disabled>🔒 Csak szerzők számára elérhető</button>
             ) : (
               <ul>
-                {user.books?.map((book) => (
-                  <li key={book.bookId}>{book.title}</li>
+                {books?.map((book) => (
+                  <li key={book.id}>{book.bookName}</li>
                 ))}
               </ul>
             )}
