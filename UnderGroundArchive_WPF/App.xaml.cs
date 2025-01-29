@@ -22,14 +22,16 @@ namespace UnderGroundArchive_WPF
             ConfigureServices(services);
 
             var serviceProvider = services.BuildServiceProvider();
-            var mainWindow = serviceProvider.GetRequiredService<UserView>();
-            mainWindow.Show();
+            var loginWindow = serviceProvider.GetRequiredService<LoginView>();
+            loginWindow.Show();
         }
 
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<HttpClient>();
             services.AddSingleton<ApiService>();
+            services.AddSingleton<LoginViewModel>();
+            services.AddSingleton<LoginView>();
             services.AddSingleton<UserViewModel>();
             services.AddSingleton<UserView>();
         }

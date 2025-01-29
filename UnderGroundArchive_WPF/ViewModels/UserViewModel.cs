@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -19,13 +20,51 @@ namespace UnderGroundArchive_WPF.ViewModels
         private ObservableCollection<UserModel> _users;
         private UserModel _selectedUser;
 
+        private List<string> _roleOptions = new List<string>
+        {
+            "User", "Author", "Critic", "Moderator", "Admin"
+        };
+
+        public List<string> RoleOptions
+        {
+            get => _roleOptions;
+            set
+            {
+                _roleOptions = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _selectedRole;
+        public string SelectedRole
+        {
+            get => _selectedRole;
+            set
+            {
+                _selectedRole = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UserViewModel(ApiService apiService)
         {
             _apiService = apiService;
             LoadUsersCommand = new RelayCommand(async () => await LoadUsersAsync());
-            ChangeMuteStatusCommand = new RelayCommand(async () => await ChangeMuteStatusAsync());
-            ChangeBanStatusCommand = new RelayCommand(async () => await ChangeBanStatusAsync());
-            UpdateUserRoleCommand = new RelayCommand(async () => await UpdateUserRoleAsync());
+            ChangeMuteStatusCommand = new RelayCommand(async () =>
+            {
+                Trace.WriteLine("ChangeMuteStatusCommand executed");
+                await ChangeMuteStatusAsync();
+            });
+            ChangeBanStatusCommand = new RelayCommand(async () =>
+            {
+                Trace.WriteLine("ChangeBanStatusCommand executed");
+                await ChangeBanStatusAsync();
+            });
+            UpdateUserRoleCommand = new RelayCommand(async () =>
+            {
+                Trace.WriteLine("UpdateUserRoleCommand executed");
+                await UpdateUserRoleAsync();
+            });
         }
 
         public ObservableCollection<UserModel> Users
@@ -61,40 +100,49 @@ namespace UnderGroundArchive_WPF.ViewModels
 
         private async Task ChangeMuteStatusAsync()
         {
+            Trace.WriteLine("Attempting to change mute status...");
             if (SelectedUser != null)
             {
                 var success = await _apiService.ChangeMuteStatusAsync(SelectedUser.Id);
+                Trace.WriteLine(success ? "Mute status changed" : "Mute status change failed");
                 if (success)
                 {
                     SelectedUser.IsMuted = !SelectedUser.IsMuted;
+                    await LoadUsersAsync();
                 }
             }
         }
 
+
         private async Task ChangeBanStatusAsync()
         {
-            if (SelectedUser != null)
+            if (SelectedUser != null && !string.IsNullOrEmpty(SelectedUser.Id))
             {
                 var success = await _apiService.ChangeBanStatusAsync(SelectedUser.Id);
                 if (success)
                 {
                     SelectedUser.IsBanned = !SelectedUser.IsBanned;
+                    await LoadUsersAsync();                    
                 }
             }
         }
 
+
+
         private async Task UpdateUserRoleAsync()
         {
-            if (SelectedUser != null)
+            if (SelectedUser != null && !string.IsNullOrEmpty(SelectedRole))
             {
-                var newRoleName = "Admin"; // Replace with actual role selection logic
-                var success = await _apiService.UpdateUserRoleAsync(SelectedUser.Id, newRoleName);
+                var success = await _apiService.UpdateUserRoleAsync(SelectedUser.Id, SelectedRole);
                 if (success)
                 {
-                    SelectedUser.RoleName = newRoleName;
+                    SelectedUser.RoleName = SelectedRole;
+                    await LoadUsersAsync();
                 }
             }
         }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

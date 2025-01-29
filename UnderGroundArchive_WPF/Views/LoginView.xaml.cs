@@ -16,14 +16,16 @@ using UnderGroundArchive_WPF.ViewModels;
 namespace UnderGroundArchive_WPF.Views
 {
     /// <summary>
-    /// Interaction logic for UserView.xaml
+    /// Interaction logic for LoginView.xaml
     /// </summary>
-    public partial class UserView : Window
+    public partial class LoginView : Window
     {
-        public UserView(UserViewModel viewModel)
+
+        public LoginView(LoginViewModel viewModel)
         {
             InitializeComponent();
             DataContext = viewModel;
         }
+
     }
 }
