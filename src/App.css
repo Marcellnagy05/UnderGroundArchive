@@ -3,9 +3,10 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(164deg, var(--background) 58%, var(--thirdColor) 82%);
+  background: radial-gradient(ellipse at bottom, var(--background), var(--thirdColor));
   color: var(--primaryText); /* Betűszín beállítása */
   overflow: hidden;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -60,29 +61,64 @@ body {
     margin: 0;
   }
 }
-
-/* Light Theme */
 .light-theme {
-  --background: #fdf3e7; /* Világos homok szín */
-  --primaryText: #9a3508; /* Erőteljes narancsbarna */
-  --secondaryText: #d06d39; /* Lágyabb narancs */
-  --primary: #e27227; /* Melegebb narancs árnyalat */
-  --secondary: #f1842d; /* Élénk narancs */
-  --hover: #f5a056; /* Pasztell narancs hover */
-  --slider: #9a3508; /* Erősebb szín a csúszkán */
-  --thirdColor: #fde8d1; /* Világosabb háttérszín */
+  --background: #f3e5e5; /* Halvány rózsás háttér */
+  --primaryText: #09122C; /* Sötétkék szöveg */
+  --secondaryText: #872341; /* Mély bordós-piros */
+  --primary: #BE3144; /* Élénk vöröses árnyalat */
+  --secondary: #E17564; /* Melegebb, világosabb vörös */
+  --hover: #f5a397; /* Világosabb rózsás hover */
+  --slider: #872341; /* Erősebb bordó csúszka */
+  --thirdColor: #f8d2cd; /* Világos pasztelles háttérszín */
 }
 
 .dark-theme {
-  --background: #0f0407; /* Még sötétebb borvörös */
-  --primaryText: #e0aab5; /* Lágyabb rózsaszín text */
-  --secondaryText: #a44b63; /* Halványabb bordó árnyalat */
-  --primary: #7b1b4d; /* Mély mályva szín */
-  --secondary: #8d234f; /* Sötétebb rózsaszín */
-  --hover: #c04d66; /* Lágyabb hover rózsaszín */
-  --slider: #a43458; /* Halvány bordó a csúszkához */
-  --thirdColor: #1c0a11; /* Még sötétebb bordó árnyék */
+  --background: #09122C; /* Mélykékes háttér */
+  --primaryText: #E17564; /* Világosabb vöröses szöveg */
+  --secondaryText: #BE3144; /* Élénkebb vörös */
+  --primary: #872341; /* Sötétebb bordó */
+  --secondary: #BE3144; /* Kevésbé sötét, erőteljes vörös */
+  --hover: #E17564; /* Lágyabb piros hover */
+  --slider: #BE3144; /* Intenzív vörös csúszka */
+  --thirdColor: #0d1a3d; /* Sötétkék árnyalatú fekete */
 }
+/*eredeti light theme*/
+
+/*
+  --background: #fdf3e7;
+  --primaryText: #9a3508;
+  --secondaryText: #d06d39;
+  --primary: #e27227;
+  --secondary: #f1842d;
+  --hover: #f5a056;
+  --slider: #9a3508;
+  --thirdColor: #fde8d1;
+*/
+
+/*eredeti lila*/
+/* .dark-theme {
+  --background: #0f0407;
+  --primaryText: #e0aab5;
+  --secondaryText: #a44b63;
+  --primary: #7b1b4d;
+  --secondary: #8d234f;
+  --hover: #c04d66;
+  --slider: #a43458;
+  --thirdColor: #1c0a11; 
+} */
+
+/* zöld
+  --background: #050a05;
+  --primaryText: #d4f7d4;
+  --secondaryText: #729f72;
+  --primary: #0e2a0e;
+  --secondary: #14401a;
+  --hover: #296d29; 
+  --slider: #1f4d2e; 
+  --thirdColor: #081a0d; 
+*/
+
+
 
 /*Light theme*/
 .light-theme .publishForm{

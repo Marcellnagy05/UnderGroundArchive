@@ -1,12 +1,12 @@
 export const lightTheme = {
-  background: "#fdf3e7", // Világos homokszín
-  primaryText: "#9a3508", // Erőteljes narancsbarna
-  secondaryText: "#d06d39", // Lágyabb narancs
-  primary: "#e27227", // Melegebb narancs
-  secondary: "#f1842d", // Élénk narancs
-  hover: "#f5a056", // Pasztell narancs hover
-  slider: "#9a3508", // Erősebb szín a csúszkán
-  thirdColor: "#fde8d1", // Világosabb háttérszín
+  background: "#f3e5e5", // Halvány rózsás háttér
+  primaryText: "#09122C", // Sötétkék szöveg
+  secondaryText: "#872341", // Mély bordós-piros
+  primary: "#BE3144", // Élénk vöröses árnyalat
+  secondary: "#E17564", // Melegebb, világosabb vörös
+  hover: "#f5a397", // Világosabb rózsás hover szín
+  slider: "#872341", // Erősebb bordó csúszka
+  thirdColor: "#f8d2cd", // Világos pasztelles háttérszín
 
   // Sloth
   "sloth-color-start": "#FFD633", // világosabb #ffcc00
@@ -44,15 +44,62 @@ export const lightTheme = {
   "gluttony-color-end": "#7A3E0B", // sötétebb #533D40
 };
 
+// export const darkTheme = {
+//   background: "#0f0407", // Még sötétebb borvörös
+//   primaryText: "#e0aab5", // Lágyabb rózsaszín text
+//   secondaryText: "#a44b63", // Halványabb bordó árnyalat
+//   primary: "#7b1b4d", // Mély mályva szín
+//   secondary: "#8d234f", // Sötétebb rózsaszín
+//   hover: "#c04d66", // Lágyabb hover rózsaszín
+//   slider: "#a43458", // Halvány bordó a csúszkához
+//   thirdColor: "#1c0a11", // Még sötétebb bordó árnyék
+
+//   // Sloth
+//   "sloth-color-start": "#c6accd", // világosabb #C99E74
+//   "sloth-color-mid": "#b39eb5",
+//   "sloth-color-end": "#8e7a8d", // sötétebb #C99E74
+
+//   // Envy
+//   "envy-color-start": "#E6A895", // világosabb #C6876B
+//   "envy-color-mid": "#C6876B",
+//   "envy-color-end": "#A56758", // sötétebb #C6876B
+
+//   // Greed
+//   "greed-color-start": "#A87A90", // világosabb #A7604E
+//   "greed-color-mid": "#8A6679",
+//   "greed-color-end": "#704D61", // sötétebb #A7604E
+
+//   // Lust
+//   "lust-color-start": "#B56A60", // világosabb #944C46
+//   "lust-color-mid": "#944C46",
+//   "lust-color-end": "#743832", // sötétebb #944C46
+
+//   // Wrath
+//   "wrath-color-start": "#7a1414", // világosabb #8A6679
+//   "wrath-color-mid": "#540804",
+//   "wrath-color-end": "#3f0202", // sötétebb #8A6679
+
+//   // Pride
+//   "pride-color-start": "#684764", // világosabb #4C334B
+//   "pride-color-mid": "#4C334B",
+//   "pride-color-end": "#35223A", // sötétebb #4C334B
+
+//   // Gluttony
+//   "gluttony-color-start": "#5A3D42", // világosabb #422B2F
+//   "gluttony-color-mid": "#422B2F",
+//   "gluttony-color-end": "#2E1C21", // sötétebb #422B2F
+// };
+
+
 export const darkTheme = {
-  background: "#0f0407", // Még sötétebb borvörös
-  primaryText: "#e0aab5", // Lágyabb rózsaszín text
-  secondaryText: "#a44b63", // Halványabb bordó árnyalat
-  primary: "#7b1b4d", // Mély mályva szín
-  secondary: "#8d234f", // Sötétebb rózsaszín
-  hover: "#c04d66", // Lágyabb hover rózsaszín
-  slider: "#a43458", // Halvány bordó a csúszkához
-  thirdColor: "#1c0a11", // Még sötétebb bordó árnyék
+  background: "#09122C", // Mélykékes háttér
+  primaryText: "#E17564", // Világosabb vöröses szöveg
+  secondaryText: "#BE3144", // Élénkebb vörös
+  primary: "#872341", // Sötétebb bordó
+  secondary: "#BE3144", // Kevésbé sötét, erőteljes vörös
+  hover: "#E17564", // Lágyabb piros hover szín
+  slider: "#BE3144", // Intenzív vörös csúszka
+  thirdColor: "#0d1a3d", // Sötétkék árnyalatú fekete
 
   // Sloth
   "sloth-color-start": "#c6accd", // világosabb #C99E74

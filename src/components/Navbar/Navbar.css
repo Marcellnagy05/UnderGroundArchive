@@ -43,7 +43,7 @@
   
   .nav-item:hover {
     background-color: var(--hover);
-    color: var(--primaryText);
+    color: var(--secondary);
     filter: opacity(1);
     cursor: pointer;
     transition: filter 0.5s;
@@ -130,7 +130,7 @@
   
   .nav-item:hover {
     background-color: var(--hover);
-    color: var(--primaryText);
+    color: var(--secondary);
     filter: opacity(1);
     cursor: pointer;
     transition: filter 0.5s;
@@ -218,7 +218,7 @@
   
   .nav-item:hover {
     background-color: var(--hover);
-    color: var(--primaryText);
+    color: var(--secondary);
     filter: opacity(1);
     cursor: pointer;
     transition: filter 0.5s;
