@@ -3,7 +3,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: var(--background);
+  background: linear-gradient(164deg, var(--background) 58%, var(--thirdColor) 82%);
   color: var(--primaryText); /* Betűszín beállítása */
   overflow: hidden;
 }
@@ -46,8 +46,19 @@ body {
   overflow: scroll;
 }
 
-.sidebar.expanded + .main-content {
-  margin-left: 200px; /* Kinyitott sidebar esetén */
+@media(min-width:768px){
+  .sidebar.expanded + .main-content {
+    margin-left: 200px; /* Kinyitott sidebar esetén */
+  }
+
+}
+@media(max-width:768px){
+  .sidebar.expanded + .main-content {
+    margin-bottom: 50px; /* Kinyitott sidebar esetén */
+  }
+  .main-content{
+    margin: 0;
+  }
 }
 
 /* Light Theme */

@@ -1,112 +1,262 @@
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 60px;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 0;
-  transition: width 0.3s ease;
-  overflow: hidden;
-  z-index: 1000;
-  background: var(--primary);
-  background: linear-gradient(176deg, var(--primary) 6%, var(--secondary) 20%, var(--background)97%);
-  border-radius: 0px 10px 10px 0px;
-}
-
-.sidebar.expanded {
-  width: 200px;
-}
-
-.sidebar-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.nav-item {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  padding: 10px 15px;
-  gap: 5px;
-  text-decoration: none;
-  color: var(--thirdColor);
-  font-size: 16px;
-  transition: background-color 0.5s ease, color 0.5s ease;
-  white-space: nowrap;
-  filter: opacity(0.7);
-}
-
-
-.nav-item:hover {
-  background-color: var(--hover);
-  color: var(--primaryText);
-  filter: opacity(1);
-  cursor: pointer;
-  transition: filter 0.5s;
-}
-
-.nav-icon {
-  font-size: 24px;
-  margin-right: 10px;
-  transition: color 0.3s ease;
-}
-
-.sidebar.expanded .nav-icon {
-  filter: grayscale(0%) opacity(1);
-}
-
-.nav-text {
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.sidebar.expanded .nav-text {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.sidebar.expanded .nav-text {
-  transition-delay: 0.15s;
-}
-
-.logout {
-  border: none;
-  width: 100%;
-  text-align: left;
-  padding: 10px 15px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: auto;
-  background: transparent;
-}
-
-@media (max-width: 768px) {
-  .appContent {
-    flex-direction: column; /* Mobilon a flexboxos elrendezés vízszintesről függőlegesre vált */
-  }
-
+@media (min-width: 412px) and (max-width: 768px){
   .sidebar {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: 60px; /* Sidebar alul */
-    flex-direction: row; /* Alul vízszintesen a gombok */
-    justify-content: space-around; /* Gombok elhelyezése egyenletesen */
+    width: 100vw;
+    height: 60px; /* Mobil alapértelmezett magasság */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 10px 0;
+    transition: all 0.3s ease; /* `all` a width és height miatt */
+    overflow: hidden;
+    z-index: 1000;
+    background: var(--primary);
+    background: linear-gradient(176deg, var(--primary) 6%, var(--secondary) 20%, var(--background) 97%);
     border-radius: 10px 10px 0 0;
-    transition: height 0.3s ease;
   }
-
+  
   .sidebar.expanded {
-    height: 200px; /* Kinyitott sidebar nagyobb lesz */
-    flex-direction: column; /* Kinyitott állapotban oszlopos elrendezés */
+    height: 5rem;
   }
+  
+  .sidebar-content {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .nav-item {
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    padding: 8px 8px;
+    gap: 5px;
+    text-decoration: none;
+    color: var(--thirdColor);
+    font-size: 11px;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    white-space: nowrap;
+    filter: opacity(0.7);
+  }
+  
+  
+  .nav-item:hover {
+    background-color: var(--hover);
+    color: var(--primaryText);
+    filter: opacity(1);
+    cursor: pointer;
+    transition: filter 0.5s;
+  }
+  
+  .nav-icon {
+    font-size: 24px;
+    justify-self: center;
+    transition: color 0.3s ease;
+  }
+  
+  .sidebar.expanded .nav-icon {
+    filter: grayscale(0%) opacity(1);
+  }
+  
+  .nav-text {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .sidebar.expanded .nav-text {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .sidebar.expanded .nav-text {
+    transition-delay: 0.15s;
+  }
+  
+  .logout {
+    border: none;
+    height: 100%;
+    text-align: left;
+    padding: 8px 8px;
+    cursor: pointer;
+    font-size: 11px;
+    margin-top: auto;
+    background: transparent;
+  }
+}
 
-  .main-content {
-    margin-left: 0; /* Mobilon nem kell margó */
-    margin-top: 60px; /* Hely a kinyitott navbar számára */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    z-index: 1000;
+    background: var(--primary);
+    background: linear-gradient(176deg, var(--primary) 6%, var(--secondary) 20%, var(--background)97%);
+    border-radius: 0px 10px 10px 0px;
+  }
+  
+  .sidebar.expanded {
+    width: 200px;
+  }
+  
+  .sidebar-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .nav-item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    padding: 10px 15px;
+    gap: 5px;
+    text-decoration: none;
+    color: var(--thirdColor);
+    font-size: 16px;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    white-space: nowrap;
+    filter: opacity(0.7);
+  }
+  
+  
+  .nav-item:hover {
+    background-color: var(--hover);
+    color: var(--primaryText);
+    filter: opacity(1);
+    cursor: pointer;
+    transition: filter 0.5s;
+  }
+  
+  .nav-icon {
+    font-size: 24px;
+    margin-right: 10px;
+    transition: color 0.3s ease;
+  }
+  
+  .sidebar.expanded .nav-icon {
+    filter: grayscale(0%) opacity(1);
+  }
+  
+  .nav-text {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .sidebar.expanded .nav-text {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .sidebar.expanded .nav-text {
+    transition-delay: 0.15s;
+  }
+  
+  .logout {
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: auto;
+    background: transparent;
+  }
+}
+
+@media (min-width: 1024px){
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    z-index: 1000;
+    background: var(--primary);
+    background: linear-gradient(176deg, var(--primary) 6%, var(--secondary) 20%, var(--background)97%);
+    border-radius: 0px 10px 10px 0px;
+  }
+  
+  .sidebar.expanded {
+    width: 200px;
+  }
+  
+  .sidebar-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .nav-item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    padding: 10px 15px;
+    gap: 5px;
+    text-decoration: none;
+    color: var(--thirdColor);
+    font-size: 16px;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    white-space: nowrap;
+    filter: opacity(0.7);
+    border-radius: 10px;
+  }
+  
+  
+  .nav-item:hover {
+    background-color: var(--hover);
+    color: var(--primaryText);
+    filter: opacity(1);
+    cursor: pointer;
+    transition: filter 0.5s;
+  }
+  
+  .nav-icon {
+    font-size: 24px;
+    margin-right: 10px;
+    transition: color 0.3s ease;
+  }
+  
+  .sidebar.expanded .nav-icon {
+    filter: grayscale(0%) opacity(1);
+  }
+  
+  .nav-text {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .sidebar.expanded .nav-text {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .sidebar.expanded .nav-text {
+    transition-delay: 0.15s;
+  }
+  
+  .logout {
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: auto;
+    background: transparent;
   }
 }

@@ -1,74 +1,164 @@
 .allBooks {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(autofill, 1fr);
-  gap: 16px;
-  margin-top: 20px;
-  margin-left: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.bookCard {
+  background: var(--background);
+  color: var(--primaryText);
+  border: 2px solid var(--primary);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bookCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bookCard h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--primaryText);
+}
+
+.bookCard p {
+  font-size: 14px;
+  margin: 4px 0;
+  color: var(--secondaryText);
+}
+
+.rating {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.star {
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--secondaryText);
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.star.filled {
+  color: var(--hover);
+  transform: scale(1.2);
+}
+
+.detailsButton {
+  background: var(--primary);
+  color: var(--background);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: bold;
+}
+
+.detailsButton:hover {
+  background: var(--hover);
+  transform: scale(1.05);
 }
 
 .bookDetailsContainer {
   display: flex;
   flex-direction: column;
-  align-items: left;
+  align-items: center;
+  background: var(--background);
+  color: var(--primaryText);
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 12px;
   max-width: 600px;
-  min-width: 400px;
-  margin: 20px auto;
-}
-
-.bookCard {
-  border: 2px solid black;
-  border-radius: 8px;
-  padding: 16px;
-  width: 250px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.bookCard h3 {
-  margin: 0 0 8px 0;
-}
-
-.bookCard p {
-  margin: 4px 0;
-  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .bookDetails {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 20px;
-  max-width: 600px;
-  min-width: 400px;
+}
+
+.backToList {
+  background: var(--primary);
+  color: var(--background);
+  border-radius: 10px;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.backToList:hover {
+  background: var(--hover);
+  transform: scale(1.05);
+}
+
+/* 🌟 Reszponzív optimalizálás */
+@media (max-width: 768px) {
+  .allBooks {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .bookDetailsContainer {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .detailsButton, .backToList {
+    width: 100%;
+  }
+}
+
+.bookDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  max-width: 90%;
+  width: 600px;
+  margin: 20px auto;
+  background-color: var(--background);
+  color: var(--primaryText);
+}
+
+.bookDetails {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
 }
 
 .bookInfo {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 280px;
+  flex: 1;
 }
 
 .ratings {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   align-items: center;
-}
-
-.backToList {
-  margin-top: 20px;
-  justify-self: center;
-  text-align: center;
-}
-
-.bookDetails button {
-  margin-top: 20px;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
+  gap: 15px;
+  flex: 1;
+  min-width: 280px;
 }
 
 .rating {
@@ -76,82 +166,96 @@
   gap: 5px;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .star {
   font-size: 24px;
   cursor: pointer;
   color: #ccc;
-  transition: color 0.2s;
+  transition: color 0.2s ease-in-out;
 }
 
-.star.filled {
-  color: #ffcc00;
-}
-
-.star.half-filled {
-  background: linear-gradient(to right, gold 50%, #ccc 50%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
+.star.filled,
 .star.hovered {
-  color: #ffcc00;
-}
-
-.stars.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-
-.detailsButton{
-  position: relative;
-  left: 30%;
-  background-color: var(--primary);
-  color: var(--primaryText);
-  border: 2px solid var(--primary);
-  border-radius: 10px;
-  margin-top: 10px;
-  padding: 10px;
-  width: 100px;
-  max-width: 80%;
-  cursor: pointer;
-}
-
-.detailsButton:hover{
-  background-color: var(--background);
-  color: var(--secondaryText);
-  border: 2px solid var(--primary);
-}
-
-.backToList{
-  position: relative;
-  left: 32%;
-  background-color: var(--primary);
-  border: 2px solid var(--primary);
-  color: var(--primaryText);
-  border-radius: 10px;
-  margin-top: 10px;
-  padding: 10px;
-  width: 200px;
-  max-width: 80%;
-  cursor: pointer;
-}
-
-.backToList:hover{
-  background-color: var(--background);
-  color: var(--secondaryText);
+  color: var(--primary);
 }
 
 .removeRating {
   background-color: var(--primary);
   border: 2px solid var(--primary);
   color: var(--primaryText);
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 250px;
+  text-align: center;
 }
 
 .removeRating:hover {
-  background-color: var(--background);
+  background-color: var(--hover);
+}
+
+.backToList {
+  background-color: var(--primary);
+  border: 2px solid var(--primary);
+  color: var(--primaryText);
+  border-radius: 10px;
+  margin-top: 15px;
+  padding: 12px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.backToList:hover {
+  background-color: var(--hover);
+  color: var(--secondaryText);
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+  .bookDetailsContainer {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .bookDetails {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bookInfo,
+  .ratings {
+    min-width: 100%;
+    text-align: center;
+  }
+
+  .rating {
+    flex-wrap: wrap;
+  }
+
+  .star {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .bookDetailsContainer {
+    padding: 10px;
+  }
+
+  .backToList,
+  .removeRating {
+    width: 90%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .star {
+    font-size: 18px;
+  }
 }
 

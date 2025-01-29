@@ -37,6 +37,7 @@
     top: 20px; /* Jobb felső sarok */
     right: 20px;
     z-index: 1000;
+    margin-left: 20px;
   }
   
   /* 9 pont alapállapot */
@@ -140,3 +141,6 @@
     }
   }
   
+
+  @media (min-width: 412px) and (max-width: 768px){
+  }

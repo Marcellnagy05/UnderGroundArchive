@@ -62,34 +62,6 @@
   }
 }
 
-.profileContainer {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  height: 100vh;
-  background-color: transparent;
-  font-family: Arial, sans-serif;
-}
-
-.username {
-  padding: 16px;
-  font-size: 1.25rem;
-  font-weight: bold;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  background-image: linear-gradient(
-    to right,
-    var(--color-start),
-    var(--color-mid),
-    var(--color-end)
-  );
-  background-size: 200% 100%; /* Fontos: nagyobb háttér a mozgáshoz */
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: flowingGradient 3s linear infinite;
-}
 @keyframes flowingGradient {
   0% {
     background-position: 200% 0;
@@ -144,18 +116,79 @@
   --color-mid: var(--gluttony-color-mid);
   --color-end: var(--gluttony-color-end);
 }
-
-
-.UserInfo{
-  margin-top: 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(7,1fr);
-  gap: 1.5rem;
+.profileContainer {
+  display: flex;
+  flex-direction: column; /* Függőleges elrendezés alapértelmezetten */
+  align-items: center; /* Középre igazítás */
+  height: auto; /* Ne korlátozza a magasságot mobilon */
+  padding: 16px; /* Hely a szélek körül */
+  background-color: transparent;
+  font-family: Arial, sans-serif;
 }
 
+.username {
+  width: 100%; /* Kitölti a mobil képernyő szélességét */
+  max-width: 400px; /* Maximális szélesség */
+  margin: 0 auto; /* Középre igazítás */
+  padding: 16px;
+  font-size: 1rem; /* Kisebb betűméret mobilon */
+  text-align: center;
+background-image: linear-gradient(
+    to right,
+    var(--color-start),
+    var(--color-mid),
+    var(--color-end)
+  );
+  background-size: 200% 100%; /* Fontos: nagyobb háttér a mozgáshoz */
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: flowingGradient 3s linear infinite;
+}
 
-.UserInfo p:nth-child(2n){
-  padding: 20px;
+.UserInfo {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr; /* Egy oszlop alapértelmezetten */
+  gap: 16px; /* Kisebb hely az elemek között mobilon */
+}
+
+.UserInfo p:nth-child(2n) {
+  padding: 16px; /* Kisebb padding mobilon */
   border: 2px solid var(--secondary);
+}
+
+/* Tablet méretek (768px vagy nagyobb) */
+@media (min-width: 768px) {
+  .profileContainer {
+    flex-direction: row; /* Vízszintes elrendezés */
+    align-items: flex-start; /* Balra igazítás */
+    height: 100vh; /* Teljes magasság */
+    padding: 24px; /* Több hely a széleken */
+  }
+
+  .username {
+    width: 100%; /* Teljes szélesség tablet nézetben */
+    max-width: 600px; /* Nagyobb szélesség */
+    font-size: 1.25rem; /* Eredeti betűméret */
+  }
+
+  .UserInfo {
+    grid-template-columns: repeat(2, 1fr); /* Két oszlopos elrendezés */
+    gap: 24px; /* Nagyobb hely az elemek között */
+  }
+}
+
+/* Desktop méretek (1024px vagy nagyobb) */
+@media (min-width: 1024px) {
+  .username {
+    max-width: 800px; /* Még szélesebb megjelenítés desktopon */
+    font-size: 1.5rem; /* Nagyobb betűméret desktopon */
+    padding: 24px;
+  }
+
+  .UserInfo {
+    grid-template-columns: repeat(2, 1fr); /* Továbbra is két oszlop */
+    gap: 32px; /* Még nagyobb hely az elemek között */
+  }
 }
