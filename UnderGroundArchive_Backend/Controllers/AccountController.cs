@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -80,6 +81,53 @@ namespace UnderGroundArchive_Backend.Controllers
                 return Unauthorized("Hibás felhasználónév vagy jelszó.");
             }
         }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto model)
+        {
+            var payload = await VerifyGoogleToken(model.Token);
+            if (payload == null)
+            {
+                return BadRequest("Invalid Google token.");
+            }
+
+            var user = await _userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = payload.Email,
+                    Email = payload.Email,
+                    JoinDate = DateTime.UtcNow
+                };
+
+                var result = await _userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+
+            var token = await GenerateJwtToken(user);
+            return Ok(new { jwt = token });
+        }
+
+        private async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string token)
+        {
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings()
+                {
+                    Audience = new List<string> { _configuration["Authentication:Google:ClientId"] }
+                };
+                return await GoogleJsonWebSignature.ValidateAsync(token, settings);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDTO newUser)

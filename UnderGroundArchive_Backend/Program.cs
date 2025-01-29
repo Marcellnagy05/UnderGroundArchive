@@ -65,6 +65,10 @@ public class Program
                         return context.Response.WriteAsync(result);
                     }
                 };
+            }).AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });
 
 
