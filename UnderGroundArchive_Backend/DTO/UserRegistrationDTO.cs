@@ -9,5 +9,7 @@
         public string Country { get; set; }
         public string PhoneNumber { get; set; }
         public decimal Balance { get; set; } = 0m;
+        public int SubscriptionId { get; set; } = 1;
+        public int RankId { get; set; } = 1;
     }
 }

@@ -108,7 +108,9 @@ namespace UnderGroundArchive_Backend.Controllers
                 Email = newUser.Email,
                 BirthDate = newUser.BirthDate,
                 Country = newUser.Country,
-                PhoneNumber = newUser.PhoneNumber
+                PhoneNumber = newUser.PhoneNumber,
+                RankId = 1,
+                SubscriptionId = 1,
             };
 
             var result = await _userManager.CreateAsync(user, newUser.Password);
@@ -118,7 +120,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 return BadRequest(new { errorCode = "REGISTRATION_FAILED", errors = errorMessages });
             }
 
-            await _userManager.AddToRoleAsync(user, "Critic");
+            await _userManager.AddToRoleAsync(user, "User");
 
             return Ok(new { message = "A felhasználó sikeresen regisztrálva." });
         }
