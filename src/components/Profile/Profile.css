@@ -1,14 +1,194 @@
+:root {
+  --sloth-color-start: #FFD633;
+  --sloth-color-mid: #ffcc00;
+  --sloth-color-end: #e6b800;
+  
+  --envy-color-start: #FFB733; 
+  --envy-color-mid: #FFA477;
+  --envy-color-end: #e68a00;
+  
+  --greed-color-start: #FF884D;
+  --greed-color-mid: #ED7855;
+  --greed-color-end: #cc6600;
+  
+  --lust-color-start: #A66733;
+  --lust-color-mid: #B85C4F;
+  --lust-color-end: #7A3E0B;
+  
+  --wrath-color-start: #FD9C8C;
+  --wrath-color-mid: #AC6D7E;
+  --wrath-color-end: #e6766a; 
+  
+  --pride-color-start: #F57A7A;
+  --pride-color-mid: #63465A;
+  --pride-color-end: #cc3f3f;
+  
+  --gluttony-color-start: #A66733;
+  --gluttony-color-mid: #533D40;
+  --gluttony-color-end: #7A3E0B;
+  
+}
+
+@media (prefers-color-scheme: dark-theme) {
+  :root {
+    --sloth-color-start: #c6accd; /* világosabb #C99E74 */
+    --sloth-color-mid: #b39eb5;
+    --sloth-color-end: #8e7a8d; /* sötétebb #C99E74 */
+    
+    --envy-color-start: #E6A895; /* világosabb #C6876B */
+    --envy-color-mid: #C6876B;
+    --envy-color-end: #A56758; /* sötétebb #C6876B */
+    
+    --greed-color-start: #7a1414; /* világosabb #A7604E */
+    --greed-color-mid: #540804;
+    --greed-color-end: #3f0202; /* sötétebb #A7604E */
+    
+    --lust-color-start: #B56A60; /* világosabb #944C46 */
+    --lust-color-mid: #944C46;
+    --lust-color-end: #743832; /* sötétebb #944C46 */
+    
+    --wrath-color-start: #A87A90; /* világosabb #8A6679 */
+    --wrath-color-mid: #8A6679;
+    --wrath-color-end: #704D61; /* sötétebb #8A6679 */
+    
+    --pride-color-start: #684764; /* világosabb #4C334B */
+    --pride-color-mid: #4C334B;
+    --pride-color-end: #35223A; /* sötétebb #4C334B */
+    
+    --gluttony-color-start: #5A3D42; /* világosabb #422B2F */
+    --gluttony-color-mid: #422B2F;
+    --gluttony-color-end: #2E1C21; /* sötétebb #422B2F */
+    
+  }
+}
+
+@keyframes flowingGradient {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.Newborn {
+  color: var(--primaryText);
+}
+
+.Sloth {
+  --color-start: var(--sloth-color-start);
+  --color-mid: var(--sloth-color-mid);
+  --color-end: var(--sloth-color-end);
+}
+
+.Envy {
+  --color-start: var(--envy-color-start);
+  --color-mid: var(--envy-color-mid);
+  --color-end: var(--envy-color-end);
+}
+
+.Greed {
+  --color-start: var(--greed-color-start);
+  --color-mid: var(--greed-color-mid);
+  --color-end: var(--greed-color-end);
+}
+
+.Lust {
+  --color-start: var(--lust-color-start);
+  --color-mid: var(--lust-color-mid);
+  --color-end: var(--lust-color-end);
+}
+
+.Wrath {
+  --color-start: var(--wrath-color-start);
+  --color-mid: var(--wrath-color-mid);
+  --color-end: var(--wrath-color-end);
+}
+
+.Pride {
+  --color-start: var(--pride-color-start);
+  --color-mid: var(--pride-color-mid);
+  --color-end: var(--pride-color-end);
+}
+
+.Gluttony {
+  --color-start: var(--gluttony-color-start);
+  --color-mid: var(--gluttony-color-mid);
+  --color-end: var(--gluttony-color-end);
+}
 .profileContainer {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  display: flex;
+  flex-direction: column; /* Függőleges elrendezés alapértelmezetten */
+  align-items: center; /* Középre igazítás */
+  height: auto; /* Ne korlátozza a magasságot mobilon */
+  padding: 16px; /* Hely a szélek körül */
+  background-color: transparent;
+  font-family: Arial, sans-serif;
+}
+
+.username {
+  width: 100%; /* Kitölti a mobil képernyő szélességét */
+  max-width: 400px; /* Maximális szélesség */
+  margin: 0 auto; /* Középre igazítás */
+  padding: 16px;
+  font-size: 1rem; /* Kisebb betűméret mobilon */
+  text-align: center;
+background-image: linear-gradient(
+    to right,
+    var(--color-start),
+    var(--color-mid),
+    var(--color-end)
+  );
+  background-size: 200% 100%; /* Fontos: nagyobb háttér a mozgáshoz */
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: flowingGradient 3s linear infinite;
+}
+
+.UserInfo {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr; /* Egy oszlop alapértelmezetten */
+  gap: 16px; /* Kisebb hely az elemek között mobilon */
+}
+
+.UserInfo p:nth-child(2n) {
+  padding: 16px; /* Kisebb padding mobilon */
+  border: 2px solid var(--secondary);
+}
+
+/* Tablet méretek (768px vagy nagyobb) */
+@media (min-width: 768px) {
+  .profileContainer {
+    flex-direction: row; /* Vízszintes elrendezés */
+    align-items: flex-start; /* Balra igazítás */
+    height: 100vh; /* Teljes magasság */
+    padding: 24px; /* Több hely a széleken */
   }
-  
-  
-  .profileContainer p {
-    margin: 0;
+
+  .username {
+    width: 100%; /* Teljes szélesség tablet nézetben */
+    max-width: 600px; /* Nagyobb szélesség */
+    font-size: 1.25rem; /* Eredeti betűméret */
   }
-  
+
+  .UserInfo {
+    grid-template-columns: repeat(2, 1fr); /* Két oszlopos elrendezés */
+    gap: 24px; /* Nagyobb hely az elemek között */
+  }
+}
+
+/* Desktop méretek (1024px vagy nagyobb) */
+@media (min-width: 1024px) {
+  .username {
+    max-width: 800px; /* Még szélesebb megjelenítés desktopon */
+    font-size: 1.5rem; /* Nagyobb betűméret desktopon */
+    padding: 24px;
+  }
+
+  .UserInfo {
+    grid-template-columns: repeat(2, 1fr); /* Továbbra is két oszlop */
+    gap: 32px; /* Még nagyobb hely az elemek között */
+  }
+}

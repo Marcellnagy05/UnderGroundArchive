@@ -31,6 +31,26 @@
     cursor: pointer;
     border-radius: 5px;
   }
+
+  .switch .slider {
+    background-color: var(--primary);
+  }
+  
+  .switch .slider:hover{
+    background-color: var(--thirdColor);
+    border: 1px solid var(--secondaryText);
+  }
+  
+  .setting-button{
+    background-color: var(--primary);
+    color: var(--primaryText);
+  }
+  
+  .setting-button:hover {
+    background-color: var(--thirdColor);
+    color: var(--secondaryText);
+    border: 1px solid var(--secondaryText);
+  }
   
   /* Switch stílusok */
   .switch {

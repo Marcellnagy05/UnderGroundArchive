@@ -1,0 +1,146 @@
+/* Nyitó animáció */
+@keyframes menu-expand {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  /* Záró animáció */
+  @keyframes menu-shrink {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+  }
+
+  /* Nyitott menü */
+.menu-items.active {
+    animation: menu-expand 0.3s forwards ease-in-out;
+  }
+  
+  /* Bezárás animáció */
+  .menu-items.closing {
+    animation: menu-shrink 0.3s forwards ease-in-out;
+  }
+
+.menu-container {
+    position: fixed;
+    top: 20px; /* Jobb felső sarok */
+    right: 20px;
+    z-index: 1000;
+    margin-left: 20px;
+  }
+  
+  /* 9 pont alapállapot */
+  .dots-menu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .dots-menu div {
+    width: 12px;
+    height: 12px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  .dots-menu div:nth-child(1) { animation-delay: 0s; }
+  .dots-menu div:nth-child(2) { animation-delay: 0.2s; }
+  .dots-menu div:nth-child(3) { animation-delay: 0.4s; }
+  .dots-menu div:nth-child(4) { animation-delay: 0.6s; }
+  .dots-menu div:nth-child(5) { animation-delay: 0.8s; }
+  .dots-menu div:nth-child(6) { animation-delay: 1s; }
+  .dots-menu div:nth-child(7) { animation-delay: 1.2s; }
+  .dots-menu div:nth-child(8) { animation-delay: 1.4s; }
+  .dots-menu div:nth-child(9) { animation-delay: 1.6s; }
+  
+  /* Nyitott menü animáció */
+  .menu-items {
+    position: absolute;
+    top: 0;
+    right: 10rem;
+    width: 60px;
+    height: 60px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 15px;
+    opacity: 0;
+    transform: scale(0.5); /* Kezdetben kisebb */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform-origin: right;
+  }
+  
+  .menu-items.active {
+    opacity: 1;
+    transform: scale(1); /* Teljes méretre tágul */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .menu-items button {
+    position: relative;
+    padding: 20px;
+    background: var(--thirdColor);
+    border: 2px solid var(--primaryText);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    color: var(--secondaryText);
+    transition: transform 0.3s ease, background 0.2s ease;
+  }
+
+  .Icon{
+    width: 1.5rem;
+    height: 1rem;
+  }
+  
+  .menu-items button:hover {
+    transform: scale(1.2);
+    background: var(--primary);
+    color: var(--primaryText);
+  }
+  
+  /* Záró "X" gomb középen */
+  .menu-items button.close-menu {
+    background: var(--secondary);
+    color: var(--primaryText);
+    font-size: 1rem;
+  }
+  
+  .menu-items button.close-menu:hover {
+    background: var(--thirdColor);
+  }
+  
+  /* Pulzáló animáció */
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      background-color: var(--primary);
+    }
+    50% {
+      transform: scale(1.5);
+      background-color: var(--hover);
+    }
+  }
+  
+
+  @media (min-width: 412px) and (max-width: 768px){
+  }
