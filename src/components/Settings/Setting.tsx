@@ -20,9 +20,13 @@ const Settings = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
+    console.log(JSON.stringify(newTheme));
+    
 
     // API hívás, hogy a backend-en is frissüljön a téma
     const jwt = localStorage.getItem("jwt");
+    console.log("jwt",jwt);
+    
     if (jwt) {
       try {
         const response = await fetch("https://localhost:7197/api/Account/updateTheme", {
@@ -36,15 +40,17 @@ const Settings = () => {
 
         if (!response.ok) {
           // Ha nem sikerült a kérés, próbáljuk meg lekérni a válasz szöveget
-          const errorText = await response.text();  // Próbáljuk meg szöveges választ is kezelni
-          return;
+          const errorText = await response;  // Próbáljuk meg szöveges választ is kezelni
+          return errorText;
         }
 
         // Ellenőrizzük, hogy a válasz JSON típusú-e
         const data = await response.json();
+        console.log("data:", data);
+        
         console.log("Téma frissítve:", data);
       } catch (error) {
-        
+        console.log("Baj van he", error);
       }
     }
   };
