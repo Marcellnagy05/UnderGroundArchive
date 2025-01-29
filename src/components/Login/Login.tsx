@@ -4,16 +4,17 @@ import Loading from "../Loading/Loading";
 import { jwtDecode } from "jwt-decode";
 import { useToast } from "../contexts/ToastContext";
 import { useThemeContext } from "../contexts/ThemeContext";
-import "./Login.css"
+import GoogleLoginButton from "../GoogleLoginButton/GoogleLoginButton"; // Importáld az új komponenst
+import "./Login.css";
 
 const Login = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { user, setUser } = useUserContext(); // Context használata
+  const { user, setUser } = useUserContext();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const {showToast} = useToast();
+  const { showToast } = useToast();
   const { setTheme } = useThemeContext();
 
   const checkIfLoggedIn = () => {
@@ -41,10 +42,10 @@ const Login = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
-  
+
     const MIN_LOADING_TIME = 2500;
     const startTime = Date.now();
-  
+
     try {
       const response = await fetch("https://localhost:7197/api/Account/login", {
         method: "POST",
@@ -54,28 +55,26 @@ const Login = () => {
         },
         body: JSON.stringify({ login, password }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         if (data.jwt) {
           localStorage.setItem("jwt", data.jwt.result);
-  
-          // Betöltjük a felhasználó választott témáját (ha van)
+
           const userResponse = await fetch("https://localhost:7197/api/User/me", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${data.jwt.result}`,
             },
           });
-  
+
           if (userResponse.ok) {
             const userData = await userResponse.json();
             setUser(userData);
-  
-            // Téma lekérése a user adatokból és beállítása
+
             if (userData.theme) {
-              localStorage.setItem("theme", userData.theme); // Téma tárolása
-              setTheme(userData.theme as "light" | "dark");  // Téma alkalmazása
+              localStorage.setItem("theme", userData.theme);
+              setTheme(userData.theme as "light" | "dark");
             }
           } else {
             setUser("guest");
@@ -84,7 +83,6 @@ const Login = () => {
           showToast("Nincs token a válaszban.", "error");
         }
       } else {
-        const errorData = await response.json();
         showToast("Hibás felhasználónév vagy jelszó!", "error");
         setIsLoading(false);
         return;
@@ -97,14 +95,12 @@ const Login = () => {
     } finally {
       const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-  
+
       setTimeout(() => {
         setIsLoading(false);
       }, remainingTime);
     }
   };
-  
-  
 
   if (isLoading) {
     return <Loading />;
@@ -139,6 +135,9 @@ const Login = () => {
             {error && <p className="error-message">{error}</p>}
             <button type="submit">Bejelentkezés</button>
           </form>
+
+          {/* Google bejelentkezés gomb */}
+          <GoogleLoginButton />
         </div>
       )}
     </div>

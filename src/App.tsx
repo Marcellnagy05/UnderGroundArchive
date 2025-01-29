@@ -13,14 +13,19 @@ import Profile from "./components/Profile/Profile";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ProfileProvider } from './components/contexts/ProfileContext';
+import RaindropBackground from "./components/RaindropBackground/RaindropBackground";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const App = () => {
+  const GOOGLE_CLIENT_ID = "500480770304-ll53e6gspf512sj82sotjmg36vcrqid7.apps.googleusercontent.com";
   return (
+    <GoogleOAuthProvider clientId= {GOOGLE_CLIENT_ID}>
     <Router>
       <ToastProvider>
         <UserProvider>
           <ThemeProvider>
             <ProfileProvider>
+            <RaindropBackground />
             <div className="appContent">
               <Navbar />
               <SimpleBar style={{maxHeight: '100vh'}} className="main-content" autoHide={true}>
@@ -39,6 +44,7 @@ const App = () => {
         </UserProvider>
       </ToastProvider>
     </Router>
+    </GoogleOAuthProvider>
   );
 };
 
