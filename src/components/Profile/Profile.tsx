@@ -261,7 +261,8 @@ const Profile = () => {
 
           if (response.ok) {
             const userData = await response.json();
-
+            console.log(userData);
+            
             setUserProfile({
               id: userData?.id,
               userName: userData?.userName,
@@ -344,6 +345,8 @@ const Profile = () => {
     const subscription = subscriptions.find(
       (sub) => sub.subscriptionId === subscriptionId
     );
+    console.log(subscription?.subscriptionName);
+    
     return subscription ? subscription.subscriptionName : "";
   };
 

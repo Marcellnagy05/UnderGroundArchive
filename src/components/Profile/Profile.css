@@ -72,7 +72,9 @@
 }
 
 .Newborn {
-  color: var(--primaryText);
+  --color-start: var(--primaryText);
+  --color-mid: var(--primaryText);
+  --color-end: var(--primaryText);
 }
 
 .Sloth {
