@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "../contexts/ToastContext";
 import "./PublishBook.css"
+import { getCategories, getGenres } from "../../services/PublishBookServices";
 
 // Műfaj típus
 interface Genre {
@@ -28,16 +29,16 @@ const PublishBook = () => {
   // Műfajok és kategóriák lekérése
   const fetchGenresAndCategories = async () => {
     try {
-      const genreResponse = await fetch("https://localhost:7197/api/Metadata/genres");
-      const genreData = await genreResponse.json();
-      setGenres(genreData);
+      getGenres().then(res => setGenres(res));
+      getCategories().then(res => setCategories(res));
 
-      const categoryResponse = await fetch("https://localhost:7197/api/Metadata/categories");
-      const categoryData = await categoryResponse.json();
-      setCategories(categoryData);
     } catch (err) {
-      console.error("Hiba a műfajok és kategóriák lekérése során:", err);
-      setError("Hiba történt az adatok lekérésekor.");
+
+      if(err instanceof Error){
+        setError(err.message);
+      }else{
+        console.error("Hiba a műfajok és kategóriák lekérése során:", err);
+      }
     }
   };
 

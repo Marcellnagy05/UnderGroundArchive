@@ -56,9 +56,11 @@ const Login = () => {
         body: JSON.stringify({ login, password }),
       });
 
+      console.log("1.response.ok:", response);
+      
       if (response.ok) {
         const data = await response.json();
-        if (data.jwt) {
+        if (data.jwt.result) {
           localStorage.setItem("jwt", data.jwt.result);
 
           const userResponse = await fetch("https://localhost:7197/api/User/me", {
@@ -67,11 +69,15 @@ const Login = () => {
               Authorization: `Bearer ${data.jwt.result}`,
             },
           });
-
+          console.log("userresponse.ok:", userResponse.ok);
+          
           if (userResponse.ok) {
+            console.log("ok 1");
+            
             const userData = await userResponse.json();
             setUser(userData);
-
+            console.log("Userdata:", userData);
+            
             if (userData.theme) {
               localStorage.setItem("theme", userData.theme);
               setTheme(userData.theme as "light" | "dark");
