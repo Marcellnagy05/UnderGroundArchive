@@ -15,11 +15,13 @@ namespace UnderGroundArchive_WPF.ViewModels
     {
         private readonly ApiService _apiService;
         private ObservableCollection<RequestModel> _reports;
+        private readonly INavigationService _navigationService;
         private RequestModel _selectedReport;
 
-        public ModeratorViewModel(ApiService apiService)
+        public ModeratorViewModel(ApiService apiService, INavigationService navigationService)
         {
             _apiService = apiService;
+            _navigationService = navigationService;
         }
 
         // Add properties and commands specific to the Moderator view

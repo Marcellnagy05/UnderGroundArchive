@@ -6,7 +6,5 @@
         xmlns:local="clr-namespace:UnderGroundArchive_WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+    <ContentControl x:Name="NavigationContent" />
 </Window>
