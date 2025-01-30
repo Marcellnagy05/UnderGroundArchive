@@ -350,20 +350,6 @@ const Profile = () => {
     return subscription ? subscription.subscriptionName : "";
   };
 
-  const getRankName = (rankId: number | undefined): string => {
-    if (!ranks || !rankId) return "Nincs adat";
-    const rank = ranks.find((rank) => rank.rankId === rankId);
-    return rank ? rank.rankName : "Nincs adat";
-  };
-
-  const getSubscriptionName = (subscriptionId: number | undefined): string => {
-    if (!subscriptions || !subscriptionId) return "Nincs adat";
-    const subscription = subscriptions.find(
-      (sub) => sub.subscriptionId === subscriptionId
-    );
-    return subscription ? subscription.subscriptionName : "Nincs adat";
-  };
-
   useEffect(() => {
     const token = localStorage.getItem("jwt");
     const decoded: any = jwtDecode(token ? token : "N/A");
@@ -384,13 +370,11 @@ const Profile = () => {
   }, [activeTab, books, userProfile]);
 
   const deleteRating = async (bookId: number) => {
-    const { user } = useUserContext(); // Hozzáférés a user contexthez
-
     if (
-      typeof user === "object" &&
-      user !== null &&
-      "userId" in user &&
-      "role" in user
+      typeof userProfile === "object" &&
+      userProfile !== null &&
+      "id" in userProfile &&
+      "role" in userProfile
     ) {
       if (!userProfile?.id) {
         showToast("Felhasználói azonosító hiányzik!", "error");
@@ -563,6 +547,7 @@ const Profile = () => {
                   {Object.keys(ratings[parseInt(bookId)]).map((userId) => (
                     <div key={userId}>
                       <StarRating rating={ratings[parseInt(bookId)][userId]} />
+                      <button onClick={() => deleteRating(parseInt(bookId))}>Törlés</button>
                     </div>
                   ))}
                 </div>

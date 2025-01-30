@@ -1,9 +1,10 @@
-import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useUserContext } from "../contexts/UserContext";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 const GoogleLoginButton = () => {
   const { setUser } = useUserContext();
+  const { setTheme } = useThemeContext();
 
   const handleGoogleSuccess = async (response: any) => {
     const googleToken = response.credential;
@@ -27,6 +28,12 @@ const GoogleLoginButton = () => {
         if (userResponse.ok) {
           const userData = await userResponse.json();
           setUser(userData);
+  
+          // Ellenőrizzük, hogy van-e téma és beállítjuk
+          if (userData.theme) {
+            localStorage.setItem("theme", userData.theme);
+            setTheme(userData.theme as "light" | "dark");
+          }
         }
       } else {
         console.error("Google login failed with status:", res.status);

@@ -56,7 +56,6 @@ const Login = () => {
         body: JSON.stringify({ login, password }),
       });
 
-      console.log("1.response.ok:", response);
       
       if (response.ok) {
         const data = await response.json();
@@ -69,14 +68,11 @@ const Login = () => {
               Authorization: `Bearer ${data.jwt.result}`,
             },
           });
-          console.log("userresponse.ok:", userResponse.ok);
           
           if (userResponse.ok) {
-            console.log("ok 1");
             
             const userData = await userResponse.json();
             setUser(userData);
-            console.log("Userdata:", userData);
             
             if (userData.theme) {
               localStorage.setItem("theme", userData.theme);
