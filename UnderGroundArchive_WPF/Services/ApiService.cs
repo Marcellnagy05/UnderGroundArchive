@@ -9,6 +9,7 @@ using System.Windows;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace UnderGroundArchive_WPF.Services
 {
@@ -42,27 +43,35 @@ namespace UnderGroundArchive_WPF.Services
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
             }
         }
-        public async Task<(bool isSuccess, string? token)> LoginAsync(string username, string password)
+        public async Task<(bool isSuccess, string? token, string? role)> LoginAsync(string username, string password)
         {
             var loginData = new { Login = username, Password = password };
             string jsonPayload = JsonSerializer.Serialize(loginData);
 
-            Trace.WriteLine($"Sending Login Request: {jsonPayload}");
-
             var response = await _httpClient.PostAsJsonAsync($"{BASE_URL}/api/Account/login", loginData);
             string responseContent = await response.Content.ReadAsStringAsync(); // Log the response body
 
-            Trace.WriteLine($"Login API Response: {responseContent}");
-
             if (!response.IsSuccessStatusCode)
             {
-                return (false, null);
+                return (false, null, null);
             }
 
             var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponseModel>();
             var token = loginResponse?.jwt?.result; // Extract the token
 
-            return !string.IsNullOrEmpty(token) ? (true, token) : (false, null);
+            if (string.IsNullOrEmpty(token))
+            {
+                return (false, null, null);
+            }
+
+            // Decode the JWT token to extract the role
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            // Extract the role claim
+            var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+
+            return (true, token, roleClaim);
         }
 
 
@@ -76,8 +85,21 @@ namespace UnderGroundArchive_WPF.Services
                 throw new UnauthorizedAccessException("User is not authenticated. Please log in first.");
         }
 
-        // Get all users with authorization
-        public async Task<List<UserModel>> GetUsersAsync()
+        // Get all requests
+
+        public async Task<List<RequestModel>> GetPendingRequestsAsync()
+        {
+            EnsureAuthenticated();
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{BASE_URL}/api/Admin/pendingRequests");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<RequestModel>>();
+        }
+
+            // Get all users with authorization
+            public async Task<List<UserModel>> GetUsersAsync()
         {
             EnsureAuthenticated();
             var request = new HttpRequestMessage(HttpMethod.Get, $"{BASE_URL}/api/Admin/users");
@@ -89,15 +111,43 @@ namespace UnderGroundArchive_WPF.Services
         }
 
         // Get a single user by ID
-        public async Task<UserModel> GetUserAsync(string id)
+        //public async Task<UserModel> GetUserAsync(string id)
+        //{
+        //    EnsureAuthenticated();
+        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{BASE_URL}/api/Admin/user/{id}");
+        //    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
+        //    var response = await _httpClient.SendAsync(request);
+        //    response.EnsureSuccessStatusCode();
+        //    return await response.Content.ReadFromJsonAsync<UserModel>();
+        //}
+
+        // Accept request
+        public async Task<bool> AcceptRequestAsync(int requestId)
         {
             EnsureAuthenticated();
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{BASE_URL}/api/Admin/user/{id}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<UserModel>();
+            string url = $"{BASE_URL}/api/Admin/approveRequest?requestId={requestId}";
+
+            var response = await _httpClient.PatchAsync(url, null);
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            return response.IsSuccessStatusCode;
+        }
+
+        // Deny request
+        public async Task<bool> DenyRequestAsync(int requestId)
+        {
+            EnsureAuthenticated();
+
+            string url = $"{BASE_URL}/api/Admin/denyRequest?requestId={requestId}";
+
+            var response = await _httpClient.PatchAsync(url, null);
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            return response.IsSuccessStatusCode;
         }
 
         // Update mute status

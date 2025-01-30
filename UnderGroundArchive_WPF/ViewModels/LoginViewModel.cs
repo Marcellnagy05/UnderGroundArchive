@@ -48,9 +48,7 @@ namespace UnderGroundArchive_WPF.ViewModels
 
         private async Task LoginAsync()
         {
-
-
-            var (isSuccess, token) = await _apiService.LoginAsync(Username, Password);
+            var (isSuccess, token, role) = await _apiService.LoginAsync(Username, Password);
 
             if (isSuccess && !string.IsNullOrEmpty(token))
             {
@@ -59,16 +57,30 @@ namespace UnderGroundArchive_WPF.ViewModels
                 // Store the JWT token in ApiService
                 _apiService.SetToken(token);
 
-                // Open Admin Dashboard
-                var userView = new Views.UserView(new UserViewModel(_apiService));
-                userView.Show();
-                Application.Current.MainWindow?.Close();
+                // Check the user's role and redirect accordingly
+                if (role == "Admin")
+                {
+                    // Open Admin Dashboard
+                    var userView = new Views.UserView(new UserViewModel(_apiService));
+                    userView.Show();
+                    Application.Current.MainWindow?.Close();
+                }
+                else if (role == "Moderator")
+                {
+                    // Open Moderator Dashboard
+                    var moderatorView = new Views.ModeratorView(new ModeratorViewModel(_apiService));
+                    moderatorView.Show();
+                    Application.Current.MainWindow?.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Access denied! You do not have the required permissions.");
+                }
             }
             else
             {
                 MessageBox.Show("Login failed! Please check your credentials.");
             }
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

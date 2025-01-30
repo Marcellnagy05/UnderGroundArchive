@@ -20,7 +20,7 @@
             <Label Content="Select Role" Margin="5"/>
             <ComboBox ItemsSource="{Binding RoleOptions}" SelectedItem="{Binding SelectedRole}" Width="200" Margin="5"/>
         </StackPanel>
-
+        <Button Content="Go To Requests" Command="{Binding GoToRequestsCommand}" Margin="5" Width="150" HorizontalAlignment="Right"/>
         <DataGrid ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" Grid.Row="1" AutoGenerateColumns="True" />
     </Grid>
 </Window>

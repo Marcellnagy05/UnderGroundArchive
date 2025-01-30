@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using UnderGroundArchive_WPF.Models;
 using UnderGroundArchive_WPF.Services;
@@ -50,21 +51,17 @@ namespace UnderGroundArchive_WPF.ViewModels
         {
             _apiService = apiService;
             LoadUsersCommand = new RelayCommand(async () => await LoadUsersAsync());
-            ChangeMuteStatusCommand = new RelayCommand(async () =>
-            {
-                Trace.WriteLine("ChangeMuteStatusCommand executed");
-                await ChangeMuteStatusAsync();
-            });
-            ChangeBanStatusCommand = new RelayCommand(async () =>
-            {
-                Trace.WriteLine("ChangeBanStatusCommand executed");
-                await ChangeBanStatusAsync();
-            });
-            UpdateUserRoleCommand = new RelayCommand(async () =>
-            {
-                Trace.WriteLine("UpdateUserRoleCommand executed");
-                await UpdateUserRoleAsync();
-            });
+            ChangeMuteStatusCommand = new RelayCommand(async () => await ChangeMuteStatusAsync());
+            ChangeBanStatusCommand = new RelayCommand(async () => await ChangeBanStatusAsync());
+            UpdateUserRoleCommand = new RelayCommand(async () => await UpdateUserRoleAsync());
+            GoToRequestsCommand = new RelayCommand(async () => await GoToRequests());
+        }
+
+        private async Task GoToRequests()
+        {
+            var requestView = new Views.RequestView(new RequestViewModel(_apiService));
+            Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive)?.Close();
+            requestView.Show();
         }
 
         public ObservableCollection<UserModel> Users
@@ -91,6 +88,7 @@ namespace UnderGroundArchive_WPF.ViewModels
         public ICommand ChangeMuteStatusCommand { get; }
         public ICommand ChangeBanStatusCommand { get; }
         public ICommand UpdateUserRoleCommand { get; }
+        public ICommand GoToRequestsCommand { get; }
 
         private async Task LoadUsersAsync()
         {
@@ -100,11 +98,9 @@ namespace UnderGroundArchive_WPF.ViewModels
 
         private async Task ChangeMuteStatusAsync()
         {
-            Trace.WriteLine("Attempting to change mute status...");
             if (SelectedUser != null)
             {
                 var success = await _apiService.ChangeMuteStatusAsync(SelectedUser.Id);
-                Trace.WriteLine(success ? "Mute status changed" : "Mute status change failed");
                 if (success)
                 {
                     SelectedUser.IsMuted = !SelectedUser.IsMuted;

@@ -8,6 +8,6 @@ namespace UnderGroundArchive_WPF.Models
 {
     public class LoginResponseModel
     {
-        public JwtResponse jwt { get; set; }
+        public JwtResponse? jwt { get; set; }
     }
 }
