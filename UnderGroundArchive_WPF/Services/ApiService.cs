@@ -110,6 +110,20 @@ namespace UnderGroundArchive_WPF.Services
             return await response.Content.ReadFromJsonAsync<List<UserModel>>();
         }
 
+
+        // Get all reports
+
+        public async Task<List<ReportModel>> GetPendingReports()
+        {
+            EnsureAuthenticated();
+            var report = new HttpRequestMessage(HttpMethod.Get, $"{BASE_URL}/api/Moderator/pendingReports");
+            report.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
+            var response = await _httpClient.SendAsync(report);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<ReportModel>>();
+        }
+
         // Get a single user by ID
         //public async Task<UserModel> GetUserAsync(string id)
         //{
