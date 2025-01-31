@@ -125,7 +125,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     user = new ApplicationUser
                     {
-                        UserName = payload.FamilyName,
+                        UserName = payload.FamilyName ?? payload.GivenName ?? payload.Email,
                         Email = payload.Email,
                         PhoneNumber = await GetPhoneNumberFromGoogle(request.Token),
                         Country = payload.Locale ?? "Unknown", // Ha nincs, akkor "Unknown"
