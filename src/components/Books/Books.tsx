@@ -3,6 +3,7 @@ import "./Books.css";
 import StarRating from "../StarRating/StarRating";
 import { useToast } from "../contexts/ToastContext";
 import Comments from "../Comments/Comments";
+import { FaSyncAlt } from "react-icons/fa";
 
 interface Books {
   id: number;
@@ -55,6 +56,9 @@ const Books = () => {
   }>({});
   const [criticRatings, setCriticRatings] = useState<CriticRating[]>([]);
   const { showToast } = useToast();
+  const [flippedStates, setFlippedStates] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -64,10 +68,9 @@ const Books = () => {
         console.error("Hiba a kezdeti adatok betöltése során:", err);
       }
     };
-  
+
     fetchInitialData();
   }, []);
-  
 
   useEffect(() => {
     const fetchGenresAndCategories = async () => {
@@ -113,7 +116,6 @@ const Books = () => {
 
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      const roles = decodedToken["roles"] || [];
       const roleFromClaim =
         decodedToken[
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
@@ -128,7 +130,7 @@ const Books = () => {
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
         ];
 
-      setUser({ id: userId, userName, role: roleFromClaim});
+      setUser({ id: userId, userName, role: roleFromClaim });
       setRole(roleFromClaim || "guest");
       console.log(roleFromClaim);
 
@@ -368,20 +370,29 @@ const Books = () => {
     setCriticRatings([]);
   };
 
- const calculateCriticAverage = () => {
-  if (!selectedBook || criticRatings.length === 0) return 0;
+  const calculateCriticAverage = () => {
+    if (!selectedBook || criticRatings.length === 0) return 0;
 
-  // Szűrjük az adott könyvhöz tartozó kritikus értékeléseket
-  const bookRatings = criticRatings.filter(
-    (rating) => rating.bookId === selectedBook.id
-  );
+    // Szűrjük az adott könyvhöz tartozó kritikus értékeléseket
+    const bookRatings = criticRatings.filter(
+      (rating) => rating.bookId === selectedBook.id
+    );
 
-  if (bookRatings.length === 0) return 0;
+    if (bookRatings.length === 0) return 0;
 
-  const total = bookRatings.reduce((sum, rating) => sum + rating.ratingValue, 0);
-  return total / bookRatings.length;
-};
+    const total = bookRatings.reduce(
+      (sum, rating) => sum + rating.ratingValue,
+      0
+    );
+    return total / bookRatings.length;
+  };
 
+  const toggleFlip = (id: number) => {
+    setFlippedStates((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   return (
     <div>
@@ -389,28 +400,61 @@ const Books = () => {
       {!selectedBook ? (
         <div className="allBooks">
           {books.map((book) => (
-            <div key={book.id} className="bookCard">
-              <h3>{book.bookName}</h3>
-              <p>Szerző: {users[book.authorId]?.userName || "Betöltés..."}</p>
-              <p>Műfaj: {getGenreName(book.genreId)}</p>
-              <p>Kategória: {getCategoryName(book.categoryId)}</p>
-              <p>Átlagos értékelés: {parseFloat(book.averageRating.toString()).toFixed(2) || ""}</p>
-              <StarRating rating={book.averageRating || 0} />
-              <p>Saját értékelés:</p>
-              <div className="rating">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <span
-                    key={star}
-                    className={`star ${
-                      ratings[book.id]?.[user?.id || ""] >= star ? "filled" : ""
-                    }`}
+            <div key={book.id} className="container">
+              <div
+                className={`card ${flippedStates[book.id] ? "flipped" : ""}`}
+              >
+                <div className="front">
+                  <button
+                    className="flipButton"
+                    onClick={() => toggleFlip(book.id)}
                   >
-                    ★
-                  </span>
-                ))}
+                    <FaSyncAlt />
+                  </button>
+                  <div className="title">
+                    <h3>{book.bookName}</h3>
+                    <p>
+                      Szerző: {users[book.authorId]?.userName || "Betöltés..."}
+                    </p>
+                  </div>
+                  <button
+                    className="detailsButton"
+                    onClick={() => handleDetails(book)}
+                  >
+                    Részletek
+                  </button>
+                </div>
+                <div className="back">
+                  <button
+                    className="flipButton"
+                    onClick={() => toggleFlip(book.id)}
+                  >
+                    <FaSyncAlt />
+                  </button>
+                  <p>Műfaj: {getGenreName(book.genreId)}</p>
+                  <p>Kategória: {getCategoryName(book.categoryId)}</p>
+                  <p>
+                    Átlagos értékelés:{" "}
+                    {parseFloat(book.averageRating.toString()).toFixed(2) || ""}
+                  </p>
+                  <StarRating rating={book.averageRating || 0} />
+                  <p>Saját értékelés:</p>
+                  <div className="rating">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        className={`star ${
+                          ratings[book.id]?.[user?.id || ""] >= star
+                            ? "filled"
+                            : ""
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-
-              <button className="detailsButton" onClick={() => handleDetails(book)}>Részletek</button>
             </div>
           ))}
         </div>
@@ -471,7 +515,10 @@ const Books = () => {
                 </>
               )}
               {selectedBook && ratings[selectedBook.id]?.[user?.id || ""] && (
-                <button className="removeRating" onClick={() => deleteRating(selectedBook.id)}>
+                <button
+                  className="removeRating"
+                  onClick={() => deleteRating(selectedBook.id)}
+                >
                   Értékelés törlése
                 </button>
               )}

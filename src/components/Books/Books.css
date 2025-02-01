@@ -1,3 +1,13 @@
+.light-theme {
+  --background-rgb: 243, 229, 229;
+  --thirdColor-rgb: 248, 210, 205;
+}
+
+.dark-theme {
+  --background-rgb: 9, 18, 44;
+  --thirdColor-rgb: 13, 26, 61;
+}
+
 .allBooks {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -6,32 +16,89 @@
   justify-content: center;
 }
 
-.bookCard {
-  background: var(--background);
-  color: var(--primaryText);
-  border: 2px solid var(--primary);
-  border-radius: 12px;
-  padding: 16px;
-  max-width: 300px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.container {
+  width: 250px;
+  height: 280px;
+  border-radius: 2rem;
 }
 
 
-.bookCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 2px 15px var(--primary);
+.flipped {
+  cursor: pointer;
+  transform: rotateY(180deg);
 }
 
-.bookCard h3 {
+.flipButton{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: transparent;
+}
+
+.flipButton:hover{
+  color: var(--primary);
+  background-color: transparent;
+}
+
+.card {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  transition: transform 1500ms, box-shadow 300ms;
+  transform-style: preserve-3d;
+  border-radius: 2rem;
+  cursor: pointer;
+}
+
+.card:hover{
+  box-shadow: 0px 4px 15px var(--primary);
+}
+
+.front,
+.back {
+  height: 100%;
+  width: 100%;
+  border-radius: 2rem;
+  position: absolute;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.front {
+  background: linear-gradient(
+      rgba(var(--background-rgb), 0.9),
+      rgba(var(--thirdColor-rgb), 0.75)
+    ),
+    url("../../../public/images/BookCardPlaceholder.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  justify-content: space-around;
+}
+
+.back {
+  background-color: var(--background);
+  transform: rotateY(180deg);
+}
+
+.title{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title h3 {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 8px;
   color: var(--primaryText);
 }
 
-.bookCard p {
+.title p {
   font-size: 14px;
   margin: 4px 0;
   color: var(--secondaryText);
@@ -117,7 +184,8 @@
     padding: 15px;
   }
 
-  .detailsButton, .backToList {
+  .detailsButton,
+  .backToList {
     width: 100%;
   }
 }
@@ -259,4 +327,3 @@
     font-size: 18px;
   }
 }
-
