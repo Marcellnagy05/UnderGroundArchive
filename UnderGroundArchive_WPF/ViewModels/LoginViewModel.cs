@@ -15,14 +15,12 @@ namespace UnderGroundArchive_WPF.ViewModels
     public class LoginViewModel
     {
         private readonly ApiService _apiService;
-        private readonly INavigationService _navigationService;
         private string _username;
         private string _password;
 
-        public LoginViewModel(ApiService apiService, INavigationService navigationService)
+        public LoginViewModel(ApiService apiService)
         {
             _apiService = apiService;
-            _navigationService = navigationService;
             LoginCommand = new RelayCommand(async () => await LoginAsync());
         }
 
@@ -62,17 +60,22 @@ namespace UnderGroundArchive_WPF.ViewModels
                 // Check the user's role and redirect accordingly
                 if (role == "Admin")
                 {
-                    _navigationService.NavigateTo<UserViewModel>();
+                    // Open Admin Dashboard
+                    var userView = new Views.UserView(new UserViewModel(_apiService));
+                    userView.Show();
+                    Application.Current.MainWindow?.Close();
                 }
                 else if (role == "Moderator")
                 {
-                    _navigationService.NavigateTo<ModeratorViewModel>();
+                    // Open Moderator Dashboard
+                    var moderatorView = new Views.ModeratorView(new ModeratorViewModel(_apiService));
+                    moderatorView.Show();
+                    Application.Current.MainWindow?.Close();
                 }
                 else
                 {
                     MessageBox.Show("Access denied! You do not have the required permissions.");
                 }
-                _navigationService.CloseCurrentWindow();
             }
             else
             {

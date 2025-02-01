@@ -18,18 +18,16 @@ namespace UnderGroundArchive_WPF.ViewModels
     public class RequestViewModel : INotifyPropertyChanged
     {
         private readonly ApiService _apiService;
-        private readonly INavigationService _navigationService;
         private ObservableCollection<RequestModel> _requests;
         private RequestModel _selectedRequest;
 
-        public RequestViewModel(ApiService apiService, INavigationService navigationService)
+        public RequestViewModel(ApiService apiService)
         {
             _apiService = apiService;
             LoadRequestsCommand = new RelayCommand(async () => await LoadRequestsAsync());
             AcceptRequestCommand = new RelayCommand(async () => await AcceptRequestAsync());
             DenyRequestCommand = new RelayCommand(async () => await DenyRequestAsync());
             GoToUsersCommand = new RelayCommand(async () => await GoToUsers());
-            _navigationService = navigationService;
         }
 
         public ObservableCollection<RequestModel> Requests
@@ -60,7 +58,9 @@ namespace UnderGroundArchive_WPF.ViewModels
 
         private async Task GoToUsers()
         {
-            _navigationService.NavigateTo<UserViewModel>();
+            var userView = new Views.UserView(new UserViewModel(_apiService));
+            Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive)?.Close();
+            userView.Show();
         }
         private async Task LoadRequestsAsync()
         {

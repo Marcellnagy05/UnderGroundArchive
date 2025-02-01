@@ -19,6 +19,7 @@ namespace UnderGroundArchive_WPF
         public MainWindow()
         {
             InitializeComponent();
+            this.Visibility = Visibility.Hidden;
         }
     }
 }

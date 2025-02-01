@@ -18,7 +18,6 @@ namespace UnderGroundArchive_WPF.ViewModels
     public class UserViewModel : INotifyPropertyChanged
     {
         private readonly ApiService _apiService;
-        private readonly INavigationService _navigationService;
         private ObservableCollection<UserModel> _users;
         private UserModel _selectedUser;
 
@@ -48,7 +47,7 @@ namespace UnderGroundArchive_WPF.ViewModels
             }
         }
 
-        public UserViewModel(ApiService apiService, INavigationService navigationService)
+        public UserViewModel(ApiService apiService)
         {
             _apiService = apiService;
             LoadUsersCommand = new RelayCommand(async () => await LoadUsersAsync());
@@ -56,12 +55,13 @@ namespace UnderGroundArchive_WPF.ViewModels
             ChangeBanStatusCommand = new RelayCommand(async () => await ChangeBanStatusAsync());
             UpdateUserRoleCommand = new RelayCommand(async () => await UpdateUserRoleAsync());
             GoToRequestsCommand = new RelayCommand(async () => await GoToRequests());
-            _navigationService = navigationService;
         }
 
         private async Task GoToRequests()
         {
-            _navigationService.NavigateTo<RequestViewModel>();
+            var requestView = new Views.RequestView(new RequestViewModel(_apiService));
+            Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive)?.Close();
+            requestView.Show();
         }
 
         public ObservableCollection<UserModel> Users
