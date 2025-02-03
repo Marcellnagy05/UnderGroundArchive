@@ -4,9 +4,17 @@ body {
   margin: 0;
   padding: 0;
   background: radial-gradient(ellipse at bottom, var(--background), var(--thirdColor));
-  color: var(--primaryText); /* Betűszín beállítása */
+  color: var(--primaryText);
   overflow: hidden;
   font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 60%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 40%; }
+  100% { background-position: 0% 50%; }
 }
 
 ::-webkit-scrollbar {

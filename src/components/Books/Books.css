@@ -80,7 +80,7 @@
 }
 
 .back {
-  background-color: var(--background);
+  background-color: var(--thirdColor);
   transform: rotateY(180deg);
 }
 
