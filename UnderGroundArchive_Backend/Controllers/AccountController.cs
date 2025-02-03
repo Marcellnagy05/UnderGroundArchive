@@ -111,6 +111,7 @@ namespace UnderGroundArchive_Backend.Controllers
         {
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
+                IssuedAtClockTolerance = TimeSpan.FromMinutes(5),
                 Audience = new List<string> { "500480770304-ll53e6gspf512sj82sotjmg36vcrqid7.apps.googleusercontent.com" }
             };
 
@@ -125,7 +126,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     user = new ApplicationUser
                     {
-                        UserName = payload.FamilyName,
+                        UserName = payload.FamilyName ?? payload.GivenName ?? payload.Email,
                         Email = payload.Email,
                         PhoneNumber = await GetPhoneNumberFromGoogle(request.Token),
                         Country = payload.Locale ?? "Unknown", // Ha nincs, akkor "Unknown"
@@ -141,7 +142,6 @@ namespace UnderGroundArchive_Backend.Controllers
                     }
                 }
 
-                // **Itt generálunk egy SAJÁT JWT-t**
                 await _userManager.AddToRoleAsync(user, "User");
                 var jwtToken = GenerateJwtToken(user);
                 return Ok(new { jwt = jwtToken });
