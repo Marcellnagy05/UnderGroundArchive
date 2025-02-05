@@ -37,6 +37,8 @@ namespace UnderGroundArchive_Backend.Controllers
                     r.ReportId,
                     r.ReporterId,
                     r.ReportedPersonId,
+                    r.ReportedCommentId,
+                    r.ReportedBookId,
                     r.ReportTypeId,
                     r.ReportMessage,
                     r.IsHandled,
@@ -54,13 +56,15 @@ namespace UnderGroundArchive_Backend.Controllers
                 .Where(x => x.IsHandled == false)
                 .Select(r => new
                 {
-                   r.ReportId,
-                   r.ReporterId,
-                   r.ReportedPersonId,
-                   r.ReportTypeId,
-                   r.ReportMessage,
-                   r.IsHandled,
-                   r.CreatedAt
+                    r.ReportId,
+                    r.ReporterId,
+                    r.ReportedPersonId,
+                    r.ReportedCommentId,
+                    r.ReportedBookId,
+                    r.ReportTypeId,
+                    r.ReportMessage,
+                    r.IsHandled,
+                    r.CreatedAt
                 })
                 .ToListAsync();
 
@@ -78,6 +82,8 @@ namespace UnderGroundArchive_Backend.Controllers
                     r.ReportId,
                     r.ReporterId,
                     r.ReportedPersonId,
+                    r.ReportedCommentId,
+                    r.ReportedBookId,
                     r.ReportTypeId,
                     r.ReportMessage,
                     r.IsHandled,
