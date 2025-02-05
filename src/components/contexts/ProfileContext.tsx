@@ -11,6 +11,7 @@ interface UserProfile {
   birthDate: string;
   rankId: string;
   subscriptionId: string;
+  profilePictureId:string
 }
 
 interface ProfileContextType {
@@ -33,6 +34,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
+        const profilePictureId = decoded["ProfilePictureId"]
 
         const profile: UserProfile = {
           id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
@@ -44,6 +46,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
           birthDate: decoded["BirthDate"],
           rankId: decoded["RankId"],
           subscriptionId: decoded["SubscriptionId"],
+          profilePictureId: profilePictureId
         };
 
         setUserProfile(profile);

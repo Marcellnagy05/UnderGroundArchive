@@ -120,10 +120,11 @@
 }
 .profileContainer {
   display: flex;
-  flex-direction: column; /* Függőleges elrendezés alapértelmezetten */
-  align-items: center; /* Középre igazítás */
-  height: auto; /* Ne korlátozza a magasságot mobilon */
-  padding: 16px; /* Hely a szélek körül */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  padding: 16px;
   background-color: transparent;
   font-family: Arial, sans-serif;
 }
@@ -135,7 +136,7 @@
   padding: 16px;
   font-size: 1rem; /* Kisebb betűméret mobilon */
   text-align: center;
-background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
     var(--color-start),
     var(--color-mid),
@@ -148,17 +149,38 @@ background-image: linear-gradient(
   animation: flowingGradient 3s linear infinite;
 }
 
+.profileContent{
+  background-color: var(--thirdColor);
+  border-radius: 10px;
+  min-width: 30vw;
+}
+
 .UserInfo {
   margin-top: 16px;
-  display: grid;
-  grid-template-columns: 1fr; /* Egy oszlop alapértelmezetten */
-  gap: 16px; /* Kisebb hely az elemek között mobilon */
+}
+
+.one{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userTitle h3{
+  font-size: 2rem;
+}
+
+.userTitle{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
 }
 
 .UserInfo p:nth-child(2n) {
   padding: 16px; /* Kisebb padding mobilon */
-  border: 2px solid var(--secondary);
 }
+
 
 /* Tablet méretek (768px vagy nagyobb) */
 @media (min-width: 768px) {

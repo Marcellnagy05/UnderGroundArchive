@@ -12,7 +12,8 @@ export interface User {
   email: string,
   birthDate: string,
   rankId: string,
-  subscriptionId: string
+  subscriptionId: string,
+
 }
 
 
@@ -50,7 +51,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         const birthDate = decoded["BirthDate"]
         const rankId = decoded["RankId"]
         const subscriptionId = decoded["SubscriptionId"]
-
+        
         
         if (decoded?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]) {
           setUser({ 
@@ -62,7 +63,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             email: email,
             birthDate: birthDate,
             rankId: rankId,
-            subscriptionId: subscriptionId
+            subscriptionId: subscriptionId,
           });
         } else {
           console.error("Invalid token structure - missing name");

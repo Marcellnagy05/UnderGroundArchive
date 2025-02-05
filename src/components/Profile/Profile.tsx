@@ -7,6 +7,9 @@ import StarRating from "../StarRating/StarRating";
 import { useToast } from "../contexts/ToastContext";
 import { useProfileContext } from "../contexts/ProfileContext";
 import ProfileMenu from "../ProfileMenu/ProfileMenu";
+import { RankIcon } from "../RankIcon/RankIcon";
+import { UserInfo } from "../UserInfo/UserInfo";
+import RankSelector from "../RankSelector/RankSelector";
 
 interface Ranks {
   rankId: number;
@@ -54,6 +57,10 @@ const Profile = () => {
   }>({});
   const [criticRatings, setCriticRatings] = useState<CriticRating[]>([]);
   const { showToast } = useToast();
+  const [selectedRank, setSelectedRank] = useState(userProfile?.rankId || 1);
+  const [selectedPictureId, setSelectedPictureId] = useState(
+    userProfile?.profilePictureId || userProfile?.rankId || 1
+  );
 
   const handleMenuClick = (tab: string) => {
     setActiveTab(tab);
@@ -261,8 +268,7 @@ const Profile = () => {
 
           if (response.ok) {
             const userData = await response.json();
-            console.log(userData);
-            
+
             setUserProfile({
               id: userData?.id,
               userName: userData?.userName,
@@ -273,6 +279,7 @@ const Profile = () => {
               birthDate: userData?.birthDate,
               rankId: userData?.rankId.toString(),
               subscriptionId: userData?.subscriptionId.toString(),
+              profilePictureId: userData.profilePictureId.toString(),
             });
           } else {
             console.error("Failed to fetch user data");
@@ -345,8 +352,7 @@ const Profile = () => {
     const subscription = subscriptions.find(
       (sub) => sub.subscriptionId === subscriptionId
     );
-    console.log(subscription?.subscriptionName);
-    
+
     return subscription ? subscription.subscriptionName : "";
   };
 
@@ -437,42 +443,40 @@ const Profile = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <h2>Felhasználói adatok</h2>
             <div className="UserInfo">
-              <p>
-                <strong>Felhasználónév:</strong>{" "}
-              </p>
-              <p>{userProfile?.userName || "N/A"}</p>
-              <p>
-                <strong>Szerepkör:</strong>
-              </p>
-              <p>{userProfile?.role || "N/A"}</p>
-              <p>
-                <strong>Email:</strong>
-              </p>
-              <p>{userProfile?.email || "N/A"}</p>
-              <p>
-                <strong>Szül. idő:</strong>{" "}
-              </p>
-              <p>
-                {userProfile?.birthDate
-                  ? `${userProfile.birthDate.substring(
-                      0,
-                      4
-                    )}.${userProfile.birthDate.substring(
-                      5,
-                      7
-                    )}.${userProfile.birthDate.substring(8, 10)}`
-                  : "N/A"}
-              </p>
-              <p>
-                <strong>Ország:</strong>
-              </p>
-              <p>{userProfile?.country || "N/A"}</p>
-              <p>
-                <strong>Telefonszám:</strong>
-              </p>
-              <p>{userProfile?.phoneNumber || "N/A"}</p>
+              <div className="section one">
+                {/* 🟢 Az ikon a ProfilePictureId alapján frissül */}
+                <RankIcon rank={selectedPictureId.toString()} />
+
+                <div className="userTitle">
+                  <h3>{userProfile?.userName || "N/A"}</h3>
+                  <p>({userProfile?.role || "N/A"})</p>
+                </div>
+
+                {/* Jobb felső sarokba helyezett RankSelector */}
+                <RankSelector
+                  userProfile={userProfile}
+                  selectedPictureId={selectedPictureId}
+                  setSelectedPictureId={setSelectedPictureId}
+                />
+              </div>
+
+              <UserInfo
+                email={userProfile?.email || "N/A"}
+                birthDate={
+                  userProfile?.birthDate
+                    ? `${userProfile.birthDate.substring(
+                        0,
+                        4
+                      )}.${userProfile.birthDate.substring(
+                        5,
+                        7
+                      )}.${userProfile.birthDate.substring(8, 10)}`
+                    : "N/A"
+                }
+                country={userProfile?.country || "N/A"}
+                phone={userProfile?.phoneNumber || "N/A"}
+              />
             </div>
           </motion.div>
         )}
@@ -547,7 +551,9 @@ const Profile = () => {
                   {Object.keys(ratings[parseInt(bookId)]).map((userId) => (
                     <div key={userId}>
                       <StarRating rating={ratings[parseInt(bookId)][userId]} />
-                      <button onClick={() => deleteRating(parseInt(bookId))}>Törlés</button>
+                      <button onClick={() => deleteRating(parseInt(bookId))}>
+                        Törlés
+                      </button>
                     </div>
                   ))}
                 </div>

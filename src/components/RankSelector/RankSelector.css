@@ -1,0 +1,37 @@
+.rank-selector-container {
+    background-color: var(--thirdColor);
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .rank-selector-container select {
+    background-color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .rank-selector-container select:focus {
+    outline: none;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    .rank-selector-container {
+      top: 5px;
+      right: 5px;
+      padding: 4px;
+    }
+  
+    .rank-selector-container select {
+      font-size: 0.9rem;
+      padding: 2px 6px;
+    }
+  }
+  

@@ -1,0 +1,44 @@
+.user-info-icons {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .icon {
+    font-size: 2rem;
+    color: var(--primaryText);
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .icon:hover {
+    color: var(--secondaryText);
+  }
+  
+  .tooltip {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s;
+  }
+  
+  .icon-container:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+  }

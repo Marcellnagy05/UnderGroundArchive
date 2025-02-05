@@ -71,7 +71,7 @@ const Navbar = () => {
             </NavLink>
             <NavLink to="/faq" className="nav-item">
               <FaQuestionCircle className="nav-icon" />
-              <span className="nav-text">FAQ</span>
+              <span className="nav-text">GYIK</span>
             </NavLink>
             <button onClick={handleLogout} className="nav-item logout">
               <FaSignOutAlt className="nav-icon" />

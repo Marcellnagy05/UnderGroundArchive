@@ -1,8 +1,9 @@
+import { div } from "framer-motion/m";
 import { useEffect, useRef } from "react";
 
 const RaindropBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -18,11 +19,11 @@ const RaindropBackground = () => {
       speed: Math.random() * 3 + 2,
       length: Math.random() * 15 + 10,
     }));
-    
-    const ripples: { x: number; y: number; radius: number; }[] = [];
+
+    const ripples: { x: number; y: number; radius: number }[] = [];
 
     const hexToRgba = (hex: string, alpha: number = 0.5) => {
-      hex = hex.replace(/^#/, '');
+      hex = hex.replace(/^#/, "");
       let r = parseInt(hex.substring(0, 2), 16);
       let g = parseInt(hex.substring(2, 4), 16);
       let b = parseInt(hex.substring(4, 6), 16);
@@ -30,18 +31,21 @@ const RaindropBackground = () => {
     };
 
     const getColors = () => {
-      let colorVar = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-      return colorVar.startsWith('#') ? hexToRgba(colorVar) : colorVar || 'rgba(173, 216, 230, 0.5)';
+      let colorVar = getComputedStyle(document.documentElement)
+        .getPropertyValue("--primary")
+        .trim();
+      return colorVar.startsWith("#")
+        ? hexToRgba(colorVar)
+        : colorVar || "rgba(173, 216, 230, 0.5)";
     };
 
     const animate = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const rainColor = getColors();
       ctx.strokeStyle = rainColor;
-      ctx.lineWidth = 1;
-      
+      ctx.lineWidth = 1.5;
+
       raindrops.forEach((drop) => {
         ctx.beginPath();
         ctx.moveTo(drop.x, drop.y);
@@ -56,7 +60,7 @@ const RaindropBackground = () => {
           ripples.push({ x: drop.x, y: canvas.height, radius: 2 });
         }
       });
-      
+
       ripples.forEach((ripple, index) => {
         ctx.beginPath();
         ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
@@ -66,15 +70,15 @@ const RaindropBackground = () => {
         ripple.radius += 0.5;
         if (ripple.radius > 10) ripples.splice(index, 1);
       });
-      
+
       if (Math.random() < 0.005) {
         canvas.style.filter = "brightness(1.5)";
-        setTimeout(() => canvas.style.filter = "brightness(1)", 100);
+        setTimeout(() => (canvas.style.filter = "brightness(1)"), 100);
       }
-      
+
       requestAnimationFrame(animate);
     };
-    
+
     animate();
 
     const handleResize = () => {
@@ -87,17 +91,17 @@ const RaindropBackground = () => {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: -1,
-      }}
-    />
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: -1,
+        }}
+      />
   );
 };
 
