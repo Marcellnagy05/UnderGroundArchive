@@ -151,7 +151,17 @@ namespace UnderGroundArchive_Backend.Dbcontext
             modelBuilder.Entity<Reports>()
                 .HasOne(rp => rp.ReportedPeople)
                 .WithMany(b => b.ReportSubject)
-                .HasForeignKey(cr => cr.ReportedId);
+                .HasForeignKey(cr => cr.ReportedPersonId);
+
+            modelBuilder.Entity<Reports>()
+                .HasOne(rp => rp.ReportedComments)
+                .WithMany(b => b.ReportSubject)
+                .HasForeignKey(cr => cr.ReportedCommentId);
+
+            modelBuilder.Entity<Reports>()
+                .HasOne(rp => rp.ReportedBooks)
+                .WithMany(b => b.ReportSubject)
+                .HasForeignKey(cr => cr.ReportedBookId);
 
             //Chapters table
 

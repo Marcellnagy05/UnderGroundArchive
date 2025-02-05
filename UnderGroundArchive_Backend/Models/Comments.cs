@@ -12,5 +12,6 @@
         public int ThreadId { get; set; }
         public virtual Books Books { get; set; }
         public virtual ApplicationUser Users { get; set; }
+        public virtual ICollection<Reports> ReportSubject { get; set; } = new List<Reports>();
     }
 }

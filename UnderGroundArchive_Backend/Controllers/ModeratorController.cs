@@ -36,7 +36,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     r.ReportId,
                     r.ReporterId,
-                    r.ReportedId,
+                    r.ReportedPersonId,
                     r.ReportTypeId,
                     r.ReportMessage,
                     r.IsHandled,
@@ -56,7 +56,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                    r.ReportId,
                    r.ReporterId,
-                   r.ReportedId,
+                   r.ReportedPersonId,
                    r.ReportTypeId,
                    r.ReportMessage,
                    r.IsHandled,
@@ -77,7 +77,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     r.ReportId,
                     r.ReporterId,
-                    r.ReportedId,
+                    r.ReportedPersonId,
                     r.ReportTypeId,
                     r.ReportMessage,
                     r.IsHandled,

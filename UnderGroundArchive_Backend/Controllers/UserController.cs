@@ -277,7 +277,9 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     r.ReportId,
                     r.ReporterId,
-                    r.ReportedId,
+                    r.ReportedPersonId,
+                    r.ReportedCommentId,
+                    r.ReportedBookId,
                     r.ReportTypeId,
                     r.ReportMessage,
                     r.IsHandled,
@@ -304,7 +306,9 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     r.ReportId,
                     r.ReporterId,
-                    r.ReportedId,
+                    r.ReportedPersonId,
+                    r.ReportedCommentId,
+                    r.ReportedBookId,
                     r.ReportTypeId,
                     r.ReportMessage,
                     r.IsHandled,
@@ -330,7 +334,9 @@ namespace UnderGroundArchive_Backend.Controllers
             var newReport = new Reports
             {
                 ReporterId = reporterId,
-                ReportedId = reportDto.ReportedId,
+                ReportedPersonId = reportDto.ReportedPersonId,
+                ReportedCommentId = reportDto.ReportedCommentId,
+                ReportedBookId = reportDto.ReportedBookId,
                 ReportTypeId = reportDto.ReportTypeId,
                 ReportMessage = reportDto.ReportMessage,
                 CreatedAt = DateTime.Now,

@@ -2,7 +2,9 @@
 {
     public class ReportDTO
     {
-        public string ReportedId { get; set; }
+        public string? ReportedPersonId { get; set; }
+        public int? ReportedCommentId { get; set; }
+        public int? ReportedBookId { get; set; }
         public int ReportTypeId { get; set; }
         public string? ReportMessage { get; set; }
     }
