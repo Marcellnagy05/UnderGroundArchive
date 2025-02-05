@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UnderGroundArchive_Backend.Dbcontext;
 
@@ -11,9 +12,11 @@ using UnderGroundArchive_Backend.Dbcontext;
 namespace UnderGroundArchive_Backend.Migrations
 {
     [DbContext(typeof(UGA_DBContext))]
-    partial class UGA_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20250205020009_ProfilePictureId")]
+    partial class ProfilePictureId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,7 +246,7 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("ProfilePictureId")
+                    b.Property<int>("ProfilePictureId")
                         .HasColumnType("int");
 
                     b.Property<int?>("RankId")

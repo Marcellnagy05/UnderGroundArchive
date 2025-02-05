@@ -129,6 +129,7 @@ namespace UnderGroundArchive_Backend.Controllers
                     u.RankId,
                     u.RankPoints,
                     u.Theme,
+                    u.ProfilePictureId,
                     u.SubscriptionId,
                     Role = _dbContext.UserRoles
                         .Where(ur => ur.UserId == u.Id)

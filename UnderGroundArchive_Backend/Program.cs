@@ -90,7 +90,7 @@ public class Program
         // CORS beállítása
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("AllowLocalhost", builder =>
+            options.AddPolicy("AllowAll", builder =>
             {
                 builder.WithOrigins("http://localhost:5173")
                        .AllowAnyMethod()
@@ -114,8 +114,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        // CORS beállítás alkalmazása a UseRouting előtt
-        app.UseCors("AllowLocalhost");  // CORS szabályok alkalmazása
+        app.UseCors("AllowAll");  // CORS szabályok alkalmazása
         app.UseRouting();  // Routing beállítása
 
         app.UseAuthentication(); // Bejelentkezés (JWT alapú)

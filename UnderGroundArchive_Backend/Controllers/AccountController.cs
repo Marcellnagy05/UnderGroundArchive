@@ -274,11 +274,12 @@ namespace UnderGroundArchive_Backend.Controllers
     new Claim("PhoneNumber", user.PhoneNumber ?? string.Empty),
     new Claim("Country", user.Country ?? string.Empty),
     new Claim("Email", user.Email ?? string.Empty),
+    new Claim("ProfilePictureId", user.ProfilePictureId.ToString()),
 
     // Ellenőrizd, hogy biztosan nem null!
     new Claim("BirthDate", user.BirthDate.HasValue ? user.BirthDate.Value.ToString("yyyy-MM-dd") : "N/A"),
     new Claim("RankId", user.RankId.HasValue ? user.RankId.Value.ToString() : "-1"),
-    new Claim("SubscriptionId", user.SubscriptionId.HasValue ? user.SubscriptionId.Value.ToString() : "-1")
+    new Claim("SubscriptionId", user.SubscriptionId.HasValue ? user.SubscriptionId.Value.ToString() : "-1"),
 };
 
             // Szerepkörök hozzáadása a tokenhez
@@ -382,6 +383,39 @@ namespace UnderGroundArchive_Backend.Controllers
                 return NotFound(new { Message = "No subscriptions found." });
             }
             return Ok(subscriptions);
+        }
+        [HttpPatch("updateProfilePicture")]
+        public async Task<IActionResult> UpdateProfilePicture([FromBody] UpdateProfilePictureDTO request)
+        {
+            if (request.ProfilePictureId <= 0)
+            {
+                return BadRequest("Érvénytelen ProfilePictureId.");
+            }
+
+            // Bejelentkezett felhasználó azonosítása
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int randomszam = 12;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized($"Felhasználó nem azonosítható. itt lenne a userid: {userId} itt meg a random szám:{randomszam}");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Felhasználó nem található.");
+            }
+
+            // 🟢 Frissítjük a ProfilePictureId-t
+            user.ProfilePictureId = request.ProfilePictureId;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                return StatusCode(500, "Hiba történt a frissítés során.");
+            }
+
+            return Ok(new { message = "Profilkép frissítve!", profilePictureId = user.ProfilePictureId });
         }
 
 

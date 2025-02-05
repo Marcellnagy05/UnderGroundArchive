@@ -4,6 +4,7 @@ namespace UnderGroundArchive_Backend.Models
 {
     public class ApplicationUser : IdentityUser
     {
+
         public int? RankId { get; set; } = 1;
         public int? SubscriptionId { get; set; } = 1;
         public DateTime JoinDate { get; set; } = DateTime.Now;
@@ -13,6 +14,7 @@ namespace UnderGroundArchive_Backend.Models
         public decimal Balance { get; set; } = 0;
         public string Favourites { get; set; } = "";
         public string Theme { get; set; } = "dark";
+        public int? ProfilePictureId { get; set; }
         public bool IsMuted { get; set; } = false;
         public bool IsBanned { get; set; } = false;
         public virtual ICollection<Books> Books { get; set; } = new List<Books>();
@@ -21,5 +23,10 @@ namespace UnderGroundArchive_Backend.Models
         public virtual ICollection<Comments> Comments { get; set; } = new List<Comments>();
         public virtual ICollection<Reports> ReportSender { get; set; } = new List<Reports>();
         public virtual ICollection<Reports> ReportSubject { get; set; } = new List<Reports>();
+
+        public ApplicationUser()
+        {
+            ProfilePictureId = RankId;
+        }
     }
 }
