@@ -85,6 +85,20 @@ namespace UnderGroundArchive_WPF.Services
                 throw new UnauthorizedAccessException("User is not authenticated. Please log in first.");
         }
 
+
+        // Get all reports
+
+        public async Task<List<ReportModel>> GetPendingReportsAsync()
+        {
+            EnsureAuthenticated();
+            var report = new HttpRequestMessage(HttpMethod.Get, $"{BASE_URL}/api/Moderator/pendingReports");
+            report.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
+            var response = await _httpClient.SendAsync(report);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<ReportModel>>();
+        }
+
         // Get all requests
 
         public async Task<List<RequestModel>> GetPendingRequestsAsync()

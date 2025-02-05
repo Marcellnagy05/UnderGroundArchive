@@ -7,6 +7,17 @@
         mc:Ignorable="d"
         Title="ModeratorView" Height="450" Width="800">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Button Content="Load Pending Reports" Command="{Binding LoadReportsCommand}" Margin="5" />
+            <Button Content="Accept Reports(Delete Reported Creation)" Command="{Binding AcceptReportCommand}" Margin="5" />
+            <Button Content="Deny Reports" Command="{Binding DenyReportCommand}" Margin="5" />
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Reports}" SelectedItem="{Binding SelectedReport}" Grid.Row="1" AutoGenerateColumns="True" />
     </Grid>
 </Window>
