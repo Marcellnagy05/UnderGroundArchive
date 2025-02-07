@@ -10,6 +10,7 @@ import ProfileMenu from "../ProfileMenu/ProfileMenu";
 import { RankIcon } from "../RankIcon/RankIcon";
 import { UserInfo } from "../UserInfo/UserInfo";
 import RankSelector from "../RankSelector/RankSelector";
+import { FaTrashCan } from "react-icons/fa6";
 
 interface Ranks {
   rankId: number;
@@ -445,20 +446,12 @@ const Profile = () => {
           >
             <div className="UserInfo">
               <div className="section one">
-                {/* 🟢 Az ikon a ProfilePictureId alapján frissül */}
-                <RankIcon rank={selectedPictureId.toString()} />
+                <RankIcon rank={userProfile?.profilePictureId.toString()} />
 
                 <div className="userTitle">
                   <h3>{userProfile?.userName || "N/A"}</h3>
                   <p>({userProfile?.role || "N/A"})</p>
                 </div>
-
-                {/* Jobb felső sarokba helyezett RankSelector */}
-                <RankSelector
-                  userProfile={userProfile}
-                  selectedPictureId={selectedPictureId}
-                  setSelectedPictureId={setSelectedPictureId}
-                />
               </div>
 
               <UserInfo
@@ -490,20 +483,16 @@ const Profile = () => {
             transition={{ duration: 0.5 }}
           >
             <h2>Jelszó változtatás</h2>
-            <form onSubmit={handlePasswordChange}>
-              <label>
-                Jelenlegi Jelszo:
-                <input type="password" name="currentPassword" required />
-              </label>
-              <label>
-                Új jelszó:
-                <input type="password" name="newPassword" required />
-              </label>
-              <label>
-                Új jelszó megerősítése:
-                <input type="password" name="confirmPassword" required />
-              </label>
-              <button type="submit">Jelszó frissítése</button>
+            <form className="passwordForm" onSubmit={handlePasswordChange}>
+              <label>Jelenlegi Jelszo:</label>
+              <input type="password" name="currentPassword" required />
+              <label>Új jelszó:</label>
+              <input type="password" name="newPassword" required />
+              <label>Új jelszó megerősítése:</label>
+              <input type="password" name="confirmPassword" required />
+              <button className="submitButton" type="submit">
+                Jelszó frissítése
+              </button>
             </form>
           </motion.div>
         )}
@@ -541,7 +530,6 @@ const Profile = () => {
           >
             <h3>Értékelt könyvek</h3>
             {Object.keys(ratings).map((bookId) => {
-              // Könyv név kikeresése az books tömbből az aktuális bookId alapján
               const book = books.find((book) => book.id === parseInt(bookId));
               const bookName = book ? book.bookName : "Ismeretlen könyv";
 
@@ -549,12 +537,16 @@ const Profile = () => {
                 <div key={bookId} className="ratingItem">
                   <h4>{bookName}</h4>
                   {Object.keys(ratings[parseInt(bookId)]).map((userId) => (
-                    <div key={userId}>
-                      <StarRating rating={ratings[parseInt(bookId)][userId]} />
-                      <button onClick={() => deleteRating(parseInt(bookId))}>
-                        Törlés
+                    <>
+                      <div key={userId}>
+                      <button className="removeRatingBtn" onClick={() => deleteRating(parseInt(bookId))}>
+                        <FaTrashCan/>
                       </button>
-                    </div>
+                        <StarRating
+                          rating={ratings[parseInt(bookId)][userId]}
+                        />
+                      </div>
+                    </>
                   ))}
                 </div>
               );

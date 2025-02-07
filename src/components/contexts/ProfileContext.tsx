@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { jwtDecode } from "jwt-decode";
 
 interface UserProfile {
   id: string;
@@ -11,54 +10,56 @@ interface UserProfile {
   birthDate: string;
   rankId: string;
   subscriptionId: string;
-  profilePictureId:string
+  profilePictureId: string;
 }
 
 interface ProfileContextType {
   userProfile: UserProfile | null;
-  setUserProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
+  setUserProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>; // 🔥 Hozzáadva!
+  fetchUserProfile: () => Promise<void>;
 }
 
-const defaultProfileContext: ProfileContextType = {
+// 🔥 Most már `setUserProfile` is az alapértékben van!
+const ProfileContext = createContext<ProfileContextType>({
   userProfile: null,
-  setUserProfile: () => {},
-};
-
-export const ProfileContext = createContext<ProfileContextType>(defaultProfileContext);
+  setUserProfile: () => {}, // 🔥 Hozzáadva!
+  fetchUserProfile: async () => {},
+});
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
-  useEffect(() => {
+  const fetchUserProfile = async () => {
     const token = localStorage.getItem("jwt");
-    if (token) {
-      try {
-        const decoded: any = jwtDecode(token);
-        const profilePictureId = decoded["ProfilePictureId"]
+    if (!token) return;
 
-        const profile: UserProfile = {
-          id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
-          userName: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
-          role: decoded["http://schemas.xmlsoap.org/ws/2008/06/identity/claims/role"],
-          phoneNumber: decoded["PhoneNumber"],
-          country: decoded["Country"],
-          email: decoded["Email"],
-          birthDate: decoded["BirthDate"],
-          rankId: decoded["RankId"],
-          subscriptionId: decoded["SubscriptionId"],
-          profilePictureId: profilePictureId
-        };
+    try {
+      const response = await fetch("https://localhost:7197/api/User/me", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        setUserProfile(profile);
-        
-      } catch (error) {
-        console.error("Error decoding token:", error);
+      if (!response.ok) {
+        throw new Error("Nem sikerült lekérni a felhasználói adatokat");
       }
+
+      const data = await response.json();
+      setUserProfile(data); // 🔄 Frissítjük a userProfile-t
+
+    } catch (error) {
+      console.error("Hiba a profil lekérésekor:", error);
     }
+  };
+
+  useEffect(() => {
+    fetchUserProfile(); // 🔄 Amikor betölt az oldal, kérd le a user adatokat
   }, []);
 
   return (
-    <ProfileContext.Provider value={{ userProfile, setUserProfile }}>
+    <ProfileContext.Provider value={{ userProfile, setUserProfile, fetchUserProfile }}> 
       {children}
     </ProfileContext.Provider>
   );

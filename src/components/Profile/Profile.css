@@ -149,6 +149,8 @@
   animation: flowingGradient 3s linear infinite;
 }
 
+
+/*User Data*/
 .profileContent{
   background-color: var(--thirdColor);
   border-radius: 10px;
@@ -181,6 +183,56 @@
   padding: 16px; /* Kisebb padding mobilon */
 }
 
+/*Password*/
+.passwordForm{
+  display: grid;
+  grid-template-rows: repeat(4,1fr);
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.passwordForm label, input{
+  text-align: left;
+}
+
+.passwordForm input{
+  background-color: var(--thirdColor);
+  color: var(--primaryText);
+  border: 2px solid var(--primary);
+  border-radius: 0.5rem;
+}
+
+.passwordForm input:focus{
+  border: 2px solid var(--primary);
+}
+
+.submitButton{
+  grid-column: span 2;
+  margin: 0rem 0.5rem 0rem 0.5rem;
+}
+
+/*Ratings*/
+.ratingItem{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+  color: var(--primaryText);
+  background-color: var(--background);
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.rating{
+  margin-bottom: 0.5rem;
+}
+
+.removeRatingBtn{
+  background: none;
+  max-width: 5rem;
+  font-size: 1.2rem;
+}
 
 /* Tablet méretek (768px vagy nagyobb) */
 @media (min-width: 768px) {

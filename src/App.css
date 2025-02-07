@@ -81,43 +81,6 @@ body {
   --slider: #BE3144; /* Intenzív vörös csúszka */
   --thirdColor: #0d1a3d; /* Sötétkék árnyalatú fekete */
 }
-/*eredeti light theme*/
-
-/*
-  --background: #fdf3e7;
-  --primaryText: #9a3508;
-  --secondaryText: #d06d39;
-  --primary: #e27227;
-  --secondary: #f1842d;
-  --hover: #f5a056;
-  --slider: #9a3508;
-  --thirdColor: #fde8d1;
-*/
-
-/*eredeti lila*/
-/* .dark-theme {
-  --background: #0f0407;
-  --primaryText: #e0aab5;
-  --secondaryText: #a44b63;
-  --primary: #7b1b4d;
-  --secondary: #8d234f;
-  --hover: #c04d66;
-  --slider: #a43458;
-  --thirdColor: #1c0a11; 
-} */
-
-/* zöld
-  --background: #050a05;
-  --primaryText: #d4f7d4;
-  --secondaryText: #729f72;
-  --primary: #0e2a0e;
-  --secondary: #14401a;
-  --hover: #296d29; 
-  --slider: #1f4d2e; 
-  --thirdColor: #081a0d; 
-*/
-
-
 
 /*Light theme*/
 .light-theme .publishForm{

@@ -1,56 +1,53 @@
 import { useState, useEffect } from "react";
-import { useThemeContext } from "../contexts/ThemeContext"; // Importáljuk a ThemeContext-et
-import { FaBell, FaUserEdit, FaSun, FaMoon } from "react-icons/fa";  // Nap és hold ikonok
-import "./Settings.css"; // Importáljuk a CSS-t
+import { useThemeContext } from "../contexts/ThemeContext";
+import { FaList, FaBell, FaUserEdit, FaSun, FaMoon } from "react-icons/fa";
+import RankSelector from "../RankSelector/RankSelector";
+import "./Settings.css";
 
-const Settings = () => {
+const Settings = ({ userProfile }) => {
   const { theme, setTheme } = useThemeContext();
   const [notifications, setNotifications] = useState<boolean>(true);
+  const [selectedPictureId, setSelectedPictureId] = useState<number>(
+    userProfile?.profilePictureId || 1
+  );
 
-  // A téma betöltése az oldal frissítésekor
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "light" || savedTheme === "dark") {
-      setTheme(savedTheme); // Csak akkor állítjuk be, ha az érték "light" vagy "dark"
+      setTheme(savedTheme);
     }
   }, [setTheme]);
 
   const toggleTheme = async () => {
-    // Frissítjük a helyi témát
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
-    console.log(JSON.stringify(newTheme));
-    
-
-    // API hívás, hogy a backend-en is frissüljön a téma
     const jwt = localStorage.getItem("jwt");
-    console.log("jwt",jwt);
-    
+
     if (jwt) {
       try {
-        const response = await fetch("https://localhost:7197/api/Account/updateTheme", {
-          method: "PUT", // PUT metódus, mert frissítünk egy meglévő rekordot
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${jwt}`,
-          },
-          body: JSON.stringify({ theme: newTheme }),
-        });
+        const response = await fetch(
+          "https://localhost:7197/api/Account/updateTheme",
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${jwt}`,
+            },
+            body: JSON.stringify({ theme: newTheme }),
+          }
+        );
 
         if (!response.ok) {
-          // Ha nem sikerült a kérés, próbáljuk meg lekérni a válasz szöveget
-          const errorText = await response;  // Próbáljuk meg szöveges választ is kezelni
-          return errorText;
+          const errorText = await response.text();
+          console.error(errorText);
+          return;
         }
 
-        // Ellenőrizzük, hogy a válasz JSON típusú-e
         const data = await response.json();
-        console.log("data:", data);
-        
         console.log("Téma frissítve:", data);
       } catch (error) {
-        console.log("Baj van he", error);
+        console.log("Hiba történt:", error);
       }
     }
   };
@@ -70,17 +67,19 @@ const Settings = () => {
           <strong>Téma</strong>
           <p>{theme === "light" ? "Világos" : "Sötét"}</p>
         </div>
-        {/* Switch a téma váltásához */}
         <label className="switch">
-          {/* Hold és Nap ikonok a kapcsolóhoz */}
           <input
             type="checkbox"
             checked={theme === "dark"}
             onChange={toggleTheme}
           />
           <span className="slider">
-            <FaSun className={`icon sun ${theme === "light" ? "active" : ""}`} />
-            <FaMoon className={`icon moon ${theme === "dark" ? "active" : ""}`} />
+            <FaSun
+              className={`icon sun ${theme === "light" ? "active" : ""}`}
+            />
+            <FaMoon
+              className={`icon moon ${theme === "dark" ? "active" : ""}`}
+            />
           </span>
         </label>
       </div>
@@ -104,6 +103,19 @@ const Settings = () => {
         <button className="setting-button" onClick={toggleNotifications}>
           Váltás
         </button>
+      </div>
+      <div className="setting-item rank-selector">
+        <div className="setting-icon">
+          <FaList />
+        </div>
+        <div className="setting-content">
+          <strong>Rangválasztó</strong>
+        </div>
+          <RankSelector
+            userProfile={userProfile}
+            selectedPictureId={selectedPictureId}
+            setSelectedPictureId={setSelectedPictureId}
+          />
       </div>
     </div>
   );

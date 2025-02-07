@@ -1,37 +1,86 @@
+.rank-selector{
+  display: flex;
+  justify-content: space-between;
+}
+
 .rank-selector-container {
-    background-color: var(--thirdColor);
-    border-radius: 8px;
+  position: relative;
+  background-color: var(--primary);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.dropdown-button {
+  background-color: var(--primaryColor);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.dropdown-button:hover {
+  background-color: var(--primaryDarkColor);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  background: var(--secondary);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+  z-index: 100;
+  
+  max-height: 400px;
+  overflow-y: auto
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.dropdown-item:hover {
+  background-color: var(--secondaryColor);
+}
+
+.dropdown-item.selected {
+  background-color: var(--primaryColor);
+  color: white;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .rank-selector-container {
     padding: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
-  
-  .rank-selector-container select {
-    background-color: white;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
+
+  .dropdown-button {
+    font-size: 0.9rem;
+    padding: 8px 14px;
   }
-  
-  .rank-selector-container select:focus {
-    outline: none;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+
+  .dropdown-menu {
+    width: 200px;
   }
-  
-  @media (max-width: 768px) {
-    .rank-selector-container {
-      top: 5px;
-      right: 5px;
-      padding: 4px;
-    }
-  
-    .rank-selector-container select {
-      font-size: 0.9rem;
-      padding: 2px 6px;
-    }
+
+  .dropdown-item {
+    font-size: 0.9rem;
+    padding: 6px 10px;
   }
-  
+}

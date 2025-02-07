@@ -72,7 +72,7 @@
       rgba(var(--background-rgb), 0.9),
       rgba(var(--thirdColor-rgb), 0.75)
     ),
-    url("../../../public/images/BookCardPlaceholder.png");
+    url("../../../images/BookCardPlaceholder.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
