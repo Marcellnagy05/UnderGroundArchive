@@ -109,7 +109,7 @@ const Settings = ({ userProfile }) => {
           <FaList />
         </div>
         <div className="setting-content">
-          <strong>Rangválasztó</strong>
+          <strong>Ikonválasztó</strong>
         </div>
           <RankSelector
             userProfile={userProfile}
