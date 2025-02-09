@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Comments.css";
 import StarRating from "../StarRating/StarRating";
+import { updatePoints } from "../../services/RankingServices";
 
 interface CommentDTO {
   commentId: number;
@@ -261,7 +262,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
           },
         }
       );
-
+      await updatePoints(currentUser.id, -5, "User");
       if (response.ok) {
         await fetchComments();
       } else {
@@ -306,7 +307,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
           }),
         }
       );
-
+      await updatePoints(currentUser.id, 5, "User");
       if (response.ok) {
         await fetchComments();
         setNewComment("");

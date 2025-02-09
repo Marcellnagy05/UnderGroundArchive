@@ -16,6 +16,7 @@ import {
 } from "../../services/BookServices";
 import { Book, Genre, Category, User, CriticRating } from "../../Types/Books";
 import { updatePoints } from "../../services/RankingServices";
+import { UserProfile } from '../../Types/UserProfile';
 
 
 const Books = () => {
@@ -250,8 +251,9 @@ const Books = () => {
         showToast("Sikeres értékelés!", "success");
 
         if (selectedBook?.authorId) {
-            await updatePoints(selectedBook.authorId, 10, "User");
+            await updatePoints(selectedBook.authorId, 10, "Author");
         }
+        await updatePoints(user.id, 5, "User");
     } catch (err) {
         console.error("Hiba az értékelés mentése során:", err);
         showToast("Nem sikerült menteni az értékelést.", "error");
@@ -278,6 +280,7 @@ const deleteRatings = async (bookId: number) => {
         if (selectedBook?.authorId) {
             await updatePoints(selectedBook.authorId, -10, "Author");
         }
+        await updatePoints(user.id, -5, "User");
     } catch (err) {
         console.error("Hiba az értékelés törlése során:", err);
         showToast("Nem sikerült törölni az értékelést.", "error");
