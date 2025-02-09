@@ -1,0 +1,67 @@
+.rankContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    height: 40px;
+    margin-bottom: 5rem;
+    gap: 15px;
+}
+
+.currentRank, .nextRank {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--primaryText);
+    font-weight: bold;
+    font-size: 0.75rem;
+    min-width: 80px;
+    max-width: 120px;
+}
+
+/* Progress Bar középen */
+.progressContainer {
+    flex-grow: 1;
+    height: 15px;
+    background-color: var(--thirdColor);
+    border: 2px solid var(--primary);
+    border-radius: 7px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+/* Progress Bar kitöltése */
+.progressBar {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 7px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Százalékos érték a progress bar fölött */
+.progressText {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--primaryText);
+    font-weight: bold;
+}
+
+/* Reszponzív design */
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
+    }
+
+    .progressContainer {
+        width: 100%;
+        margin: 5px 0;
+    }
+}

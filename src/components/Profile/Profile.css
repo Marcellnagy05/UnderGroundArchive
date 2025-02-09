@@ -131,7 +131,7 @@
 
 .username {
   width: 100%; /* Kitölti a mobil képernyő szélességét */
-  max-width: 400px; /* Maximális szélesség */
+  min-width: 700px;
   margin: 0 auto; /* Középre igazítás */
   padding: 16px;
   font-size: 1rem; /* Kisebb betűméret mobilon */

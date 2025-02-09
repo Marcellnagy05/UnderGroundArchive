@@ -11,6 +11,7 @@ import { RankIcon } from "../RankIcon/RankIcon";
 import { UserInfo } from "../UserInfo/UserInfo";
 import RankSelector from "../RankSelector/RankSelector";
 import { FaTrashCan } from "react-icons/fa6";
+import RankBar from "../RankBar/RankBar";
 
 interface Ranks {
   rankId: number;
@@ -62,6 +63,9 @@ const Profile = () => {
   const [selectedPictureId, setSelectedPictureId] = useState(
     userProfile?.profilePictureId || userProfile?.rankId || 1
   );
+  const [userPoints, setUserPoints] = useState<number>(0);
+  const [rankId, setRankId] = useState<number>(0);
+  
 
   const handleMenuClick = (tab: string) => {
     setActiveTab(tab);
@@ -74,6 +78,7 @@ const Profile = () => {
     const newPassword = formData.get("newPassword")?.toString();
     const confirmPassword = formData.get("confirmPassword")?.toString();
     const currentPassword = formData.get("currentPassword")?.toString();
+
 
     if (newPassword !== confirmPassword) {
       alert("A két jelszó nem egyezik meg!");
@@ -254,6 +259,27 @@ const Profile = () => {
     }
   };
 
+  const reloadUserData = async () => {
+    const token = localStorage.getItem("jwt");
+    try {
+      const response = await fetch("https://localhost:7197/api/User/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+        const data = await response.json();
+        setUserPoints(data.points);
+        setRankId(data.rankId);
+    } catch (error) {
+        console.error("Hiba a felhasználó adatainak lekérése során:", error);
+    }
+};
+
+useEffect(() => {
+    reloadUserData();
+}, [userProfile?.rankId]);
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("jwt");
@@ -269,6 +295,8 @@ const Profile = () => {
 
           if (response.ok) {
             const userData = await response.json();
+            console.log(userData);
+            
 
             setUserProfile({
               id: userData?.id,
@@ -281,6 +309,7 @@ const Profile = () => {
               rankId: userData?.rankId.toString(),
               subscriptionId: userData?.subscriptionId.toString(),
               profilePictureId: userData.profilePictureId.toString(),
+              rankPoints: userData.rankPoints,
             });
           } else {
             console.error("Failed to fetch user data");
@@ -454,6 +483,8 @@ const Profile = () => {
                 </div>
               </div>
 
+              <RankBar userId={userProfile?.id} userPoints={userProfile?.rankPoints} rankId={rankId} onRankUpdate={reloadUserData} />
+
               <UserInfo
                 email={userProfile?.email || "N/A"}
                 birthDate={
@@ -580,3 +611,7 @@ const Profile = () => {
 };
 
 export default Profile;
+function setUserPoints(points: any) {
+  throw new Error("Function not implemented.");
+}
+

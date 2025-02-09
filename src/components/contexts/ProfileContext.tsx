@@ -11,6 +11,7 @@ interface UserProfile {
   rankId: string;
   subscriptionId: string;
   profilePictureId: string;
+  rankPoints: number;
 }
 
 interface ProfileContextType {

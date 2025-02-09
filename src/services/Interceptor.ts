@@ -16,7 +16,6 @@ const fetchInterceptor = async (input: RequestInfo, init?: RequestInit) => {
         if (!response.ok) {
             if (response.status === 401) {
                 console.error("Unauthorized - Redirecting to login");
-                // Handle unauthorized case, e.g., redirect to login
             }
         }
         
