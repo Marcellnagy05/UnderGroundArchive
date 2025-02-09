@@ -21,6 +21,7 @@ public class Program
                 new MySqlServerVersion(new Version(8, 0, 33)))); // Replace with your MySQL version
 
         builder.Services.AddScoped<IBookService, BookService>();
+        builder.Services.AddScoped<RankingService>();
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {

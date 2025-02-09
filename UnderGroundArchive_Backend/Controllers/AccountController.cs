@@ -418,6 +418,35 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok(new { message = "Profilkép frissítve!", profilePictureId = user.ProfilePictureId });
         }
 
+        [HttpPatch("{userId}/updaterank")]
+        public async Task<IActionResult> UpdateRank(string userId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Felhasználó nem található.");
+            }
+
+            var ranks = await _dbContext.Ranks
+                .OrderBy(r => r.PointsRequired)
+                .ToListAsync();
+
+            // Jelenlegi rang keresése
+            var currentRank = ranks.LastOrDefault(r => r.PointsRequired <= user.RankPoints);
+
+            if (currentRank != null && user.RankId != currentRank.RankId)
+            {
+                user.RankId = currentRank.RankId;
+                _dbContext.Users.Update(user);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new { message = "Rang sikeresen frissítve!", newRankId = currentRank.RankId });
+            }
+
+            return Ok(new { message = "Nincs szükség rangfrissítésre." });
+        }
+
+
 
     }
 }

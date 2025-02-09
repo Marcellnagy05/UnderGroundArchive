@@ -426,7 +426,12 @@ namespace UnderGroundArchive_Backend.Controllers
             _dbContext.ReaderRatings.Add(readerRating);
             await _dbContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetReaderRating", new { id = readerRating.RatingId }, readerRating);
+            return CreatedAtAction(nameof(GetReaderRating), new { id = readerRating.RatingId }, new
+            {
+                message = "Értékelés sikeresen mentve!",
+                ratingId = readerRating.RatingId
+            });
+
         }
 
 
