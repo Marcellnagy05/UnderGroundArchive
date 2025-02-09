@@ -736,8 +736,97 @@ namespace UnderGroundArchive_Backend.Controllers
             return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
         }
 
+        [HttpPost("likeComment/{commentId}")]
+        public async Task<IActionResult> LikeComment(int commentId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User is not authenticated.");
+            }
 
+            var comment = await _dbContext.Comments.FindAsync(commentId);
+            if (comment == null)
+            {
+                return NotFound("Comment not found.");
+            }
 
+            var existingLike = await _dbContext.CommentLikes
+                .FirstOrDefaultAsync(cl => cl.CommentId == commentId && cl.UserId == userId);
+
+            if (existingLike != null)
+            {
+                if (existingLike.IsLike)
+                {
+                    return BadRequest("You have already liked this comment.");
+                }
+
+                existingLike.IsLike = true;
+                comment.Likes++;
+                comment.Dislikes--;
+            }
+            else
+            {
+                _dbContext.CommentLikes.Add(new CommentLike
+                {
+                    CommentId = commentId,
+                    UserId = userId,
+                    IsLike = true
+                });
+                comment.Likes++;
+            }
+
+            _dbContext.Comments.Update(comment);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Comment liked successfully.", likes = comment.Likes });
+        }
+
+        [HttpPost("dislikeComment/{commentId}")]
+        public async Task<IActionResult> DislikeComment(int commentId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User is not authenticated.");
+            }
+
+            var comment = await _dbContext.Comments.FindAsync(commentId);
+            if (comment == null)
+            {
+                return NotFound("Comment not found.");
+            }
+
+            var existingLike = await _dbContext.CommentLikes
+                .FirstOrDefaultAsync(cl => cl.CommentId == commentId && cl.UserId == userId);
+
+            if (existingLike != null)
+            {
+                if (!existingLike.IsLike)
+                {
+                    return BadRequest("You have already disliked this comment.");
+                }
+
+                existingLike.IsLike = false;
+                comment.Likes--;
+                comment.Dislikes++;
+            }
+            else
+            {
+                _dbContext.CommentLikes.Add(new CommentLike
+                {
+                    CommentId = commentId,
+                    UserId = userId,
+                    IsLike = false
+                });
+                comment.Dislikes++;
+            }
+
+            _dbContext.Comments.Update(comment);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Comment disliked successfully.", dislikes = comment.Dislikes });
+        }
 
 
         [HttpPut("modifyComment/{id}")]
