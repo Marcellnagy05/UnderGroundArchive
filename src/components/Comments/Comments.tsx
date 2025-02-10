@@ -10,6 +10,8 @@ interface CommentDTO {
   commentMessage: string;
   parentCommentId?: number | null;
   threadId: number;
+  likes: number;
+  dislikes: number;
 }
 
 interface User {
@@ -44,6 +46,8 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
   const [criticRatings, setCriticRatings] = useState<Record<number, number>>(
     {}
   );
+  const [likes, setLikes] = useState<Record<number, number>>({});
+  const [dislikes, setDislikes] = useState<Record<number, number>>({});
 
   const getAuthToken = () => localStorage.getItem("jwt");
 
@@ -240,6 +244,78 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
     }
   };
 
+  const handleLikes = async (commentId: number, commenterId: string) => {
+    try {
+      const token = localStorage.getItem("jwt");
+      if (!token) {
+        alert("Please log in to like comments.");
+        return;
+      }
+
+      const response = await fetch(
+        `https://localhost:7197/api/User/likeComment/${commentId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      updatePoints(commenterId, 2, "User")
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        alert(errorMessage);
+        return;
+      }
+
+      const data = await response.json();
+
+      setLikes((prevLikes) => ({
+        ...prevLikes,
+        [commentId]: data.likes,
+      }));
+    } catch (error) {
+      console.error("Error liking comment:", error);
+    }
+  };
+
+  const handleDislikes = async (commentId: number, commenterId: string) => {
+    try {
+      const token = localStorage.getItem("jwt");
+      if (!token) {
+        alert("Please log in to dislike comments.");
+        return;
+      }
+
+      const response = await fetch(
+        `https://localhost:7197/api/User/dislikeComment/${commentId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      updatePoints(commenterId, -1, "User")
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        alert(errorMessage);
+        return;
+      }
+
+      const data = await response.json();
+
+      setDislikes((prevDislikes) => ({
+        ...prevDislikes,
+        [commentId]: data.dislikes,
+      }));
+    } catch (error) {
+      console.error("Error disliking comment:", error);
+    }
+  };
+
   const handleDeleteComment = async (commentId: number) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this comment?"
@@ -388,17 +464,24 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
 
   const renderComments = () => {
     return comments
-      .filter((comment) => comment.threadId === comment.commentId) // Csak a fő kommenteket jelenítjük meg
+      .filter((comment) => comment.threadId === comment.commentId)
       .map((comment) => {
-        const replies = nestedComments[comment.commentId] || []; // A reply-ket a threadId alapján gyűjtjük
+        const replies = nestedComments[comment.commentId] || [];
         const isExpanded = expandedComments.has(comment.commentId);
-        const ratingKey:any = `${comment.bookId}_${comment.commenterId}`;
+        const ratingKey: any = `${comment.bookId}_${comment.commenterId}`;
 
         return (
           <div key={comment.commentId} className="comment">
+            <div className="like-dislike">
+              <button onClick={() => handleLikes(comment.commentId,comment.commenterId)}>
+                ↑ {likes[comment.commentId] ?? comment.likes}
+              </button>
+              <button onClick={() => handleDislikes(comment.commentId, comment.commenterId)}>
+                ↓ {dislikes[comment.commentId] ?? comment.dislikes}
+              </button>
+            </div>
             <div className="content">
               {editingComment === comment.commentId ? (
-                // Edit logika (nem változik)
                 <div>
                   <textarea
                     className="edit-comment-textarea"
@@ -488,14 +571,13 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                     </div>
                   )}
 
-                  {/* Reply-k megjelenítése */}
                   <div className="replies">
                     {(isExpanded ? replies : replies.slice(0, 1)).map(
                       (reply) => {
-                        const replyRatingKey:any = `${reply.bookId}_${reply.commenterId}`; // Egyedi kulcs a reply-hez
+                        const replyRatingKey: any = `${reply.bookId}_${reply.commenterId}`; // Egyedi kulcs a reply-hez
                         const parentCommenterId = findParentCommenterId(
                           reply.threadId
-                        ); // Parent commenter ID meghatározása
+                        );
                         const parentUsername = parentCommenterId
                           ? usernames[parentCommenterId] || "Loading..."
                           : "Unknown";
@@ -522,7 +604,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                     </span>
                                   ) : null}
                                 </p>
-                                {/* Reply saját értékelése */}
                                 <div className="ratings">
                                   {readerRatings[replyRatingKey] && (
                                     <div className="reader-rating">
@@ -567,6 +648,20 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                 </div>
                               )}
                             </div>
+
+                            <div className="like-dislike">
+                              <button
+                                onClick={() => handleLikes(reply.commentId, reply.commenterId)}
+                              >
+                                ↑ {likes[reply.commentId] ?? reply.likes}
+                              </button>
+                              <button
+                                onClick={() => handleDislikes(reply.commentId, reply.commenterId)}
+                              >
+                                ↓ {dislikes[reply.commentId] ?? reply.dislikes}
+                              </button>
+                            </div>
+
                             <div className="actions">
                               <>
                                 {!editingComment ||
@@ -583,22 +678,24 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                     {currentUser.id === reply.commenterId && (
                                       <div>
                                         <button
-                                      className="edit-button"
-                                      onClick={() => {
-                                        setEditingComment(reply.commentId);
-                                        setEditedMessage(reply.commentMessage);
-                                      }}
-                                    >
-                                      Edit
-                                    </button>
-                                    <button
-                                      className="delete-button"
-                                      onClick={() =>
-                                        handleDeleteComment(reply.commentId)
-                                      }
-                                    >
-                                      Delete
-                                    </button>
+                                          className="edit-button"
+                                          onClick={() => {
+                                            setEditingComment(reply.commentId);
+                                            setEditedMessage(
+                                              reply.commentMessage
+                                            );
+                                          }}
+                                        >
+                                          Edit
+                                        </button>
+                                        <button
+                                          className="delete-button"
+                                          onClick={() =>
+                                            handleDeleteComment(reply.commentId)
+                                          }
+                                        >
+                                          Delete
+                                        </button>
                                       </div>
                                     )}
                                   </>
@@ -635,7 +732,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                       }
                     )}
 
-                    {/* Expand/collapse gombok */}
                     {replies.length > 1 && !isExpanded && (
                       <button
                         className="expand-button"
