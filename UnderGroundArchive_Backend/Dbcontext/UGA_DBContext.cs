@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UnderGroundArchive_Backend.Models;
+using UnderGroundArchive_Backend.Services;
 
 namespace UnderGroundArchive_Backend.Dbcontext
 {
@@ -37,6 +38,8 @@ namespace UnderGroundArchive_Backend.Dbcontext
 
         public DbSet<ReportTypes> ReportTypes { get; set; }
         public DbSet<Chapters> Chapters { get; set; }
+        public DbSet<CommentLike> CommentLikes { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

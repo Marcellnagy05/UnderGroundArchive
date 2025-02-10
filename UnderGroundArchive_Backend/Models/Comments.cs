@@ -6,6 +6,8 @@
         public int BookId { get; set; }
         public string CommentMessage { get; set; }
         public string CommenterId { get; set; }
+        public int Likes { get; set; }
+        public int Dislikes { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? ModifiedAt { get; set; }
         public int? ParentCommentId { get; set; }
