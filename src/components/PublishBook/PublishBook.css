@@ -13,8 +13,10 @@
     height: 100vh;
 }
 
-.publishContainer>h2{
+.publishForm>h2{
     margin-bottom: 30px;
+    justify-self: center;
+    align-self: center;
 }
 
 .publishForm textarea{
@@ -22,6 +24,9 @@
     padding: 12px;
     border-radius: 10px;
     font-size: 0.95rem;
+    background-color: var(--background);
+    border: 2px solid var(--primary);
+    color: var(--primaryText);
 }
 
 .publishForm{
@@ -33,6 +38,8 @@
     width: 100%;
     max-width: 500px;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0.1, 0.1, 0.1, 0.25);
+    color: var(--secondaryText);
 }
 
 .publishFormItem{
@@ -45,12 +52,20 @@
     padding: 12px;
     border-radius: 10px;
     font-size: 0.95rem;
+    background-color: var(--background);
+    border: 2px solid var(--primary);
+    color: var(--primaryText);
 }
 
 .formSelect{
     height: 3em;
     font-size: 0.95rem;
     cursor: pointer;
+    background-color: var(--background);
+    border: 2px solid var(--primary);
+    color: var(--primaryText);
+    border-radius: 10px;
+    padding: 10px;
 }
 
 .publishButton{
@@ -59,4 +74,13 @@
     border-radius: 10px;
     margin-top: 20px;
     cursor: pointer;
+    background-color: var(--background);
+    border: 2px solid var(--primary);
+    color: var(--secondaryText);
 }
+
+.publishButton:hover{
+    background-color: var(--primary);
+    color: var(--primaryText);
+}
+  

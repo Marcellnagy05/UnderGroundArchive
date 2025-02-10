@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { registerUser } from "../../services/AuthServices";
 import { useToast } from "../contexts/ToastContext";
 import "./Register.css";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -12,6 +13,7 @@ const Register = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [error, setError] = useState("");
     const { showToast } = useToast();
+    const navigate = useNavigate();
 
     const handleRegister = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -24,6 +26,7 @@ const Register = () => {
         try {
             const message = await registerUser(name, email, password, birthDate, country, phoneNumber);
             showToast(message, "success");
+            navigate("/login")
             setError("");
         } catch (error: any) {
             setError(error.message || "Hiba történt a regisztráció során.");

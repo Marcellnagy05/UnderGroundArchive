@@ -174,9 +174,9 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
         `https://localhost:7197/api/User/user/${userId}`
       );
       if (response.ok) {
-        const text = await response.text(); // A választ először textként dolgozzuk fel
+        const text = await response.text();
         if (text) {
-          const data = JSON.parse(text); // Csak akkor próbáljuk JSON-re alakítani, ha van tartalom
+          const data = JSON.parse(text);
           setUsernames((prevUsernames) => ({
             ...prevUsernames,
             [userId]: data.userName,
@@ -262,7 +262,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
           },
         }
       );
-      updatePoints(commenterId, 2, "User")
+      updatePoints(commenterId, 2, "User");
       if (!response.ok) {
         const errorMessage = await response.text();
         alert(errorMessage);
@@ -298,7 +298,7 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
           },
         }
       );
-      updatePoints(commenterId, -1, "User")
+      updatePoints(commenterId, -1, "User");
       if (!response.ok) {
         const errorMessage = await response.text();
         alert(errorMessage);
@@ -472,14 +472,6 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
 
         return (
           <div key={comment.commentId} className="comment">
-            <div className="like-dislike">
-              <button onClick={() => handleLikes(comment.commentId,comment.commenterId)}>
-                ↑ {likes[comment.commentId] ?? comment.likes}
-              </button>
-              <button onClick={() => handleDislikes(comment.commentId, comment.commenterId)}>
-                ↓ {dislikes[comment.commentId] ?? comment.dislikes}
-              </button>
-            </div>
             <div className="content">
               {editingComment === comment.commentId ? (
                 <div>
@@ -524,6 +516,22 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                         <StarRating rating={criticRatings[ratingKey]} />
                       </div>
                     )}
+                  </div>
+                  <div className="like-dislike">
+                    <button
+                      onClick={() =>
+                        handleLikes(comment.commentId, comment.commenterId)
+                      }
+                    >
+                      ↑ {likes[comment.commentId] ?? comment.likes}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDislikes(comment.commentId, comment.commenterId)
+                      }
+                    >
+                      ↓ {dislikes[comment.commentId] ?? comment.dislikes}
+                    </button>
                   </div>
                   <div className="actions">
                     <button
@@ -595,8 +603,8 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
                                     {usernames[reply.commenterId] ||
                                       "Loading..."}
                                   </strong>
-                                  : válaszolt <strong>{parentUsername}</strong>
-                                  -nak/nek <br />
+                                  : @<strong>{parentUsername}</strong>
+                                  <br />
                                   {!editingComment ||
                                   editingComment !== reply.commentId ? (
                                     <span className="commentMessage">
@@ -651,12 +659,22 @@ const Comments = ({ bookId, currentUser }: CommentsProps) => {
 
                             <div className="like-dislike">
                               <button
-                                onClick={() => handleLikes(reply.commentId, reply.commenterId)}
+                                onClick={() =>
+                                  handleLikes(
+                                    reply.commentId,
+                                    reply.commenterId
+                                  )
+                                }
                               >
                                 ↑ {likes[reply.commentId] ?? reply.likes}
                               </button>
                               <button
-                                onClick={() => handleDislikes(reply.commentId, reply.commenterId)}
+                                onClick={() =>
+                                  handleDislikes(
+                                    reply.commentId,
+                                    reply.commenterId
+                                  )
+                                }
                               >
                                 ↓ {dislikes[reply.commentId] ?? reply.dislikes}
                               </button>

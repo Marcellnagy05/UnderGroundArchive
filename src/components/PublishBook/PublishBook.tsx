@@ -135,10 +135,10 @@ const PublishBook = () => {
 
   return (
     <div className="publishContainer">
-      <h2>Könyv publikálása</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {isAuthor ? (
         <form className="publishForm" onSubmit={handlePublish}>
+          <h2>Könyv publikálása</h2>
           <div className="publishFormItem">
             <label>Könyv neve:</label>
             <input

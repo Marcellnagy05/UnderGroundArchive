@@ -1,0 +1,16 @@
+.homeContainer{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.logo{
+    display: flex;
+    align-items: flex-start;
+}
+
+.logo>img{
+    scale: 1.5;
+    image-rendering: auto;
+}
