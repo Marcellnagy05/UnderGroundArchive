@@ -48,7 +48,7 @@ export default tseslint.config({
   },
 })
 ```
-#Csapattagok:
+# Csapattagok:
 ```js
 const Frontend_Developer = new Developer("Nagy Marcell János")
 const Backend_Developer = new Developer("Ötvös Ákos")
