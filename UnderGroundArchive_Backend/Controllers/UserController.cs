@@ -23,42 +23,6 @@ namespace UnderGroundArchive_Backend.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
-        {
-            var users = await _dbContext.Users
-                .Select(user => new
-                {
-                    user.Id,
-                    user.UserName,
-                    user.Email,
-                    user.JoinDate,
-                    user.BirthDate,
-                    user.Country,
-                    user.RankPoints,
-                    user.Balance,
-                    user.IsMuted,
-                    user.IsBanned,
-                    RoleName = _dbContext.UserRoles
-                        .Where(ur => ur.UserId == user.Id)
-                        .Join(_dbContext.Roles,
-                              ur => ur.RoleId,
-                              r => r.Id,
-                              (ur, r) => r.Name)
-                        .FirstOrDefault(),
-                    RankName = _dbContext.Ranks
-                        .Where(r => r.RankId == user.RankId)
-                        .Select(r => r.RankName)
-                        .FirstOrDefault(),
-                    SubscriptionName = _dbContext.Subscription
-                        .Where(s => s.SubscriptionId == user.SubscriptionId)
-                        .Select(s => s.SubscriptionName)
-                        .FirstOrDefault()
-                })
-                .ToListAsync();
-
-            return Ok(users);
-        }
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetUser(string id)
         {
