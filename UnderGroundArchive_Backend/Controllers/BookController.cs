@@ -46,10 +46,42 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpGet("book/{id}")]
-        public async Task<ActionResult<Books>> GetBook(int id)
+        public async Task<ActionResult<BookDTO>> GetBook(int id)
         {
-            var book = await _dbContext.Books.Include(c => c.Comments).Include(r => r.ReaderRatings).Include(cr => cr.CriticRatings).FirstOrDefaultAsync(c => c.BookId == id);
-            return book == null ? NotFound() : book;
+            var book = await _dbContext.Books
+                .Include(c => c.Comments)
+                .Include(r => r.ReaderRatings)
+                .Include(cr => cr.CriticRatings)
+                .Where(b => b.BookId == id)
+                .Select(b => new BookDTO
+                {
+                    Id = b.BookId,
+                    BookName = b.BookName,
+                    GenreId = b.GenreId,
+                    CategoryId = b.CategoryId,
+                    BookDescription = b.BookDescription,
+                    Comments = b.Comments.Select(c => new CommentDTO { CommentMessage = c.CommentMessage }).ToList(),
+                    ReaderRatings = b.ReaderRatings.Select(r => new ReaderRatingDTO { RatingValue = r.RatingValue }).ToList(),
+                    CriticRatings = b.CriticRatings.Select(cr => new CriticRatingDTO { RatingValue = cr.RatingValue }).ToList(),
+                    AverageRating = b.ReaderRatings.Any() ? b.ReaderRatings.Average(r => r.RatingValue) : 0,
+                    AuthorId = b.AuthorId
+                })
+                .FirstOrDefaultAsync();
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(book);
+        }
+
+
+        [HttpGet("book/count")]
+        public async Task<ActionResult<int>> GetBookCount()
+        {
+            var count = await _dbContext.Books.CountAsync();
+            return Ok(count);
         }
 
         //get chapter endpoints
