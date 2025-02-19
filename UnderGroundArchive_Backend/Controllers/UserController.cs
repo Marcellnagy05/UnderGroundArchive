@@ -167,17 +167,18 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPost("createRequest")]
-        public async Task<IActionResult> CreateRequest(RequestDTO request)
+        public async Task<IActionResult> CreateRequest([FromBody]RequestDTO request)
         {
-            // Get the authenticated user's ID
             var requesterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            Console.WriteLine($"Token validáció: {User.Identity.IsAuthenticated}");
+            Console.WriteLine($"Felhasználó azonosító: {requesterId}");
 
             if (string.IsNullOrEmpty(requesterId))
             {
                 return Unauthorized("User is not authenticated.");
             }
 
-            // Create a new request
             var newRequest = new Requests
             {
                 RequesterId = requesterId,
@@ -188,7 +189,6 @@ namespace UnderGroundArchive_Backend.Controllers
                 IsHandled = false
             };
 
-            // Add and save the request
             _dbContext.Requests.Add(newRequest);
             await _dbContext.SaveChangesAsync();
 
