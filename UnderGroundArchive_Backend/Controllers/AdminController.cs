@@ -181,7 +181,7 @@ namespace UnderGroundArchive_Backend.Controllers
             request.IsApproved = true;
             request.IsHandled = true;
 
-            if (request.RequestType == 0)
+            if (request.RequestType == 2)
             {
                 await UpdateUserRole(request.RequesterId, "Critic");
             }
