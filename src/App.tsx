@@ -16,6 +16,7 @@ import { ProfileProvider } from './components/contexts/ProfileContext';
 import RaindropBackground from "./components/RaindropBackground/RaindropBackground";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from "./components/Home/Home";
+import Requests from "./components/Requests/Requests";
 
 const App = () => {
   const GOOGLE_CLIENT_ID = "500480770304-ll53e6gspf512sj82sotjmg36vcrqid7.apps.googleusercontent.com";
@@ -38,6 +39,7 @@ const App = () => {
                   <Route path="/books" element={<Books />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/requests" element={<Requests />} />
                 </Routes>
               </SimpleBar>
             </div>

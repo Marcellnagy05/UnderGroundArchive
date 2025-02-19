@@ -1,8 +1,8 @@
-const BASE_URL = "https://localhost:7197/api/Account";
+const BASE_URL = "https://localhost:7197";
 
 export async function loginUser(login: string, password: string) {
     try {
-        const response = await fetch(`${BASE_URL}/login`, {
+        const response = await fetch(`${BASE_URL}/api/Account/login`, {
             method: "POST",
             mode: "cors",
             headers: {
@@ -30,7 +30,7 @@ export async function loginUser(login: string, password: string) {
 
 export async function fetchUserData(token: string) {
     try {
-        const response = await fetch("https://localhost:7197/api/User/me", {
+        const response = await fetch(`${BASE_URL}/api/User/me`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -64,7 +64,7 @@ export async function registerUser(name: string, email: string, password: string
     };
 
     try {
-        const response = await fetch(`${BASE_URL}/register`, {
+        const response = await fetch(`${BASE_URL}/api/Account/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
