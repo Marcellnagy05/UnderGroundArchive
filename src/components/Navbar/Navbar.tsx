@@ -11,6 +11,7 @@ import {
   FaCog,
   FaQuestionCircle,
   FaSignOutAlt,
+  FaPaperPlane
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
@@ -72,6 +73,10 @@ const Navbar = () => {
             <NavLink to="/faq" className="nav-item">
               <FaQuestionCircle className="nav-icon" />
               <span className="nav-text">GYIK</span>
+            </NavLink>
+            <NavLink to="/requests" className="nav-item">
+              <FaPaperPlane className="nav-icon" />
+              <span className="nav-text">Kérelmek</span>
             </NavLink>
             <button onClick={handleLogout} className="nav-item logout">
               <FaSignOutAlt className="nav-icon" />

@@ -1,26 +1,43 @@
 import { useEffect, useState } from "react";
-import { Book } from "../Types/Books";
+import { Book } from "../../Types/Books";
 import "./Home.css";
-import { getAllBooks } from "../services/BookServices";
+import { getBookById, getBookCount } from "../../services/BookServices";
 import { FaStar } from "react-icons/fa";
 
 const Home = () => {
-  const items = Array.from({ length: 10 }, (_, i) => i + 1);
   const [books, setBooks] = useState<Book[]>([]);
-  const selectedBooks = books.slice(0, 10);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchRandomBooks = async () => {
+      const storedData = localStorage.getItem("randomBooks");
+      const storedDate = localStorage.getItem("booksFetchDate");
+      const today = new Date().toISOString().split("T")[0];
+
+      if (storedData && storedDate === today) {
+        setBooks(JSON.parse(storedData));
+        return;
+      }
+
       try {
-        const booksData = await getAllBooks();
+        const bookCount = await getBookCount();
+        const randomIndexes = Array.from(
+          { length: 10 },
+          () => Math.floor(Math.random() * bookCount) + 1
+        );
+
+        const bookPromises = randomIndexes.map(id => getBookById(id));
+        const booksData = await Promise.all(bookPromises);
+
+        localStorage.setItem("randomBooks", JSON.stringify(booksData));
+        localStorage.setItem("booksFetchDate", today);
+
         setBooks(booksData);
       } catch (err) {
         console.error("Hiba a könyvek lekérése során:", err);
-        setError("Hiba történt az adatok lekérésekor.");
       }
     };
 
-    fetchInitialData();
+    fetchRandomBooks();
   }, []);
 
   return (
@@ -34,14 +51,18 @@ const Home = () => {
             <h3>Üdvözöllek az UnderGroundArchive oldalán!</h3>
           </div>
           <div className="cardBody">
+            <div className="aboutUs">
+              <h2>Mire is jó ez az oldal?</h2>
+              <p></p>
+            </div>
             <div className="sliderContainer">
-              <h2>Heti felkapottjaink</h2>
+              <h2>Napi Menu</h2>
               <div className="slider">
                 <div className="list">
-                  {selectedBooks.map((book, index) => (
+                  {books.map((book, index) => (
                     <div
-                      className="item"
                       key={index}
+                      className="item"
                       style={{ "--position": index + 1 } as React.CSSProperties}
                     >
                       <div className="homeBooks">
@@ -63,6 +84,7 @@ const Home = () => {
 };
 
 export default Home;
+
 function setError(arg0: string) {
   throw new Error("Function not implemented.");
 }

@@ -2,11 +2,31 @@ const BASE_URL = "https://localhost:7197";
 
 export async function getAllBooks() {
     try {
-        const response = await fetch(`${BASE_URL}/api/User/books`);
+        const response = await fetch(`${BASE_URL}/api/Book/books`);
         return await response.json();
     } catch (error) {
         console.error("Hiba a könyvek lekérése során:", error);
         throw new Error("Hiba történt a könyvek betöltésekor.");
+    }
+}
+
+export async function getBookCount() {
+    try {
+        const response = await fetch(`${BASE_URL}/api/Book/book/count`);
+        return await response.json();
+    } catch (error) {
+        console.error("Hiba a könyvek számának lekérése során.");
+        throw new Error("Hiba történt a könyvek számának lekérésekor.");
+    }
+}
+
+export async function getBookById(id: number){
+    try {
+        const response = await fetch(`${BASE_URL}/api/Book/book/${id}`)
+        return await response.json();
+    } catch (error) {
+        console.error(`Hiba a ${id}-as/es indexű könyv lekérése során.`)
+        throw new Error("Hiba történt a könyv lekérése során.")
     }
 }
 
