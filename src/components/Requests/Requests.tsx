@@ -1,39 +1,46 @@
-import React, { useState } from "react";
-import "./Requests.css";
+import { useState } from "react";
 import MyRequests from "./MyRequests";
 import NewRequest from "./NewRequest";
+import "./Requests.css";
 
-const Requests = () => {
-  const [activeView, setActiveView] = useState<"myRequests" | "newRequest">(
-    "myRequests"
-  );
+const Request = () => {
+  const [activeView, setActiveView] = useState("myRequests");
 
   return (
     <div className="requestContainer">
-      <div className="buttonContainer">
-        <button
-          className={`toggleButton ${
-            activeView === "myRequests" ? "active" : ""
-          }`}
-          onClick={() => setActiveView("myRequests")}
-        >
-          Saját Kérelmeim
-        </button>
-        <button
-          className={`toggleButton ${
-            activeView === "newRequest" ? "active" : ""
-          }`}
-          onClick={() => setActiveView("newRequest")}
-        >
-          Új kérelem
-        </button>
-        <div className="requestContent">
-          {activeView === "myRequests" && <MyRequests />}
-          {activeView === "newRequest" && <NewRequest />}
+      <div
+        className={`requestContent ${
+          activeView === "myRequests" ? "myRequestsActive" : "newRequestActive"
+        }`}
+      >
+        <div className="myRequestsContainer">
+          <MyRequests />
         </div>
+        <div className="newRequestContainer">
+          <NewRequest />
+        </div>
+      </div>
+
+      <div className="buttons-container">
+        {activeView === "newRequest" && (
+          <button
+            className="request-slide-button left"
+            onClick={() => setActiveView("myRequests")}
+          >
+            ← <strong className="arrow-words">Kérelmeim</strong>
+          </button>
+        )}
+        {activeView === "myRequests" && (
+          <button
+            className="request-slide-button right"
+            onClick={() => setActiveView("newRequest")}
+          >
+           <strong className="arrow-words">Új kérelem</strong> →
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
-export default Requests;
+export default Request;

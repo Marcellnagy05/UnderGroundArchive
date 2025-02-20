@@ -56,6 +56,148 @@ textarea{
     margin: 1rem 0rem 1rem 0rem;
 }
 
-.requestContent{
+.myRequestsContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: transparent;
+    min-height: 100vh;
+    color: var(--secondary);
+    flex-shrink: 0;
     width: 100%;
+}
+.requestContainer {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.requestContent {
+    display: flex;
+    width: 200vw;
+    transition: transform 0.5s ease-in-out;
+}
+
+.myRequestsContainer,
+.newRequestContainer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.requestContent.myRequestsActive {
+    transform: translateX(50vw);
+}
+
+.requestContent.newRequestActive {
+    transform: translateX(-50vw);
+}
+
+
+.myRequestsBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80vw;
+    gap: 1.5rem;
+}
+
+.request {
+    width: 60%;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    border: 2px solid var(--secondary);
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: var(--background);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.request:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.request:hover {
+    .message, .status, .decision{
+        color: var(--primaryText);
+    }
+}
+
+.message {
+    margin-left: 3rem;
+    flex: 2;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.status, 
+.decision {
+    flex: 1;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.status, .message, .decision {
+    color: var(--secondary);
+}
+
+@media (max-width: 768px) {
+    .request {
+        width: 90%;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .message {
+        margin-left: 0;
+        flex: 1;
+    }
+}
+
+.buttons-container {
+    position: absolute;
+    top: 50%;
+    right: 5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.request-slide-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    color: var(--secondary);
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.request-slide-button:hover {
+    background: transparent;
+    transform: scale(1.2);
+}
+
+.arrow-words{
+    font-size: 1rem;
+    margin: 0.4rem 0.5rem 0rem 0.5rem;
 }

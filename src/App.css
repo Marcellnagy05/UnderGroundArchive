@@ -60,6 +60,7 @@ body {
     margin: 0;
   }
 }
+
 .light-theme {
   --background: #f3e5e5; /* Halvány rózsás háttér */
   --primaryText: #09122C; /* Sötétkék szöveg */
