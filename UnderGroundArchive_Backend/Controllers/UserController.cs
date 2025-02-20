@@ -117,12 +117,15 @@ namespace UnderGroundArchive_Backend.Controllers
         // Request endpoints
 
         [HttpGet("myrequests")]
-        public async Task<IActionResult> GetAllRequests([FromQuery] string userId)
+        public async Task<IActionResult> GetAllRequests()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(userId))
             {
                 return BadRequest("User ID is required.");
             }
+
             var requests = await _dbContext.Requests
                 .Where(r => r.RequesterId == userId)
                 .Select(r => new
@@ -139,7 +142,6 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return Ok(requests);
         }
-
 
         [HttpGet("myrequest/{id}")]
         public async Task<IActionResult> GetRequest(int id, [FromQuery] string userId)
