@@ -5,22 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UnderGroundArchive_WPF.Views"
         mc:Ignorable="d"
-        Title="UserView" Height="450" Width="800">
+        Title="UserView" Height="450" Width="800"
+        Style="{StaticResource BackgroundStyle}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <Button Content="Load Users" Command="{Binding LoadUsersCommand}" Margin="5" />
-            <Button Content="Mute User" Command="{Binding ChangeMuteStatusCommand}" Margin="5" />
-            <Button Content="Ban User" Command="{Binding ChangeBanStatusCommand}" Margin="5" />
-            <Button Content="Update Role" Command="{Binding UpdateUserRoleCommand}" Margin="5" />
-            <Label Content="Select Role" Margin="5"/>
-            <ComboBox ItemsSource="{Binding RoleOptions}" SelectedItem="{Binding SelectedRole}" Width="200" Margin="5"/>
+        <StackPanel Orientation="Vertical" Grid.Column="0">
+            <Button Content="Load Users" Command="{Binding LoadUsersCommand}" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Mute User" Command="{Binding ChangeMuteStatusCommand}" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Ban User" Command="{Binding ChangeBanStatusCommand}" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Update Role" Command="{Binding UpdateUserRoleCommand}" Style="{StaticResource ButtonStyle}" />
+            <Label Content="Select Role:" Style="{StaticResource UserLabelStyle}" />
+            <ComboBox ItemsSource="{Binding RoleOptions}" SelectedItem="{Binding SelectedRole}" Style="{StaticResource UserComboBoxStyle}" />
         </StackPanel>
-        <Button Content="Go To Requests" Command="{Binding GoToRequestsCommand}" Margin="5" Width="150" HorizontalAlignment="Right"/>
-        <DataGrid ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" Grid.Row="1" AutoGenerateColumns="True" />
+
+        <Button Content="Go To Requests" Command="{Binding GoToRequestsCommand}" Width="150" Height="40" VerticalAlignment="Bottom" Style="{StaticResource ButtonStyle}" />
+
+        <DataGrid ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" Grid.Column="1" AutoGenerateColumns="True" Style="{StaticResource UserDataGridStyle}" />
     </Grid>
 </Window>

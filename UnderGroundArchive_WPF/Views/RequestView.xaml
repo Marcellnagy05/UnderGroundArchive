@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UnderGroundArchive_WPF.Views"
         mc:Ignorable="d"
-        Title="RequestView" Height="450" Width="800">
+        Title="RequestView" Height="450" Width="800"
+        Style="{StaticResource BackgroundStyle}">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -13,11 +15,13 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <Button Content="Load Pending Requests" Command="{Binding LoadRequestsCommand}" Margin="5" />
-            <Button Content="Accept Request" Command="{Binding AcceptRequestCommand}" Margin="5" />
-            <Button Content="Deny Request" Command="{Binding DenyRequestCommand}" Margin="5" />
+            <Button Content="Load Pending Requests" Command="{Binding LoadRequestsCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" />
+            <Button Content="Accept Request" Command="{Binding AcceptRequestCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
+            <Button Content="Deny Request" Command="{Binding DenyRequestCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
         </StackPanel>
-        <Button Content="Go Back" Command="{Binding GoToUsersCommand}" Margin="5" Width="150" HorizontalAlignment="Right"/>
-        <DataGrid ItemsSource="{Binding Requests}" SelectedItem="{Binding SelectedRequest}" Grid.Row="1" AutoGenerateColumns="True" />
+
+        <Button Content="Go Back" Command="{Binding GoToUsersCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" HorizontalAlignment="Right"/>
+
+        <DataGrid ItemsSource="{Binding Requests}" SelectedItem="{Binding SelectedRequest}" Grid.Row="1" Style="{StaticResource UserDataGridStyle}" AutoGenerateColumns="True" />
     </Grid>
 </Window>

@@ -6,17 +6,18 @@
         xmlns:local="clr-namespace:UnderGroundArchive_WPF.Views"
         xmlns:helpers="clr-namespace:UnderGroundArchive_WPF.Helpers"
         mc:Ignorable="d"
-        Title="LoginView" Height="450" Width="800">
+        Title="LoginView" Height="450" Width="800"
+        Style="{StaticResource BackgroundStyle}">
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="Username" Margin="5"/>
-            <TextBox Text="{Binding Username, Mode=TwoWay}" Width="200" Margin="5"/>
+            <TextBlock Text="Username" Style="{StaticResource LabelStyle}"/>
+            <TextBox Text="{Binding Username, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
 
-            <TextBlock Text="Password" Margin="5"/>
+            <TextBlock Text="Password" Style="{StaticResource LabelStyle}"/>
             <PasswordBox helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}" 
-                         Width="200" Margin="5" Name="PasswordBox"/>
+                         Style="{StaticResource PasswordStyle}"/>
 
-            <Button Content="Login" Command="{Binding LoginCommand}" Width="100" Margin="10" />
+            <Button Content="Login" Command="{Binding LoginCommand}" Style="{StaticResource ButtonStyle}"/>
         </StackPanel>
     </Grid>
 </Window>
