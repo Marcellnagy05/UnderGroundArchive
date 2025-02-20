@@ -27,7 +27,7 @@ const ThemeToggle = () => {
             </div>
             <label className="switch">
                 <input type="checkbox" checked={theme === "dark"} onChange={toggleTheme} />
-                <span className="slider">
+                <span className="themeSlider">
                     <FaSun className={`icon sun ${theme === "light" ? "active" : ""}`} />
                     <FaMoon className={`icon moon ${theme === "dark" ? "active" : ""}`} />
                 </span>

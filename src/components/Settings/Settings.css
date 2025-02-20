@@ -33,11 +33,11 @@
     border-radius: 5px;
   }
 
-  .switch .slider {
+  .switch .themeSlider {
     background-color: var(--primary);
   }
   
-  .switch .slider:hover{
+  .switch .themeSlider:hover{
     background-color: var(--thirdColor);
     border: 1px solid var(--secondaryText);
   }
@@ -67,7 +67,7 @@
     height: 0;
   }
   
-  .switch .slider {
+  .switch .themeSlider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -82,27 +82,27 @@
     padding: 8px;  /* Jobb illeszkedés */
   }
   
-  .switch .slider .icon {
+  .switch .themeSlider .icon {
     font-size: 25px;  /* Nagyobb ikonok */
     transition: 0.3s;
   }
   
-  .switch .slider .sun {
+  .switch .themeSlider .sun {
     transform: translateX(0);
     color: #fff; /* Nap ikon világos színű */
   }
   
-  .switch .slider .moon {
+  .switch .themeSlider .moon {
     transform: translateX(22px);
     color: transparent; /* Hold ikon ne jelenjen meg világos témában */
   }
   
-  .switch input:checked + .slider .sun {
+  .switch input:checked + .themeSlider .sun {
     transform: translateX(22px);
     color: transparent;  /* Nap ikon ne jelenjen meg sötét témában */
   }
   
-  .switch input:checked + .slider .moon {
+  .switch input:checked + .themeSlider .moon {
     transform: translateX(0);
     color: #fff;  /* Hold ikon világos színű sötét témában */
   }
