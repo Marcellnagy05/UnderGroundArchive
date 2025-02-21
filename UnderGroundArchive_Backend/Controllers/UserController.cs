@@ -821,22 +821,41 @@ namespace UnderGroundArchive_Backend.Controllers
 
         //Favourite endpoints
 
-        [HttpGet("favourites")]
-        public async Task<IActionResult> GetFavourites()
+        [HttpGet("myfavourites")]
+        public async Task<IActionResult> GetMyFavourites()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized();
+                return BadRequest("User ID is required.");
             }
 
-            var favoriteBooks = await _dbContext.Favourites
-                .Where(f => f.UserId == user.Id)
-                .Select(f => f.Book)
+            var requests = await _dbContext.Favourites
+                .Where(r => r.UserId == userId)
+                .Select(r => new
+                {
+                    r.FavouriteId,
+                    
+                    BookName = _dbContext.Books
+                    .Where(x => x.BookId == r.BookId)
+                    .Select(x => x.BookName),
+                   
+                    ChapterNumber = _dbContext.Chapters
+                    .Where(x => x.ChapterId == r.ChapterId)
+                    .Select(x => x.ChapterNumber)
+                    .FirstOrDefault(),
+
+                    ChapterTitle = _dbContext.Chapters
+                    .Where(x => x.ChapterId == r.ChapterId)
+                    .Select(x => x.ChapterTitle)
+                    .FirstOrDefault(),
+                })
                 .ToListAsync();
 
-            return Ok(favoriteBooks);
+            return Ok(requests);
         }
+
 
         [HttpPost("addFavourite/{bookId}")]
         public async Task<IActionResult> AddFavourite(int bookId)
@@ -909,5 +928,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return Ok("Last read chapter updated successfully.");
         }
+
+
     }
 }
