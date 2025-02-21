@@ -27,5 +27,16 @@ namespace UnderGroundArchive_WPF.Views
             DataContext = viewModel;
         }
 
+        private void Enter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (LoginButton.Command.CanExecute(null))
+                {
+                    LoginButton.Command.Execute(null);
+                }
+            }
+        }
+
     }
 }

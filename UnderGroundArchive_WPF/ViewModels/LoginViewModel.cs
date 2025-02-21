@@ -52,7 +52,6 @@ namespace UnderGroundArchive_WPF.ViewModels
 
             if (isSuccess && !string.IsNullOrEmpty(token))
             {
-                MessageBox.Show("Login successful! Token received.");
 
                 // Store the JWT token in ApiService
                 _apiService.SetToken(token);

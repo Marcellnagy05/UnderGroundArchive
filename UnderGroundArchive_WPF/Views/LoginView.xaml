@@ -9,7 +9,7 @@
         Title="LoginView" Height="450" Width="800"
         Style="{StaticResource BackgroundStyle}">
     <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" KeyDown="Enter_KeyDown">
             <TextBlock Text="Username" Style="{StaticResource LabelStyle}"/>
             <TextBox Text="{Binding Username, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
 
@@ -17,7 +17,7 @@
             <PasswordBox helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}" 
                          Style="{StaticResource PasswordStyle}"/>
 
-            <Button Content="Login" Command="{Binding LoginCommand}" Style="{StaticResource ButtonStyle}"/>
+            <Button x:Name="LoginButton" Content="Login" Command="{Binding LoginCommand}" Style="{StaticResource ButtonStyle}"/>
         </StackPanel>
     </Grid>
 </Window>
