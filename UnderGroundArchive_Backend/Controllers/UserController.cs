@@ -821,6 +821,23 @@ namespace UnderGroundArchive_Backend.Controllers
 
         //Favourite endpoints
 
+        [HttpGet("favourites")]
+        public async Task<IActionResult> GetFavourites()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var favoriteBooks = await _dbContext.Favourites
+                .Where(f => f.UserId == user.Id)
+                .Select(f => f.Book)
+                .ToListAsync();
+
+            return Ok(favoriteBooks);
+        }
+
         [HttpGet("myfavourites")]
         public async Task<IActionResult> GetMyFavourites()
         {
@@ -833,23 +850,14 @@ namespace UnderGroundArchive_Backend.Controllers
 
             var requests = await _dbContext.Favourites
                 .Where(r => r.UserId == userId)
+                .Include(r => r.Book)
+                .Include(r => r.LastReadChapter) 
                 .Select(r => new
                 {
                     r.FavouriteId,
-                    
-                    BookName = _dbContext.Books
-                    .Where(x => x.BookId == r.BookId)
-                    .Select(x => x.BookName),
-                   
-                    ChapterNumber = _dbContext.Chapters
-                    .Where(x => x.ChapterId == r.ChapterId)
-                    .Select(x => x.ChapterNumber)
-                    .FirstOrDefault(),
-
-                    ChapterTitle = _dbContext.Chapters
-                    .Where(x => x.ChapterId == r.ChapterId)
-                    .Select(x => x.ChapterTitle)
-                    .FirstOrDefault(),
+                    BookName = r.Book != null ? r.Book.BookName : null,
+                    ChapterNumber = r.LastReadChapter != null ? r.LastReadChapter.ChapterNumber : (int?)null,
+                    ChapterTitle = r.LastReadChapter != null ? r.LastReadChapter.ChapterTitle : null
                 })
                 .ToListAsync();
 
