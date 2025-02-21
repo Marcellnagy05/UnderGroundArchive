@@ -12,7 +12,7 @@ import { UserInfo } from "../UserInfo/UserInfo";
 import RankSelector from "../RankSelector/RankSelector";
 import { FaTrashCan } from "react-icons/fa6";
 import RankBar from "../RankBar/RankBar";
-import { fetchFavourites } from "../../services/BookServices";
+import { fetchMyFavourites } from "../../services/BookServices";
 
 
 interface Ranks {
@@ -126,7 +126,7 @@ const Profile = () => {
           // Döntés a fetch típusáról
           if (activeTab === "ertekelt") {
             const response = await fetch(
-              "https://localhost:7197/api/User/books",
+              "https://localhost:7197/api/Book/books",
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -145,7 +145,7 @@ const Profile = () => {
             userProfile.role === "Author"
           ) {
             const response = await fetch(
-              "https://localhost:7197/api/User/books",
+              "https://localhost:7197/api/Book/books",
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -228,7 +228,7 @@ const Profile = () => {
     if (token) {
       const fetchData = async () => {
         try {
-          const favs = await fetchFavourites(token);
+          const favs = await fetchMyFavourites(token);
           console.log("Favs:", favs);
   
           if (favs && Array.isArray(favs)) {

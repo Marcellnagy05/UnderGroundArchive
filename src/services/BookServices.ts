@@ -214,25 +214,43 @@ export async function deleteFavourite(bookId: number) {
 
 export async function fetchFavourites(token: string) {
     try {
-      const response = await fetch(`${BASE_URL}/api/User/myfavourites`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const response = await fetch(`${BASE_URL}/api/User/favourites`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-      if (!response.ok) throw new Error("Nem sikerült lekérni a kedvenceket.");
-  
-      const data = await response.json();
-      console.log("API válasz:", data); // Logoljuk a teljes választ
-      // Ellenőrizzük, hogy a data valóban egy tömb-e és van-e benne bookId
-      if (Array.isArray(data)) {
-        return data.map((fav: { bookId: number }) => fav.bookId);
-      } else {
-        console.error("A válasz nem tömb!");
-        return [];
-      }
+        if (!response.ok) throw new Error("Nem sikerült lekérni a kedvenceket.");
+
+        const data = await response.json();
+        console.log("API válasz:", data); // Logoljuk a teljes választ
+        // Ellenőrizzük, hogy a data valóban egy tömb-e és van-e benne bookId
+        if (Array.isArray(data)) {
+            return data.map((fav: { bookId: number }) => fav.bookId);
+        } else {
+            console.error("A válasz nem tömb!");
+            return [];
+        }
     } catch (error) {
-      console.error("Hiba a kedvencek betöltésekor:", error);
-      return [];
+        console.error("Hiba a kedvencek betöltésekor:", error);
+        return [];
     }
 }
+
+
+export async function fetchMyFavourites(token: string) {
+    try {
+        const response = await fetch(`${BASE_URL}/api/User/myfavourites`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        const favData = await response.json();
+
+        return favData;
+
+    } catch (error) {
+        console.error("Hiba a kedvencek betöltésekor:", error);
+        return [];
+    }
+} 
