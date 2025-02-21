@@ -890,7 +890,7 @@ namespace UnderGroundArchive_Backend.Controllers
             _dbContext.Favourites.Add(favorite);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Book added to favorites.");
+            return Ok(new { message = "Book added to favorites." });
         }
 
         [HttpDelete("removeFavourite/{bookId}")]
@@ -911,7 +911,7 @@ namespace UnderGroundArchive_Backend.Controllers
             _dbContext.Favourites.Remove(favorite);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Book removed from favorites.");
+            return Ok(new { message = "Book removed from favorites." });
         }
 
         [HttpPatch("updateLastReadChapter/{bookId}")]
