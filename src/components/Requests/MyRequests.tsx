@@ -28,7 +28,7 @@ const MyRequests = () => {
   }, [token]);
 
   return (
-    <div className="myRequestsContainer">
+    <div>
       {loading && <p>Betöltés...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
       <div className="myRequestsBody">
