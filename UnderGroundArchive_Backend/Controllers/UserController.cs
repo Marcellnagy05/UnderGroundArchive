@@ -887,8 +887,8 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok("Book removed from favorites.");
         }
 
-        [HttpPatch("updateLastReadChapter/{favouriteId}")]
-        public async Task<IActionResult> UpdateLastReadChapter(int favouriteId, [FromBody] int chapterId)
+        [HttpPatch("updateLastReadChapter/{bookId}")]
+        public async Task<IActionResult> UpdateLastReadChapter(int bookId, [FromBody] int chapterId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -897,7 +897,7 @@ namespace UnderGroundArchive_Backend.Controllers
             }
 
             var favorite = await _dbContext.Favourites
-                .FirstOrDefaultAsync(f => f.FavouriteId == favouriteId && f.UserId == user.Id);
+                .FirstOrDefaultAsync(f => f.BookId == bookId && f.UserId == user.Id);
 
             if (favorite == null)
             {
