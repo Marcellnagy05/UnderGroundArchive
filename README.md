@@ -1,8 +1,8 @@
 # UnderGroundArchive
-Projekt indításának feltételei:
+Projekt indításához szükséges programok:
 
 ```html
-  <div>
+  <div classname="Programok">
     <ul>
       <li>Visual studio</li>
       <li>Visual Studio Code</li>
