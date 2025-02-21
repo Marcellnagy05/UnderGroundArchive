@@ -12,6 +12,8 @@ import { UserInfo } from "../UserInfo/UserInfo";
 import RankSelector from "../RankSelector/RankSelector";
 import { FaTrashCan } from "react-icons/fa6";
 import RankBar from "../RankBar/RankBar";
+import { fetchFavourites } from "../../services/BookServices";
+
 
 interface Ranks {
   rankId: number;
@@ -46,6 +48,13 @@ interface Books {
   averageRating: number;
 }
 
+interface Fav {
+  favouriteId: number,
+  bookName: string,
+  chapterNumber: number,
+  chapterTitle: string
+}
+
 const Profile = () => {
   const { userProfile, setUserProfile } = useProfileContext();
   const [ranks, setRanks] = useState<Ranks[] | undefined>(undefined);
@@ -65,11 +74,13 @@ const Profile = () => {
   );
   const [userPoints, setUserPoints] = useState<number>(0);
   const [rankId, setRankId] = useState<number>(0);
-  
+  const [favourites, setFavourites] = useState<Fav[]>([])
 
   const handleMenuClick = (tab: string) => {
     setActiveTab(tab);
   };
+
+  
 
   const handlePasswordChange = (e: React.FormEvent<HTMLFormElement>) => {
     const token = localStorage.getItem("jwt");
@@ -210,6 +221,31 @@ const Profile = () => {
       console.error("Unexpected error fetching critic ratings:", err);
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+  
+    if (token) {
+      const fetchData = async () => {
+        try {
+          const favs = await fetchFavourites(token);
+          console.log("Favs:", favs);
+  
+          if (favs && Array.isArray(favs)) {
+            setFavourites(favs);
+          } else {
+            console.error("A kedvencek adat nem megfelelő");
+          }
+        } catch (error) {
+          console.error("Hiba a kedvencek betöltésekor:", error);
+        }
+      };
+  
+      fetchData();
+    }
+  }, []);
+  
+
 
   const fetchReaderRatings = async (userId: string) => {
     try {
@@ -603,6 +639,23 @@ useEffect(() => {
                 ))}
               </ul>
             )}
+          </motion.div>
+        )}
+        {activeTab === "kedvencek" && (
+          <motion.div
+            className={`username ${getSubscriptionStyle(
+              parseInt(userProfile?.subscriptionId || "N/A")
+            )}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ul>
+              {favourites?.map((favourite) => (
+                <li key={favourite.favouriteId}>{favourite.bookName}</li>
+              ))
+              }
+            </ul>
           </motion.div>
         )}
       </div>

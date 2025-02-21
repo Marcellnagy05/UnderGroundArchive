@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaQuestion,FaUser, FaLock, FaMoneyBill, FaStar, FaBook } from "react-icons/fa"; // Ikonok
 import "./ProfileMenu.css";
+import { BsBookmarkFill } from "react-icons/bs";
 
 interface ProfileMenuProps {
   onMenuClick: (tab: string) => void; // Függvény, amely egy stringet vár
@@ -58,7 +59,9 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ onMenuClick }) => {
             <FaBook />
           </button>
 
-          <button><FaQuestion/></button>
+          <button onClick={() => onMenuClick("kedvencek")}>
+            <BsBookmarkFill/>
+          </button>
           <button><FaQuestion/></button>
           <button><FaQuestion/></button>
         </div>

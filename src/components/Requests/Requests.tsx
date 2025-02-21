@@ -8,36 +8,40 @@ const Request = () => {
 
   return (
     <div className="requestContainer">
-      <div
-        className={`requestContent ${
-          activeView === "myRequests" ? "myRequestsActive" : "newRequestActive"
-        }`}
-      >
-        <div className="myRequestsContainer">
-          <MyRequests />
-        </div>
-        <div className="newRequestContainer">
-          <NewRequest />
-        </div>
-      </div>
+      <div className="mainContainer">
+          <div className="buttons-container">
+            {activeView === "newRequest" && (
+              <button
+                className="request-slide-button left"
+                onClick={() => setActiveView("myRequests")}
+              >
+                ← <strong className="arrow-words">Kérelmeim</strong>
+              </button>
+            )}
+            {activeView === "myRequests" && (
+              <button
+                className="request-slide-button right"
+                onClick={() => setActiveView("newRequest")}
+              >
+                <strong className="arrow-words">Új kérelem</strong> →
+              </button>
+            )}
+          </div>
 
-      <div className="buttons-container">
-        {activeView === "newRequest" && (
-          <button
-            className="request-slide-button left"
-            onClick={() => setActiveView("myRequests")}
-          >
-            ← <strong className="arrow-words">Kérelmeim</strong>
-          </button>
-        )}
-        {activeView === "myRequests" && (
-          <button
-            className="request-slide-button right"
-            onClick={() => setActiveView("newRequest")}
-          >
-           <strong className="arrow-words">Új kérelem</strong> →
-          </button>
-        )}
+        <div
+          className={`requestContent ${
+            activeView === "myRequests"
+              ? "myRequestsActive"
+              : "newRequestActive"
+          }`}
+        >
+          <div className="myRequestsContainer">
+            <MyRequests />
+          </div>
+          <div className="newRequestContainer">
+            <NewRequest />
+          </div>
+        </div>
       </div>
     </div>
   );

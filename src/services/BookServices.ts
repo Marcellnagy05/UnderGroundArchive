@@ -20,7 +20,7 @@ export async function getBookCount() {
     }
 }
 
-export async function getBookById(id: number){
+export async function getBookById(id: number) {
     try {
         const response = await fetch(`${BASE_URL}/api/Book/book/${id}`)
         return await response.json();
@@ -29,6 +29,7 @@ export async function getBookById(id: number){
         throw new Error("Hiba történt a könyv lekérése során.")
     }
 }
+
 
 export async function getGenres() {
     try {
@@ -147,5 +148,91 @@ export async function deleteRating(bookId: number, role: string, token: string) 
     } catch (error) {
         console.error("Hiba az értékelés törlése során:", error);
         throw error;
+    }
+}
+
+export async function addFavourite(bookId: number) {
+    const token = localStorage.getItem("jwt")
+    try {
+        const response = await fetch(`${BASE_URL}/api/User/addFavourite/${bookId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ bookId }),
+        });
+
+        // Ellenőrzés, hogy van válasz
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Szerver hiba:", errorText);
+            return null;  // Ha nincs érvényes válasz, null-t adunk vissza
+        }
+
+        // JSON válasz olvasása
+        const jsonData = await response.json();
+        console.log("Szerver válasz:", jsonData);
+        return jsonData; // Visszaadjuk a válasz JSON-t
+
+    } catch (error) {
+        console.error("Hiba a kedvencek mentésekor:", error);
+        return null;
+    }
+}
+
+export async function deleteFavourite(bookId: number) {
+    const token = localStorage.getItem("jwt")
+    try {
+        const response = await fetch(`${BASE_URL}/api/User/removeFavourite/${bookId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ bookId }),
+        });
+
+        // Ellenőrzés, hogy van válasz
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Szerver hiba:", errorText);
+            return null;  // Ha nincs érvényes válasz, null-t adunk vissza
+        }
+
+        // JSON válasz olvasása
+        const jsonData = await response.json();
+        console.log("Szerver válasz:", jsonData);
+        return jsonData; // Visszaadjuk a válasz JSON-t
+
+    } catch (error) {
+        console.error("Hiba a kedvencek mentésekor:", error);
+        return null;
+    }
+}
+
+
+export async function fetchFavourites(token: string) {
+    try {
+      const response = await fetch(`${BASE_URL}/api/User/myfavourites`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Nem sikerült lekérni a kedvenceket.");
+  
+      const data = await response.json();
+      console.log("API válasz:", data); // Logoljuk a teljes választ
+      // Ellenőrizzük, hogy a data valóban egy tömb-e és van-e benne bookId
+      if (Array.isArray(data)) {
+        return data.map((fav: { bookId: number }) => fav.bookId);
+      } else {
+        console.error("A válasz nem tömb!");
+        return [];
+      }
+    } catch (error) {
+      console.error("Hiba a kedvencek betöltésekor:", error);
+      return [];
     }
 }

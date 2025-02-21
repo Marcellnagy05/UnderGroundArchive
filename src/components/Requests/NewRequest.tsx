@@ -62,7 +62,7 @@ const NewRequest = () => {
   const filteredOptions = options.filter((option) => option.role !== userRole);
 
   return (
-    <div className="newRequestContainer">
+    <div>
       <h2>Új kérelem létrehozása</h2>
       {error && <p className="error">{error}</p>}
       {successMessage && <p className="success">{successMessage}</p>}

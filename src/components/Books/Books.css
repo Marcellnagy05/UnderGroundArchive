@@ -327,3 +327,9 @@
     font-size: 18px;
   }
 }
+
+.favourites {
+  display: flex;
+  justify-content: flex-end;
+}
+

@@ -13,11 +13,12 @@ import {
   getReaderRatings,
   saveRating,
   deleteRating,
+  fetchFavourites,
 } from "../../services/BookServices";
 import { Book, Genre, Category, User, CriticRating } from "../../Types/Books";
 import { updatePoints } from "../../services/RankingServices";
-import { UserProfile } from '../../Types/UserProfile';
-
+import { UserProfile } from "../../Types/UserProfile";
+import Favourites from "../Favourites/Favourites";
 
 const Books = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -37,6 +38,7 @@ const Books = () => {
   const [flippedStates, setFlippedStates] = useState<{
     [key: number]: boolean;
   }>({});
+  const [userFavourites, setUserFavourites] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -48,14 +50,14 @@ const Books = () => {
         setError("Hiba történt az adatok lekérésekor.");
       }
     };
-  
+
     fetchInitialData();
   }, []);
 
   useEffect(() => {
     allBooks();
   }, []);
-  
+
   useEffect(() => {
     const fetchGenresAndCategories = async () => {
       try {
@@ -128,15 +130,17 @@ const Books = () => {
     try {
       const bookData = await getAllBooks();
       setBooks(bookData);
-  
+
       if (bookData.length > 0) {
-        const authorIds = [...new Set(bookData.map((book: Book) => book.authorId))];
+        const authorIds = [
+          ...new Set(bookData.map((book: Book) => book.authorId)),
+        ];
         await fetchUsersByIds(authorIds); // ✅ Csak akkor fut, ha van könyv
       }
-  
+
       if (user?.id) {
         await fetchReaderRatings(user.id);
-  
+
         if (role === "Critic") {
           bookData.forEach((book) => fetchCriticRatings(book.id));
         }
@@ -146,32 +150,54 @@ const Books = () => {
       setError("Hiba történt az adatok lekérésekor.");
     }
   };
-  
+
+  const token = localStorage.getItem("jwt");
+  useEffect(() => {
+    async function loadFavourites() {
+      if (user) {
+        const favourites = await fetchFavourites(token);
+        setUserFavourites(favourites);
+      }
+    }
+
+    loadFavourites();
+  }, [user, token || null]);
+
+  const handleFavouriteChange = (bookId: number, isFavourite: boolean) => {
+    setUserFavourites((prevFavourites) => {
+      if (isFavourite) {
+        return [...prevFavourites, bookId];
+      } else {
+        return prevFavourites.filter((id) => id !== bookId);
+      }
+    });
+  };
 
   const fetchUsersByIds = async (authorIds: string[]) => {
     try {
       const userPromises = authorIds.map(async (id) => {
-        const response = await fetch(`https://localhost:7197/api/User/user/${id}`);
+        const response = await fetch(
+          `https://localhost:7197/api/User/user/${id}`
+        );
         if (!response.ok) {
           console.warn(`Nem található felhasználó az ID-val: ${id}`);
           return null;
         }
         return response.json();
       });
-  
+
       const usersData = await Promise.all(userPromises);
-  
+
       const usersMap = usersData.reduce((acc, user) => {
         if (user) acc[user.id] = user; // Csak ha van érvényes adat
         return acc;
       }, {} as { [key: string]: User });
-  
+
       setUsers((prevUsers) => ({ ...prevUsers, ...usersMap }));
     } catch (err) {
       console.error("Hiba a felhasználók lekérése során:", err);
     }
   };
-  
 
   const fetchCriticRatings = async (bookId: number) => {
     try {
@@ -194,99 +220,98 @@ const Books = () => {
 
   const fetchReaderRatings = async (userId: string) => {
     try {
-        const ratingsData = await getReaderRatings(userId);
+      const ratingsData = await getReaderRatings(userId);
 
-        // Ellenőrizzük, hogy van-e értékelés
-        if (ratingsData && ratingsData.length > 0) {
-            setRatings((prevRatings) => {
-                const updatedRatings = { ...prevRatings };
-                ratingsData.forEach((rating: any) => {
-                    if (!updatedRatings[rating.bookId]) {
-                        updatedRatings[rating.bookId] = {};
-                    }
-                    updatedRatings[rating.bookId][userId] = rating.ratingValue;
-                });
-                return updatedRatings;
-            });
-        } else {
-            console.log("Nincsenek értékelések ehhez a felhasználóhoz.");
-        }
+      // Ellenőrizzük, hogy van-e értékelés
+      if (ratingsData && ratingsData.length > 0) {
+        setRatings((prevRatings) => {
+          const updatedRatings = { ...prevRatings };
+          ratingsData.forEach((rating: any) => {
+            if (!updatedRatings[rating.bookId]) {
+              updatedRatings[rating.bookId] = {};
+            }
+            updatedRatings[rating.bookId][userId] = rating.ratingValue;
+          });
+          return updatedRatings;
+        });
+      } else {
+        console.log("Nincsenek értékelések ehhez a felhasználóhoz.");
+      }
     } catch (err) {
-        console.error("Hiba az olvasói értékelések lekérése során:", err);
+      console.error("Hiba az olvasói értékelések lekérése során:", err);
     }
-};
+  };
 
   const saveRatings = async (bookId: number, rating: number) => {
     if (!role) {
-        alert("Nem rendelkezik jogosultsággal az értékeléshez.");
-        return;
+      alert("Nem rendelkezik jogosultsággal az értékeléshez.");
+      return;
     }
 
     if (!user?.id) {
-        alert("Felhasználói azonosító hiányzik.");
-        return;
+      alert("Felhasználói azonosító hiányzik.");
+      return;
     }
 
     try {
-        await saveRating(
-            bookId,
-            rating,
-            user.id,
-            role,
-            localStorage.getItem("jwt") || ""
-        );
+      await saveRating(
+        bookId,
+        rating,
+        user.id,
+        role,
+        localStorage.getItem("jwt") || ""
+      );
 
-        setRatings((prevRatings) => ({
-            ...prevRatings,
-            [bookId]: {
-                ...prevRatings[bookId],
-                [user.id]: rating,
-            },
-        }));
+      setRatings((prevRatings) => ({
+        ...prevRatings,
+        [bookId]: {
+          ...prevRatings[bookId],
+          [user.id]: rating,
+        },
+      }));
 
-        if (role === "Critic") {
-            await fetchCriticRatings(bookId);
-        }
+      if (role === "Critic") {
+        await fetchCriticRatings(bookId);
+      }
 
-        showToast("Sikeres értékelés!", "success");
+      showToast("Sikeres értékelés!", "success");
 
-        if (selectedBook?.authorId) {
-            await updatePoints(selectedBook.authorId, 10, "Author");
-        }
-        await updatePoints(user.id, 5, "User");
+      if (selectedBook?.authorId) {
+        await updatePoints(selectedBook.authorId, 10, "Author");
+      }
+      await updatePoints(user.id, 5, "User");
     } catch (err) {
-        console.error("Hiba az értékelés mentése során:", err);
-        showToast("Nem sikerült menteni az értékelést.", "error");
+      console.error("Hiba az értékelés mentése során:", err);
+      showToast("Nem sikerült menteni az értékelést.", "error");
     }
-};
+  };
 
-const deleteRatings = async (bookId: number) => {
+  const deleteRatings = async (bookId: number) => {
     if (!user?.id) {
-        showToast("Felhasználói azonosító hiányzik!", "error");
-        return;
+      showToast("Felhasználói azonosító hiányzik!", "error");
+      return;
     }
 
     try {
-        await deleteRating(bookId, role || "", localStorage.getItem("jwt") || "");
+      await deleteRating(bookId, role || "", localStorage.getItem("jwt") || "");
 
-        setRatings((prevRatings) => {
-            const updatedRatings = { ...prevRatings };
-            delete updatedRatings[bookId];
-            return updatedRatings;
-        });
+      setRatings((prevRatings) => {
+        const updatedRatings = { ...prevRatings };
+        delete updatedRatings[bookId];
+        return updatedRatings;
+      });
 
-        showToast("Értékelés sikeresen törölve!", "success");
+      showToast("Értékelés sikeresen törölve!", "success");
 
-        if (selectedBook?.authorId) {
-            await updatePoints(selectedBook.authorId, -10, "Author");
-        }
-        await updatePoints(user.id, -5, "User");
+      if (selectedBook?.authorId) {
+        await updatePoints(selectedBook.authorId, -10, "Author");
+      }
+      await updatePoints(user.id, -5, "User");
     } catch (err) {
-        console.error("Hiba az értékelés törlése során:", err);
-        showToast("Nem sikerült törölni az értékelést.", "error");
+      console.error("Hiba az értékelés törlése során:", err);
+      showToast("Nem sikerült törölni az értékelést.", "error");
     }
-};
-
+  };
 
   const handleDetails = async (book: Book) => {
     setSelectedBook(book);
@@ -394,6 +419,15 @@ const deleteRatings = async (bookId: number) => {
         <div className="bookDetailsContainer">
           <div className="bookDetails">
             <div className="bookInfo">
+              <div className="favourites">
+                <Favourites
+                  bookId={selectedBook.id}
+                  chapterId={1}
+                  isFavourite={userFavourites.includes(selectedBook.id)}
+                  onFavouriteChange={handleFavouriteChange}
+                />
+              </div>
+
               <h2>{selectedBook.bookName}</h2>
               <p>
                 Szerző:{" "}
