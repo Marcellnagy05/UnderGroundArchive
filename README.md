@@ -10,6 +10,28 @@ Projekt indításához szükséges programok:
     </ul>
   </div>
 ```
+Projekt indításának feltételei:
+- Ajánlott klónozási folyamat:
+
+- Repok klónozása:
+
+```console
+1.Lépés:
+  pushd .
+  cd ./Frontend
+  git clone https://github.com/Marcellnagy05/UnderGroundArchive_Frontend/
+  popd
+2.Lépés:
+  pushd .
+  cd ./Backend
+  git clone https://github.com/Marcellnagy05/UnderGroundArchive_Backend/
+  popd
+3.Lépés:
+  pushd .
+  cd ./Backend
+  git clone https://github.com/Marcellnagy05/UnderGroundArchive_Backend/
+  popd
+```
 
 # Csapattagok és feladataik:
 ```js
