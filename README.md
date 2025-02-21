@@ -1,4 +1,13 @@
 # UnderGroundArchive
+Projekt indításának feltételei:
+
+```html
+  <ul>
+    <li>Visual studio</li>
+    <li>Visual Studio Code</li>
+    <li>Xampp Control Panel</li>
+  </ul>
+```
 
 # Csapattagok és feladataik:
 ```js
