@@ -819,10 +819,10 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
 
-        //Favorite endpoints
+        //Favourite endpoints
 
-        [HttpGet("favorites")]
-        public async Task<IActionResult> GetFavorites()
+        [HttpGet("favourites")]
+        public async Task<IActionResult> GetFavourites()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -838,8 +838,8 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok(favoriteBooks);
         }
 
-        [HttpPost("addFavorite/{bookId}")]
-        public async Task<IActionResult> AddFavorite(int bookId)
+        [HttpPost("addFavourite/{bookId}")]
+        public async Task<IActionResult> AddFavourite(int bookId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -866,8 +866,8 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok("Book added to favorites.");
         }
 
-        [HttpDelete("removeFavorite/{bookId}")]
-        public async Task<IActionResult> RemoveFavorite(int bookId)
+        [HttpDelete("removeFavourite/{bookId}")]
+        public async Task<IActionResult> RemoveFavourite(int bookId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -887,8 +887,8 @@ namespace UnderGroundArchive_Backend.Controllers
             return Ok("Book removed from favorites.");
         }
 
-        [HttpPut("updateFavorites")]
-        public async Task<IActionResult> UpdateFavorites([FromBody] List<int> bookIds)
+        [HttpPatch("updateLastReadChapter/{favouriteId}")]
+        public async Task<IActionResult> UpdateLastReadChapter(int favouriteId, [FromBody] int chapterId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -896,24 +896,18 @@ namespace UnderGroundArchive_Backend.Controllers
                 return Unauthorized();
             }
 
-            var validBooks = await _dbContext.Books
-                .Where(book => bookIds.Contains(book.BookId))
-                .Select(book => book.BookId)
-                .ToListAsync();
+            var favorite = await _dbContext.Favourites
+                .FirstOrDefaultAsync(f => f.FavouriteId == favouriteId && f.UserId == user.Id);
 
-            if (validBooks.Count != bookIds.Count)
+            if (favorite == null)
             {
-                return BadRequest("Some provided book IDs are invalid.");
+                return NotFound("Favorite not found.");
             }
 
-            var existingFavorites = await _dbContext.Favourites.Where(f => f.UserId == user.Id).ToListAsync();
-            _dbContext.Favourites.RemoveRange(existingFavorites);
-
-            var newFavorites = bookIds.Select(bookId => new Favourites { UserId = user.Id, BookId = bookId });
-            await _dbContext.Favourites.AddRangeAsync(newFavorites);
+            favorite.ChapterId = chapterId;
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Favorites updated successfully.");
+            return Ok("Last read chapter updated successfully.");
         }
     }
 }
