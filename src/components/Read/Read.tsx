@@ -18,16 +18,23 @@ const Read = () => {
     const fetchFavouriteChapter = async () => {
       try {
         const response = await fetch(
-          "https://localhost:7197/api/User/myfavourites"
+          "https://localhost:7197/api/User/myfavourites",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!response.ok) throw new Error("Hiba a kedvencek lekérésekor");
         const favourites = await response.json();
-
-        const favouriteBook = favourites.find(
-          (fav: any) => fav.BookName === bookId
-        );
-        if (favouriteBook && favouriteBook.ChapterNumber) {
-          setChapterNumber(favouriteBook.ChapterNumber);
+        const favouriteBook = favourites.find((fav: any) => {
+          return fav.bookId == bookId;
+        });
+        
+        if (favouriteBook && favouriteBook.chapterNumber) {
+          setChapterNumber(favouriteBook.chapterNumber);
         }
       } catch (error) {
         console.error(error);
@@ -64,6 +71,7 @@ const Read = () => {
 
   useEffect(() => {
     const fetchChapter = async () => {
+      console.log(chapterNumber)
       try {
         const response = await fetch(
           `https://localhost:7197/api/Book/chapter/${bookId}/${chapterNumber}`,
