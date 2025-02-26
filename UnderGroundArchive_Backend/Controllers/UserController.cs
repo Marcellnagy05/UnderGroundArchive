@@ -851,13 +851,12 @@ namespace UnderGroundArchive_Backend.Controllers
             var requests = await _dbContext.Favourites
                 .Where(r => r.UserId == userId)
                 .Include(r => r.Book)
-                .Include(r => r.LastReadChapter) 
                 .Select(r => new
                 {
                     r.FavouriteId,
+                    r.BookId,
                     BookName = r.Book != null ? r.Book.BookName : null,
-                    ChapterNumber = r.LastReadChapter != null ? r.LastReadChapter.ChapterNumber : (int?)null,
-                    ChapterTitle = r.LastReadChapter != null ? r.LastReadChapter.ChapterTitle : null
+                    r.ChapterNumber
                 })
                 .ToListAsync();
 
@@ -915,7 +914,7 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         [HttpPatch("updateLastReadChapter/{bookId}")]
-        public async Task<IActionResult> UpdateLastReadChapter(int bookId, [FromBody] int chapterId)
+        public async Task<IActionResult> UpdateLastReadChapter(int bookId, [FromBody] int chapterNumber)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -931,7 +930,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 return NotFound("Favorite not found.");
             }
 
-            favorite.ChapterId = chapterId;
+            favorite.ChapterNumber = chapterNumber;
             await _dbContext.SaveChangesAsync();
 
             return Ok("Last read chapter updated successfully.");

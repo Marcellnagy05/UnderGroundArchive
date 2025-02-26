@@ -189,12 +189,6 @@ namespace UnderGroundArchive_Backend.Dbcontext
                 .WithMany(b => b.Favourites)
                 .HasForeignKey(f => f.BookId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Favourites>()
-                .HasOne(f => f.LastReadChapter)
-                .WithMany(c => c.Favourites)
-                .HasForeignKey(f => f.ChapterId)
-                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

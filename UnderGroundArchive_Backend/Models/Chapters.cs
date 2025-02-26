@@ -12,6 +12,5 @@ namespace UnderGroundArchive_Backend.Models
         [JsonIgnore]
         public virtual Books Book { get; set; }
 
-        public virtual ICollection<Favourites> Favourites { get; set; }
     }
 }
