@@ -19,6 +19,7 @@ import { Book, Genre, Category, User, CriticRating } from "../../Types/Books";
 import { updatePoints } from "../../services/RankingServices";
 import { UserProfile } from "../../Types/UserProfile";
 import Favourites from "../Favourites/Favourites";
+import { useNavigate } from "react-router-dom";
 
 const Books = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -39,6 +40,8 @@ const Books = () => {
     [key: number]: boolean;
   }>({});
   const [userFavourites, setUserFavourites] = useState<number[]>([]);
+  const [totalChapters, setTotalChapters] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -316,8 +319,30 @@ const Books = () => {
   const handleDetails = async (book: Book) => {
     setSelectedBook(book);
     await fetchCriticRatings(book.id);
+    fetchTotalChapters(book.id);
     if (user?.id) {
       await fetchReaderRatings(user.id);
+    }
+  };
+
+  const fetchTotalChapters = async (bookId: number) => {
+    try {
+      const response = await fetch(
+        `https://localhost:7197/api/Book/chapters/${bookId}/totalChapters`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok)
+        throw new Error("Hiba a fejezetek számának lekérésekor");
+      const data = await response.json();
+      setTotalChapters(data.totalChapters);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -349,6 +374,10 @@ const Books = () => {
       ...prev,
       [id]: !prev[id],
     }));
+  };
+
+  const navigateToReading = (bookId: number) => {
+    navigate(`/read/${bookId}`);
   };
 
   return (
@@ -437,6 +466,18 @@ const Books = () => {
               <p>Kategória: {getCategoryName(selectedBook.categoryId)}</p>
               <p>Leírás: {selectedBook.bookDescription}</p>
             </div>
+            {totalChapters ? (
+
+                <button
+                  className="btnRead"
+                  onClick={() => navigateToReading(selectedBook.id)}
+                >
+                  Olvasás
+                </button>
+
+            ):(
+              <p className="readingParagraph">Jelenleg nincs elérhető fejezet</p>
+            )}
             <div className="ratings">
               <h3>
                 {role === "Critic"

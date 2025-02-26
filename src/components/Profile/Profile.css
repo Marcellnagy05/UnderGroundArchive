@@ -268,3 +268,28 @@
     gap: 32px; /* Még nagyobb hely az elemek között */
   }
 }
+
+.myBooksContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+}
+
+.myBooks{
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--background);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  gap: 1.2rem;
+}
+
+.btnEdit{
+  background-color: var(--thirdColor);
+  border: 2px solid var(--background);
+}
+
+.btnEdit:hover{
+  background-color: var(--background);
+}

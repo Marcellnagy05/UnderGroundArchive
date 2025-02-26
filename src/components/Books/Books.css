@@ -250,7 +250,7 @@
   color: var(--primary);
 }
 
-.removeRating {
+.removeRating, .btnRead {
   background-color: var(--primary);
   border: 2px solid var(--primary);
   color: var(--primaryText);
@@ -260,6 +260,11 @@
   width: 100%;
   max-width: 250px;
   text-align: center;
+}
+
+.btnRead{
+  justify-self: center;
+  align-self:center ;
 }
 
 .removeRating:hover {
@@ -331,5 +336,10 @@
 .favourites {
   display: flex;
   justify-content: flex-end;
+}
+
+.readingParagraph{
+  text-align: center;
+  padding: 0.8rem;
 }
 

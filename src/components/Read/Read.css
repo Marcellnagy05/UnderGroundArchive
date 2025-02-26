@@ -1,0 +1,25 @@
+.currentChapterContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+h2{
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.currentChapter{
+    align-self: center;
+    max-width: 80%;
+    text-align: justify;
+}
+
+.btnChapterContainer{
+    display: flex;
+    justify-content: space-around;
+}
+
+.backToList.chapters{
+    margin-left: 1rem;
+}

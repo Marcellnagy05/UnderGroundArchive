@@ -13,7 +13,7 @@ import RankSelector from "../RankSelector/RankSelector";
 import { FaTrashCan } from "react-icons/fa6";
 import RankBar from "../RankBar/RankBar";
 import { fetchMyFavourites } from "../../services/BookServices";
-
+import { useNavigate } from "react-router-dom";
 
 interface Ranks {
   rankId: number;
@@ -49,10 +49,10 @@ interface Books {
 }
 
 interface Fav {
-  favouriteId: number,
-  bookName: string,
-  chapterNumber: number,
-  chapterTitle: string
+  favouriteId: number;
+  bookName: string;
+  chapterNumber: number;
+  chapterTitle: string;
 }
 
 const Profile = () => {
@@ -74,13 +74,12 @@ const Profile = () => {
   );
   const [userPoints, setUserPoints] = useState<number>(0);
   const [rankId, setRankId] = useState<number>(0);
-  const [favourites, setFavourites] = useState<Fav[]>([])
+  const [favourites, setFavourites] = useState<Fav[]>([]);
+  const navigate = useNavigate();
 
   const handleMenuClick = (tab: string) => {
     setActiveTab(tab);
   };
-
-  
 
   const handlePasswordChange = (e: React.FormEvent<HTMLFormElement>) => {
     const token = localStorage.getItem("jwt");
@@ -89,7 +88,6 @@ const Profile = () => {
     const newPassword = formData.get("newPassword")?.toString();
     const confirmPassword = formData.get("confirmPassword")?.toString();
     const currentPassword = formData.get("currentPassword")?.toString();
-
 
     if (newPassword !== confirmPassword) {
       alert("A két jelszó nem egyezik meg!");
@@ -224,13 +222,13 @@ const Profile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
-  
+
     if (token) {
       const fetchData = async () => {
         try {
           const favs = await fetchMyFavourites(token);
           console.log("Favs:", favs);
-  
+
           if (favs && Array.isArray(favs)) {
             setFavourites(favs);
           } else {
@@ -240,12 +238,10 @@ const Profile = () => {
           console.error("Hiba a kedvencek betöltésekor:", error);
         }
       };
-  
+
       fetchData();
     }
   }, []);
-  
-
 
   const fetchReaderRatings = async (userId: string) => {
     try {
@@ -304,17 +300,17 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-        const data = await response.json();
-        setUserPoints(data.points);
-        setRankId(data.rankId);
+      const data = await response.json();
+      setUserPoints(data.points);
+      setRankId(data.rankId);
     } catch (error) {
-        console.error("Hiba a felhasználó adatainak lekérése során:", error);
+      console.error("Hiba a felhasználó adatainak lekérése során:", error);
     }
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     reloadUserData();
-}, [userProfile?.rankId]);
+  }, [userProfile?.rankId]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -332,7 +328,6 @@ useEffect(() => {
           if (response.ok) {
             const userData = await response.json();
             console.log(userData);
-            
 
             setUserProfile({
               id: userData?.id,
@@ -494,6 +489,10 @@ useEffect(() => {
     }
   };
 
+  const navigateToAddChapters = (bookId: number) => {
+    navigate(`/addChapters/${bookId}`);
+  };
+
   return (
     <div className="profileContainer">
       <div className="profileSidebar">
@@ -519,7 +518,12 @@ useEffect(() => {
                 </div>
               </div>
 
-              <RankBar userId={userProfile?.id} userPoints={userProfile?.rankPoints} rankId={rankId} onRankUpdate={reloadUserData} />
+              <RankBar
+                userId={userProfile?.id}
+                userPoints={userProfile?.rankPoints}
+                rankId={rankId}
+                onRankUpdate={reloadUserData}
+              />
 
               <UserInfo
                 email={userProfile?.email || "N/A"}
@@ -606,9 +610,12 @@ useEffect(() => {
                   {Object.keys(ratings[parseInt(bookId)]).map((userId) => (
                     <>
                       <div key={userId}>
-                      <button className="removeRatingBtn" onClick={() => deleteRating(parseInt(bookId))}>
-                        <FaTrashCan/>
-                      </button>
+                        <button
+                          className="removeRatingBtn"
+                          onClick={() => deleteRating(parseInt(bookId))}
+                        >
+                          <FaTrashCan />
+                        </button>
                         <StarRating
                           rating={ratings[parseInt(bookId)][userId]}
                         />
@@ -633,11 +640,19 @@ useEffect(() => {
             {userProfile?.role !== "Author" ? (
               <button disabled>🔒 Csak szerzők számára elérhető</button>
             ) : (
-              <ul>
+              <div className="myBooksContainer">
                 {books?.map((book) => (
-                  <li key={book.id}>{book.bookName}</li>
+                  <div className="myBooks" key={book.id}>
+                    <p>{book.bookName}</p>
+                    <button
+                      onClick={() => navigateToAddChapters(book.id)}
+                      className="btnAddCh"
+                    >
+                      Új fejezet hozzáadása
+                    </button>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </motion.div>
         )}
@@ -653,8 +668,7 @@ useEffect(() => {
             <ul>
               {favourites?.map((favourite) => (
                 <li key={favourite.favouriteId}>{favourite.bookName}</li>
-              ))
-              }
+              ))}
             </ul>
           </motion.div>
         )}
@@ -667,4 +681,3 @@ export default Profile;
 function setUserPoints(points: any) {
   throw new Error("Function not implemented.");
 }
-
