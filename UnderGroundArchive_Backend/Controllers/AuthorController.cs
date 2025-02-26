@@ -175,7 +175,6 @@ namespace UnderGroundArchive_Backend.Controllers
         }
 
         //Chapter endpoints
-
         [HttpGet("chapters/{bookId}")]
         public async Task<IActionResult> GetChaptersByBook(int bookId)
         {
@@ -187,6 +186,21 @@ namespace UnderGroundArchive_Backend.Controllers
             if (chapters == null) return NotFound();
 
             return Ok(chapters);
+        }
+
+        [HttpGet("chapters/{bookId}/totalChapters")]
+        public async Task<IActionResult> GetChaptersByBookCount(int bookId)
+        {
+            if (bookId <= 0)
+            {
+                return BadRequest("Érvénytelen könyvazonosító.");
+            }
+
+            int totalChapters = await _dbContext.Chapters
+                .Where(c => c.BookId == bookId)
+                .CountAsync();
+
+            return Ok(new { totalChapters });
         }
 
         [HttpGet("chapter/{bookId}/{chapterNumber}")]

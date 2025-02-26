@@ -110,5 +110,21 @@ namespace UnderGroundArchive_Backend.Controllers
 
             return Ok(chapter);
         }
+
+        [HttpGet("chapters/{bookId}/totalChapters")]
+        public async Task<IActionResult> GetChaptersByBookCount(int bookId)
+        {
+            if (bookId <= 0)
+            {
+                return BadRequest("Érvénytelen könyvazonosító.");
+            }
+
+            int totalChapters = await _dbContext.Chapters
+                .Where(c => c.BookId == bookId)
+                .CountAsync();
+
+            return Ok(new { totalChapters });
+        }
+
     }
 }
