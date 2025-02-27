@@ -32,7 +32,7 @@ const Chapters = () => {
         setChapterNumber(maxChapterNumber + 1);
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error(err)
     }
   };
 
