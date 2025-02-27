@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 
 namespace UnderGroundArchive_Backend.Models
 {
@@ -19,6 +20,7 @@ namespace UnderGroundArchive_Backend.Models
         public virtual ICollection<Books> Books { get; set; } = new List<Books>();
         public virtual ICollection<Requests> Requests { get; set; } = new List<Requests>();
         public virtual ICollection<CompletedAchievements> CompletedAchievements { get; set; } = new List<CompletedAchievements>();
+        [JsonIgnore]
         public virtual ICollection<Comments> Comments { get; set; } = new List<Comments>();
         public virtual ICollection<Reports> ReportSender { get; set; } = new List<Reports>();
         public virtual ICollection<Reports> ReportSubject { get; set; } = new List<Reports>();

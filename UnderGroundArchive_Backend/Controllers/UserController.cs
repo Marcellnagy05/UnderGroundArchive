@@ -23,6 +23,48 @@ namespace UnderGroundArchive_Backend.Controllers
             _userManager = userManager;
         }
 
+        //Achievement helper function
+        private async Task GrantAchievementIfEligible(string userId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user == null) return;
+
+            int writtenCommentCount = await _dbContext.Comments.CountAsync(b => b.CommenterId == userId);
+            Console.WriteLine("-------------------------------------");
+            Console.WriteLine(writtenCommentCount);
+            var achievementsToCheck = new List<(int AchievementId, int RequiredComments)>
+            {
+                (4, 1),  //First Words – Write your first comment
+                (5, 10),  // Engaged Reader – Write 10 comments
+                (6, 50)  // Top Reviewer – Write 50 comments
+            };
+
+            foreach (var (achievementId, RequiredComments) in achievementsToCheck)
+            {
+                if (writtenCommentCount >= RequiredComments)
+                {
+                    bool achievementExists = await _dbContext.CompletedAchievements
+                        .AnyAsync(ca => ca.AchievementId == achievementId && ca.CompleterId == userId);
+
+                    if (!achievementExists)
+                    {
+                        var achievement = await _dbContext.Achievements.FindAsync(achievementId);
+                        if (achievement != null)
+                        {
+                            _dbContext.CompletedAchievements.Add(new CompletedAchievements
+                            {
+                                AchievementId = achievementId,
+                                CompleterId = userId
+                            });
+
+                            user.RankPoints += achievement.PointAmount;
+                            await _dbContext.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+        }
+
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetUser(string id)
         {
@@ -593,7 +635,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 CommentMessage = comment.CommentMessage,
                 ParentCommentId = comment.ParentCommentId,
                 ThreadId = comment.ThreadId,
-                CommenterId = comment.CommenterId // Include the CommenterId here
+                CommenterId = comment.CommenterId
             };
         }
 
@@ -667,6 +709,8 @@ namespace UnderGroundArchive_Backend.Controllers
                 _dbContext.Comments.Update(comment);
                 await _dbContext.SaveChangesAsync();
             }
+
+            await GrantAchievementIfEligible(commenterId);
 
             return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
         }
