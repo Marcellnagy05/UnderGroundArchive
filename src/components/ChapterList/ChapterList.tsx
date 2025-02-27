@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-
-interface chapters {
-  chapterId: number;
-  bookId: number;
-  chapterNumber: number;
-  chapterTitle: string;
-  chapterContent: string;
-}
+import { useNavigate, useParams } from "react-router-dom";
+import { chapters } from "../../Types/Chapters";
 
 const ChapterList = () => {
   const [chapters, setChapters] = useState<chapters[]>([]);
   const token = localStorage.getItem("jwt");
   const { bookId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchChapters = async () => {
@@ -57,13 +51,22 @@ const ChapterList = () => {
     }
   };
 
+  const handleNavigateToChapterEdit = (chapterId: number, chapterNumber: number) => {
+    navigate(`/editChapter/${bookId}/${chapterId}/${chapterNumber}`)
+  }
+
   return (
     <div className="chapterListContainer">
       <div className="chapterList">
         {chapters.map((chapter) => (
           <div key={chapter.chapterId} className="chapterItem">
             <h3>{chapter.chapterTitle}</h3>
-            <button className="chapterEdit">Szerkesztés</button>
+            <button
+              onClick={() => handleNavigateToChapterEdit(chapter.chapterId, chapter.chapterNumber)}
+              className="chapterEdit"
+            >
+              Szerkesztés
+            </button>
             <button
               onClick={() => handleChapterDelete(chapter.chapterId)}
               className="chapterDelete"

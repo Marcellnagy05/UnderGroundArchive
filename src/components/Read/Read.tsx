@@ -83,7 +83,8 @@ const Read = () => {
             },
           }
         );
-        if (!response.ok) throw new Error("Hiba a fejezet lekérésekor");
+        if (!response.ok) throw new Error("Hiba a fejezet lekérésekor")
+
         const data = await response.json();
         setChapter(data);
       } catch (error) {
@@ -117,7 +118,7 @@ const Read = () => {
     }
   };
 
-  const handlePreviousChapter = () => {
+  const handlePreviousChapter = async() => {
     if (chapterNumber > 1) {
       const newChapterNumber = chapterNumber - 1;
       setChapterNumber(newChapterNumber);

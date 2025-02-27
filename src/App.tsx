@@ -20,6 +20,7 @@ import Requests from "./components/Requests/Requests";
 import Chapters from "./components/Chapters/Chapters";
 import Read from "./components/Read/Read";
 import ChapterList from "./components/ChapterList/ChapterList";
+import EditChapter from "./components/ChapterList/EditChapter";
 
 const App = () => {
   const GOOGLE_CLIENT_ID = "500480770304-ll53e6gspf512sj82sotjmg36vcrqid7.apps.googleusercontent.com";
@@ -46,6 +47,7 @@ const App = () => {
                   <Route path="/addChapters/:bookId" element={<Chapters />} />
                   <Route path="/read/:bookId" element={<Read />} />
                   <Route path="/chapterList/:bookId" element={<ChapterList />} />
+                  <Route path="/editChapter/:bookId/:chapterId/:chapterNumber" element={<EditChapter />} />
                 </Routes>
               </SimpleBar>
             </div>
