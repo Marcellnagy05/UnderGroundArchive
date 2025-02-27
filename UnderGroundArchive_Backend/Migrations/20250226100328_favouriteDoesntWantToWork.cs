@@ -10,7 +10,6 @@ namespace UnderGroundArchive_Backend.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("ALTER TABLE `Favourites` CHANGE `ChapterId` `ChapterNumber` INT NOT NULL;");
         }
 
         /// <inheritdoc />

@@ -12,7 +12,6 @@ namespace UnderGroundArchive_Backend.Models
         public string? BookDescription { get; set; }
         public virtual Genre Genre { get; set; }
         public virtual Categories Categories { get; set; }
-        public virtual ICollection<Achievements> Achievements { get; set; }
         public virtual ICollection<Comments> Comments { get; set; }
         public virtual ICollection<ReaderRatings> ReaderRatings { get; set; }
         public virtual ICollection<CriticRatings> CriticRatings { get;set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UnderGroundArchive_Backend.Dbcontext;
 
@@ -11,9 +12,11 @@ using UnderGroundArchive_Backend.Dbcontext;
 namespace UnderGroundArchive_Backend.Migrations
 {
     [DbContext(typeof(UGA_DBContext))]
-    partial class UGA_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20250227082457_removeBookIdFromAchievements")]
+    partial class removeBookIdFromAchievements
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,10 +169,15 @@ namespace UnderGroundArchive_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("BooksBookId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PointAmount")
                         .HasColumnType("int");
 
                     b.HasKey("AchievementId");
+
+                    b.HasIndex("BooksBookId");
 
                     b.ToTable("Achievements");
                 });
@@ -787,6 +795,13 @@ namespace UnderGroundArchive_Backend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Achievements", b =>
+                {
+                    b.HasOne("UnderGroundArchive_Backend.Models.Books", null)
+                        .WithMany("Achievements")
+                        .HasForeignKey("BooksBookId");
+                });
+
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Books", b =>
                 {
                     b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", null)
@@ -997,6 +1012,8 @@ namespace UnderGroundArchive_Backend.Migrations
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Books", b =>
                 {
+                    b.Navigation("Achievements");
+
                     b.Navigation("Chapters");
 
                     b.Navigation("Comments");

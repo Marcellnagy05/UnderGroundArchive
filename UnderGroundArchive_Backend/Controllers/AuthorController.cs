@@ -59,6 +59,33 @@ namespace UnderGroundArchive_Backend.Controllers
                 _dbContext.Books.Add(book);
                 await _dbContext.SaveChangesAsync();
 
+                bool achievementExists = await _dbContext.CompletedAchievements
+                    .AnyAsync(ca => ca.AchievementId == 1 && ca.CompleterId == userId);
+
+                if (!achievementExists)
+                {
+                    var achievement = await _dbContext.Achievements.FindAsync(1);
+
+                    if (achievement != null)
+                    {
+                        var completedAchievement = new CompletedAchievements
+                        {
+                            AchievementId = 1,
+                            CompleterId = userId
+                        };
+
+                        _dbContext.CompletedAchievements.Add(completedAchievement);
+
+                        var user = await _dbContext.Users.FindAsync(userId);
+                        if (user != null)
+                        {
+                            user.RankPoints += achievement.PointAmount;
+                        }
+
+                        await _dbContext.SaveChangesAsync();
+                    }
+                }
+
                 return Ok(new { message = "A könyv sikeresen publikálva.", bookId = book.BookId });
             }
             catch (Exception ex)
@@ -116,7 +143,6 @@ namespace UnderGroundArchive_Backend.Controllers
 
 
         [HttpDelete("delete/{bookId}")]
-
         public async Task<IActionResult> DeleteBook(int bookId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -128,7 +154,7 @@ namespace UnderGroundArchive_Backend.Controllers
 
             try
             {
-                // Fetch the book to be deleted from the database
+                // Fetch the book to be deleted
                 var book = await _dbContext.Books
                     .FirstOrDefaultAsync(b => b.BookId == bookId && b.AuthorId == userId);
 
@@ -136,6 +162,12 @@ namespace UnderGroundArchive_Backend.Controllers
                 {
                     return NotFound(new { message = "A könyvet nem találjuk vagy nem jogosult a törlésére." });
                 }
+
+                // Delete related chapters
+                var chapters = await _dbContext.Chapters
+                    .Where(ch => ch.BookId == bookId)
+                    .ToListAsync();
+                _dbContext.Chapters.RemoveRange(chapters);
 
                 // Delete related comments
                 var comments = await _dbContext.Comments
@@ -155,11 +187,13 @@ namespace UnderGroundArchive_Backend.Controllers
                     .ToListAsync();
                 _dbContext.CriticRatings.RemoveRange(criticRatings);
 
+                // Delete related favorites
                 var favoritesToRemove = await _dbContext.Favourites
-                      .Where(fav => fav.BookId == bookId)
-                      .ToListAsync();
-
+                    .Where(fav => fav.BookId == bookId)
+                    .ToListAsync();
                 _dbContext.Favourites.RemoveRange(favoritesToRemove);
+
+                // Save changes after deleting dependencies
                 await _dbContext.SaveChangesAsync();
 
                 // Now delete the book
@@ -173,6 +207,7 @@ namespace UnderGroundArchive_Backend.Controllers
                 return StatusCode(500, new { message = "Belső szerverhiba történt a könyv törlése során.", error = ex.Message });
             }
         }
+
 
         //Chapter endpoints
         [HttpGet("chapters/{bookId}")]

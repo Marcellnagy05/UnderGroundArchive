@@ -102,12 +102,6 @@ namespace UnderGroundArchive_Backend.Dbcontext
                 .WithMany(u => u.Requests)
                 .HasForeignKey(r => r.RequesterId);
 
-            // Achievements Table
-            modelBuilder.Entity<Achievements>()
-                .HasOne(a => a.Books)
-                .WithMany(b => b.Achievements)
-                .HasForeignKey(a => a.BookId);
-
             // CompletedAchievements Table
             modelBuilder.Entity<CompletedAchievements>()
                 .HasOne(ca => ca.Achievements)
