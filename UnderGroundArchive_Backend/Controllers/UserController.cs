@@ -34,7 +34,13 @@ namespace UnderGroundArchive_Backend.Controllers
             {
                 (4, 1),  //First Words – Write your first comment
                 (5, 10),  // Engaged Reader – Write 10 comments
-                (6, 50)  // Top Reviewer – Write 50 comments
+                (6, 50),  // Top Reviewer – Write 50 comments
+                (7, 100),  // Conversationalist – Join the discussion with 100 comments
+                (8, 250),  // Discussion Leader – Share your insights in 250 comments
+                (9, 500),  // Community Voice – Make your voice heard with 500 comments
+                (10, 1000),  // Master Debater – Reach 1000 comments and shape the conversation
+                (11, 2500),  // Legendary Commenter – With 2500 comments, you’re a discussion icon
+                (12, 5000)  // Eternal Echo – Leave a lasting mark with 5000 comments
             };
 
             foreach (var (achievementId, RequiredComments) in achievementsToCheck)

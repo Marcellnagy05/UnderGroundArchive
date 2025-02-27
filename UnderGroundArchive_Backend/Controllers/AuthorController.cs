@@ -369,6 +369,7 @@ namespace UnderGroundArchive_Backend.Controllers
             {
                 return Unauthorized("You are not authorized to delete this chapter.");
             }
+
             _dbContext.Chapters.Remove(chapter);
             await _dbContext.SaveChangesAsync();
 
