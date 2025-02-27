@@ -343,8 +343,6 @@ namespace UnderGroundArchive_Backend.Controllers
             return NoContent();
         }
 
-
-
         [HttpDelete("deleteChapter/{chapterId}")]
         public async Task<IActionResult> DeleteChapter(int chapterId)
         {
@@ -370,11 +368,31 @@ namespace UnderGroundArchive_Backend.Controllers
                 return Unauthorized("You are not authorized to delete this chapter.");
             }
 
+            var affectedUsers = await _dbContext.Favourites
+                .Where(f => f.BookId == book.BookId && f.ChapterNumber == chapter.ChapterNumber)
+                .ToListAsync();
+
+            if (affectedUsers.Any())
+            {
+                var closestChapter = await _dbContext.Chapters
+                    .Where(c => c.BookId == book.BookId && c.ChapterNumber != chapter.ChapterNumber)
+                    .OrderByDescending(c => c.ChapterNumber) 
+                    .FirstOrDefaultAsync();
+
+                foreach (var user in affectedUsers)
+                {
+                    user.ChapterNumber = closestChapter?.ChapterNumber;
+                }
+
+                await _dbContext.SaveChangesAsync();
+            }
+
             _dbContext.Chapters.Remove(chapter);
             await _dbContext.SaveChangesAsync();
 
             return NoContent();
         }
+
 
 
 
