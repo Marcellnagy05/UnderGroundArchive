@@ -14,6 +14,7 @@ import { FaTrashCan } from "react-icons/fa6";
 import RankBar from "../RankBar/RankBar";
 import { fetchMyFavourites } from "../../services/BookServices";
 import { useNavigate } from "react-router-dom";
+import { FaEye } from "react-icons/fa";
 
 interface Ranks {
   rankId: number;
@@ -431,7 +432,7 @@ const Profile = () => {
           decoded[
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
           ]
-        ); // Fetch ratings for each book
+        );
       });
     }
   }, [activeTab, books, userProfile]);
@@ -492,6 +493,10 @@ const Profile = () => {
   const navigateToAddChapters = (bookId: number) => {
     navigate(`/addChapters/${bookId}`);
   };
+
+  const navigateToChapterList = (bookId: number) =>{
+    navigate(`/chapterList/${bookId}`);
+  }
 
   return (
     <div className="profileContainer">
@@ -643,6 +648,11 @@ const Profile = () => {
               <div className="myBooksContainer">
                 {books?.map((book) => (
                   <div className="myBooks" key={book.id}>
+                    <button 
+                      onClick={() => navigateToChapterList(book.id)} 
+                      className="chapterInfo">
+                        <FaEye/>
+                    </button>
                     <p>{book.bookName}</p>
                     <button
                       onClick={() => navigateToAddChapters(book.id)}

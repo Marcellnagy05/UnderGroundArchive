@@ -293,3 +293,9 @@
 .btnEdit:hover{
   background-color: var(--background);
 }
+
+.chapterInfo{
+  background:transparent ;
+  justify-self: flex-start;
+  align-self: flex-start;
+}
