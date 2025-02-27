@@ -30,8 +30,6 @@ namespace UnderGroundArchive_Backend.Controllers
             if (user == null) return;
 
             int writtenCommentCount = await _dbContext.Comments.CountAsync(b => b.CommenterId == userId);
-            Console.WriteLine("-------------------------------------");
-            Console.WriteLine(writtenCommentCount);
             var achievementsToCheck = new List<(int AchievementId, int RequiredComments)>
             {
                 (4, 1),  //First Words – Write your first comment
