@@ -14,7 +14,7 @@ import { FaTrashCan } from "react-icons/fa6";
 import RankBar from "../RankBar/RankBar";
 import { fetchMyFavourites } from "../../services/BookServices";
 import { useNavigate } from "react-router-dom";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaPlusCircle, FaShare } from "react-icons/fa";
 
 interface Ranks {
   rankId: number;
@@ -494,9 +494,9 @@ const Profile = () => {
     navigate(`/addChapters/${bookId}`);
   };
 
-  const navigateToChapterList = (bookId: number) =>{
+  const navigateToChapterList = (bookId: number) => {
     navigate(`/chapterList/${bookId}`);
-  }
+  };
 
   return (
     <div className="profileContainer">
@@ -641,24 +641,27 @@ const Profile = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <h2>Könyveim</h2>
+              <h2>Könyveim</h2>
             {userProfile?.role !== "Author" ? (
               <button disabled>🔒 Csak szerzők számára elérhető</button>
             ) : (
               <div className="myBooksContainer">
                 {books?.map((book) => (
                   <div className="myBooks" key={book.id}>
-                    <button 
-                      onClick={() => navigateToChapterList(book.id)} 
-                      className="chapterInfo">
-                        <FaEye/>
+                    <button
+                      onClick={() => navigateToChapterList(book.id)}
+                      className="chapterInfo"
+                      title="Fejezetek listázása"
+                    >
+                      <FaEye />
                     </button>
                     <p>{book.bookName}</p>
                     <button
                       onClick={() => navigateToAddChapters(book.id)}
                       className="btnAddCh"
+                      title="Új fejezet hozzáadása"
                     >
-                      Új fejezet hozzáadása
+                      <FaPlusCircle />
                     </button>
                   </div>
                 ))}

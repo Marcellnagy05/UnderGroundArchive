@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { chapters } from "../../Types/Chapters";
 import "./ChapterList.css";
 import { useToast } from "../contexts/ToastContext";
+import { FaShare } from "react-icons/fa";
 
 const ChapterList = () => {
   const [chapters, setChapters] = useState<chapters[]>([]);
@@ -48,8 +49,8 @@ const ChapterList = () => {
           body: JSON.stringify({ chapterId }),
         }
       );
-      if (!response.ok) showToast("Hiba a fejezet törlésekor","error");
-      showToast("Fejezet Sikeresen Törölve","success");
+      if (!response.ok) showToast("Hiba a fejezet törlésekor", "error");
+      showToast("Fejezet Sikeresen Törölve", "success");
       fetchChapters();
     } catch (error) {
       console.error(error);
@@ -63,9 +64,20 @@ const ChapterList = () => {
     navigate(`/editChapter/${bookId}/${chapterId}/${chapterNumber}`);
   };
 
+  const navigateBack = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="chapterListContainer">
+        <div className="titleContainer">
+          <button onClick={() => navigateBack()} className="backBtn">
+            <FaShare />
+          </button>
+          <h2>Fejezetek</h2>
+        </div>
       <div className="chapterList">
+
         {chapters.map((chapter) => (
           <div key={chapter.chapterId} className="chapterItem">
             <h3>{chapter.chapterTitle}</h3>

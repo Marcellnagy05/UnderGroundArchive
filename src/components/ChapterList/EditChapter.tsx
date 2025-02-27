@@ -56,8 +56,8 @@ const EditChapter = () => {
   };
 
   return (
-    <div>
-      <form className="addChapters" onSubmit={handleSubmit}>
+    <div className="editChaptersContainer">
+      <form className="editChapters" onSubmit={handleSubmit}>
         <h2 className="form-title">Fejezet szerkesztése</h2>
 
         <div className="chapter-input-group">

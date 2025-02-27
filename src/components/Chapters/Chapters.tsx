@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./Chapter.css";
 import { useToast } from "../contexts/ToastContext";
+import { FaShare } from "react-icons/fa";
 
 const Chapters = () => {
   const { bookId } = useParams();
@@ -10,17 +11,21 @@ const Chapters = () => {
   const [chapterContent, setChapterContent] = useState("");
   const [chapterNumber, setChapterNumber] = useState<number>(1);
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const fetchChapterNumber = async () => {
     try {
       const token = localStorage.getItem("jwt");
-      const response = await fetch(`https://localhost:7197/api/Author/chapters/${bookId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `https://localhost:7197/api/Author/chapters/${bookId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Nem sikerült betölteni a fejezeteket.");
@@ -28,11 +33,13 @@ const Chapters = () => {
 
       const chapters = await response.json();
       if (chapters.length > 0) {
-        const maxChapterNumber = Math.max(...chapters.map((c: any) => c.chapterNumber));
+        const maxChapterNumber = Math.max(
+          ...chapters.map((c: any) => c.chapterNumber)
+        );
         setChapterNumber(maxChapterNumber + 1);
       }
     } catch (err: any) {
-      console.error(err)
+      console.error(err);
     }
   };
 
@@ -40,7 +47,7 @@ const Chapters = () => {
     if (bookId) {
       fetchChapterNumber();
     }
-  }, [bookId])
+  }, [bookId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,21 +77,28 @@ const Chapters = () => {
         throw new Error(errorText);
       }
 
-
-      showToast("A fejezet sikeresen hozzáadva","success")
+      showToast("A fejezet sikeresen hozzáadva", "success");
       setChapterTitle("");
       setChapterContent("");
       fetchChapterNumber();
     } catch (error) {
-        showToast("Hiba történt a fejezet hozzáadása során","error")
+      showToast("Hiba történt a fejezet hozzáadása során", "error");
     }
+  };
+
+  const navigateBack = () => {
+    navigate("/profile");
   };
 
   return (
     <div className="addChaptersContainer">
       <form className="addChapters" onSubmit={handleSubmit}>
-        <h2 className="form-title">Új fejezet hozzáadása</h2>
-
+        <div className="titleContainer">
+          <button onClick={() => navigateBack()} className="backBtn">
+            <FaShare />
+          </button>
+          <h2 className="form-title">Új fejezet hozzáadása</h2>
+        </div>
         <div className="chapter-input-group">
           <label className="chapter-label">Fejezet száma:</label>
           <input

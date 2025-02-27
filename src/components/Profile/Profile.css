@@ -269,21 +269,27 @@
   }
 }
 
-.myBooksContainer{
-  display: flex;
-  flex-direction: column;
+.myBooksContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.2rem;
   margin-top: 1.2rem;
+  width: 100%;
+  padding: 1rem;
 }
 
-.myBooks{
+.myBooks {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   border: 2px solid var(--background);
   padding: 2.5rem;
   border-radius: 1rem;
   gap: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
+
 
 .btnEdit{
   background-color: var(--thirdColor);
@@ -294,8 +300,21 @@
   background-color: var(--background);
 }
 
-.chapterInfo{
+.chapterInfo, .btnAddCh{
   background:transparent ;
   justify-self: flex-start;
   align-self: flex-start;
+  transition: 0.25s ease-in;
+}
+
+.chapterInfo:hover, .btnAddCh:hover{
+  background: transparent;
+  scale: 1.2;
+}
+
+.titleContainer{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 0.05fr 3fr;
+  grid-template-rows: 1fr;
 }

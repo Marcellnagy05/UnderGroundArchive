@@ -1,9 +1,11 @@
 .chapterListContainer {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
     padding: 2rem;
+
 }
 
 .chapterList {
@@ -24,4 +26,11 @@
     border-radius: 1rem;
     background-color: var(--thirdColor);
     text-align: center;
+}
+
+.editChaptersContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.5rem;
 }
