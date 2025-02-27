@@ -26,6 +26,45 @@ namespace UnderGroundArchive_Backend.Controllers
             _dbContext = dBContext;
         }
 
+        //Achievement helper function
+        private async Task GrantAchievementIfEligible(string userId, int publishedBookCount)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user == null) return;
+
+            var achievementsToCheck = new List<(int AchievementId, int RequiredBooks)>
+            {
+                (1, 1),  // First Steps – Publish your first book
+                (2, 5),  // Aspiring Author – Publish 5 books
+                (3, 10)  // Master Storyteller – Publish 10 books
+            };
+
+            foreach (var (achievementId, requiredBooks) in achievementsToCheck)
+            {
+                if (publishedBookCount >= requiredBooks)
+                {
+                    bool achievementExists = await _dbContext.CompletedAchievements
+                        .AnyAsync(ca => ca.AchievementId == achievementId && ca.CompleterId == userId);
+
+                    if (!achievementExists)
+                    {
+                        var achievement = await _dbContext.Achievements.FindAsync(achievementId);
+                        if (achievement != null)
+                        {
+                            _dbContext.CompletedAchievements.Add(new CompletedAchievements
+                            {
+                                AchievementId = achievementId,
+                                CompleterId = userId
+                            });
+
+                            user.RankPoints += achievement.PointAmount;
+                            await _dbContext.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+        }
+
         //Book endpoints
 
         [HttpPost("publish")]
@@ -59,32 +98,9 @@ namespace UnderGroundArchive_Backend.Controllers
                 _dbContext.Books.Add(book);
                 await _dbContext.SaveChangesAsync();
 
-                bool achievementExists = await _dbContext.CompletedAchievements
-                    .AnyAsync(ca => ca.AchievementId == 1 && ca.CompleterId == userId);
+                int publishedBookCount = await _dbContext.Books.CountAsync(b => b.AuthorId == userId);
 
-                if (!achievementExists)
-                {
-                    var achievement = await _dbContext.Achievements.FindAsync(1);
-
-                    if (achievement != null)
-                    {
-                        var completedAchievement = new CompletedAchievements
-                        {
-                            AchievementId = 1,
-                            CompleterId = userId
-                        };
-
-                        _dbContext.CompletedAchievements.Add(completedAchievement);
-
-                        var user = await _dbContext.Users.FindAsync(userId);
-                        if (user != null)
-                        {
-                            user.RankPoints += achievement.PointAmount;
-                        }
-
-                        await _dbContext.SaveChangesAsync();
-                    }
-                }
+                await GrantAchievementIfEligible(userId, publishedBookCount);
 
                 return Ok(new { message = "A könyv sikeresen publikálva.", bookId = book.BookId });
             }
