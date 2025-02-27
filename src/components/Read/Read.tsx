@@ -70,8 +70,10 @@ const Read = () => {
   }, [bookId]);
 
   useEffect(() => {
+    let isMounted = true;
+  
     const fetchChapter = async () => {
-      console.log(chapterNumber)
+      console.log("Fetching chapter:", chapterNumber);
       try {
         const response = await fetch(
           `https://localhost:7197/api/Book/chapter/${bookId}/${chapterNumber}`,
@@ -83,17 +85,22 @@ const Read = () => {
             },
           }
         );
-        if (!response.ok) throw new Error("Hiba a fejezet lekérésekor")
-
+        if (!response.ok) throw new Error("Hiba a fejezet lekérésekor");
+  
         const data = await response.json();
-        setChapter(data);
+        if (isMounted) setChapter(data);
       } catch (error) {
         console.error(error);
       }
     };
-
+  
     if (bookId) fetchChapter();
+  
+    return () => {
+      isMounted = false;
+    };
   }, [bookId, chapterNumber]);
+  
 
   const navigateToBooks = () => {
     navigate("/books");
