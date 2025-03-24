@@ -10,7 +10,6 @@ namespace UnderGroundArchive_Backend.Dbcontext
         public UGA_DBContext(DbContextOptions<UGA_DBContext> options) : base(options) { }
 
         public DbSet<ApplicationUser> Users { get; set; }
-        public DbSet<Guest> Guest { get; set; }
 
         public DbSet<Requests> Requests { get; set; }
 
@@ -59,7 +58,6 @@ namespace UnderGroundArchive_Backend.Dbcontext
 
             // Primary Keys
             modelBuilder.Entity<ApplicationUser>().HasKey(u => u.Id);
-            modelBuilder.Entity<Guest>().HasKey(g => g.GuestId);
             modelBuilder.Entity<Requests>().HasKey(r => r.RequestId);
             modelBuilder.Entity<Categories>().HasKey(c => c.CategoryId);
             modelBuilder.Entity<Books>().HasKey(b => b.BookId);
@@ -151,16 +149,6 @@ namespace UnderGroundArchive_Backend.Dbcontext
                 .HasOne(rp => rp.ReportedPeople)
                 .WithMany(b => b.ReportSubject)
                 .HasForeignKey(cr => cr.ReportedPersonId);
-
-            modelBuilder.Entity<Reports>()
-                .HasOne(rp => rp.ReportedComments)
-                .WithMany(b => b.ReportSubject)
-                .HasForeignKey(cr => cr.ReportedCommentId);
-
-            modelBuilder.Entity<Reports>()
-                .HasOne(rp => rp.ReportedBooks)
-                .WithMany(b => b.ReportSubject)
-                .HasForeignKey(cr => cr.ReportedBookId);
 
             //Chapters table
 

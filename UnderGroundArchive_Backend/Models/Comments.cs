@@ -17,6 +17,5 @@ namespace UnderGroundArchive_Backend.Models
         public virtual Books Books { get; set; }
         [JsonIgnore]
         public virtual ApplicationUser Users { get; set; }
-        public virtual ICollection<Reports> ReportSubject { get; set; } = new List<Reports>();
     }
 }

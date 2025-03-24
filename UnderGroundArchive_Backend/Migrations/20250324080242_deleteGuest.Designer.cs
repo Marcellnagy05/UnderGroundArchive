@@ -12,8 +12,8 @@ using UnderGroundArchive_Backend.Dbcontext;
 namespace UnderGroundArchive_Backend.Migrations
 {
     [DbContext(typeof(UGA_DBContext))]
-    [Migration("20250121174450_commentsUpdated")]
-    partial class commentsUpdated
+    [Migration("20250324080242_deleteGuest")]
+    partial class deleteGuest
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,15 +169,10 @@ namespace UnderGroundArchive_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
                     b.Property<int>("PointAmount")
                         .HasColumnType("int");
 
                     b.HasKey("AchievementId");
-
-                    b.HasIndex("BookId");
 
                     b.ToTable("Achievements");
                 });
@@ -193,7 +188,7 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -201,7 +196,6 @@ namespace UnderGroundArchive_Backend.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
@@ -211,9 +205,11 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Favourites")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsMuted")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("JoinDate")
                         .HasColumnType("datetime(6)");
@@ -241,7 +237,10 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("RankId")
+                    b.Property<int?>("ProfilePictureId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RankId")
                         .HasColumnType("int");
 
                     b.Property<int>("RankPoints")
@@ -250,8 +249,12 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("SubscriptionId")
+                    b.Property<int?>("SubscriptionId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Theme")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
@@ -332,6 +335,62 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Chapters", b =>
+                {
+                    b.Property<int>("ChapterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ChapterId"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChapterContent")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ChapterNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChapterTitle")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ChapterId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Chapters");
+                });
+
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.CommentLike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsLike")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CommentLikes");
+                });
+
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Comments", b =>
                 {
                     b.Property<int>("CommentId")
@@ -353,6 +412,12 @@ namespace UnderGroundArchive_Backend.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Dislikes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime(6)");
@@ -430,6 +495,33 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.ToTable("CriticRatings");
                 });
 
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Favourites", b =>
+                {
+                    b.Property<int>("FavouriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("FavouriteId"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ChapterNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("FavouriteId");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Favourites");
+                });
+
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Genre", b =>
                 {
                     b.Property<int>("GenreId")
@@ -448,27 +540,6 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.HasKey("GenreId");
 
                     b.ToTable("Genre");
-                });
-
-            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Guest", b =>
-                {
-                    b.Property<int>("GuestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("GuestId"));
-
-                    b.Property<string>("GuestName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("GuestId");
-
-                    b.ToTable("Guest");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Ranks", b =>
@@ -529,6 +600,61 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.ToTable("ReaderRatings");
                 });
 
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.ReportTypes", b =>
+                {
+                    b.Property<int>("ReportTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ReportTypeId"));
+
+                    b.Property<string>("ReportTypeName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ReportTypeId");
+
+                    b.ToTable("ReportTypes");
+                });
+
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Reports", b =>
+                {
+                    b.Property<int>("ReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ReportId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsHandled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ReportMessage")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ReportTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReportedPersonId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ReporterId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("ReportTypeId");
+
+                    b.HasIndex("ReportedPersonId");
+
+                    b.HasIndex("ReporterId");
+
+                    b.ToTable("Reports");
+                });
+
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Requests", b =>
                 {
                     b.Property<int>("RequestId")
@@ -540,8 +666,14 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<bool>("IsApproved")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsHandled")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("RequestMessage")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("RequestType")
                         .HasColumnType("int");
@@ -627,17 +759,6 @@ namespace UnderGroundArchive_Backend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Achievements", b =>
-                {
-                    b.HasOne("UnderGroundArchive_Backend.Models.Books", "Books")
-                        .WithMany("Achievements")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Books");
-                });
-
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Books", b =>
                 {
                     b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", null)
@@ -665,6 +786,36 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Chapters", b =>
+                {
+                    b.HasOne("UnderGroundArchive_Backend.Models.Books", "Book")
+                        .WithMany("Chapters")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.CommentLike", b =>
+                {
+                    b.HasOne("UnderGroundArchive_Backend.Models.Comments", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Comments", b =>
@@ -716,6 +867,25 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Navigation("Books");
                 });
 
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Favourites", b =>
+                {
+                    b.HasOne("UnderGroundArchive_Backend.Models.Books", "Book")
+                        .WithMany("Favourites")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", "User")
+                        .WithMany("Favourites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.ReaderRatings", b =>
                 {
                     b.HasOne("UnderGroundArchive_Backend.Models.Books", "Books")
@@ -725,6 +895,31 @@ namespace UnderGroundArchive_Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Reports", b =>
+                {
+                    b.HasOne("UnderGroundArchive_Backend.Models.ReportTypes", "ReportTypes")
+                        .WithMany("Reports")
+                        .HasForeignKey("ReportTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", "ReportedPeople")
+                        .WithMany("ReportSubject")
+                        .HasForeignKey("ReportedPersonId");
+
+                    b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", "ReporterPeople")
+                        .WithMany("ReportSender")
+                        .HasForeignKey("ReporterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReportTypes");
+
+                    b.Navigation("ReportedPeople");
+
+                    b.Navigation("ReporterPeople");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Requests", b =>
@@ -751,16 +946,24 @@ namespace UnderGroundArchive_Backend.Migrations
 
                     b.Navigation("CompletedAchievements");
 
+                    b.Navigation("Favourites");
+
+                    b.Navigation("ReportSender");
+
+                    b.Navigation("ReportSubject");
+
                     b.Navigation("Requests");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Books", b =>
                 {
-                    b.Navigation("Achievements");
+                    b.Navigation("Chapters");
 
                     b.Navigation("Comments");
 
                     b.Navigation("CriticRatings");
+
+                    b.Navigation("Favourites");
 
                     b.Navigation("ReaderRatings");
                 });
@@ -773,6 +976,11 @@ namespace UnderGroundArchive_Backend.Migrations
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Genre", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("UnderGroundArchive_Backend.Models.ReportTypes", b =>
+                {
+                    b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618
         }

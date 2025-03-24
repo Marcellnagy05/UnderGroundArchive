@@ -539,27 +539,6 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.ToTable("Genre");
                 });
 
-            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Guest", b =>
-                {
-                    b.Property<int>("GuestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("GuestId"));
-
-                    b.Property<string>("GuestName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("GuestId");
-
-                    b.ToTable("Guest");
-                });
-
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Ranks", b =>
                 {
                     b.Property<int>("RankId")
@@ -655,12 +634,6 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Property<int>("ReportTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReportedBookId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReportedCommentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ReportedPersonId")
                         .HasColumnType("varchar(255)");
 
@@ -671,10 +644,6 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.HasKey("ReportId");
 
                     b.HasIndex("ReportTypeId");
-
-                    b.HasIndex("ReportedBookId");
-
-                    b.HasIndex("ReportedCommentId");
 
                     b.HasIndex("ReportedPersonId");
 
@@ -933,14 +902,6 @@ namespace UnderGroundArchive_Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UnderGroundArchive_Backend.Models.Books", "ReportedBooks")
-                        .WithMany("ReportSubject")
-                        .HasForeignKey("ReportedBookId");
-
-                    b.HasOne("UnderGroundArchive_Backend.Models.Comments", "ReportedComments")
-                        .WithMany("ReportSubject")
-                        .HasForeignKey("ReportedCommentId");
-
                     b.HasOne("UnderGroundArchive_Backend.Models.ApplicationUser", "ReportedPeople")
                         .WithMany("ReportSubject")
                         .HasForeignKey("ReportedPersonId");
@@ -952,10 +913,6 @@ namespace UnderGroundArchive_Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("ReportTypes");
-
-                    b.Navigation("ReportedBooks");
-
-                    b.Navigation("ReportedComments");
 
                     b.Navigation("ReportedPeople");
 
@@ -1006,18 +963,11 @@ namespace UnderGroundArchive_Backend.Migrations
                     b.Navigation("Favourites");
 
                     b.Navigation("ReaderRatings");
-
-                    b.Navigation("ReportSubject");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Categories", b =>
                 {
                     b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("UnderGroundArchive_Backend.Models.Comments", b =>
-                {
-                    b.Navigation("ReportSubject");
                 });
 
             modelBuilder.Entity("UnderGroundArchive_Backend.Models.Genre", b =>
