@@ -26,6 +26,7 @@ namespace UnderGroundArchive_WPF.ViewModels
             LoadReportsCommand = new RelayCommand(async () => await LoadReportsAsync());
             AcceptReporttCommand = new RelayCommand(async () => await AcceptReportAsync());
             DenyReportCommand = new RelayCommand(async () => await DenyReportAsync());
+            LogOutCommand = new RelayCommand(async () => await LogOutAsync());
         }
 
         public ObservableCollection<ReportModel> Reports
@@ -51,6 +52,22 @@ namespace UnderGroundArchive_WPF.ViewModels
         public ICommand LoadReportsCommand { get; }
         public ICommand AcceptReporttCommand { get; }
         public ICommand DenyReportCommand { get; }
+        public ICommand LogOutCommand { get; }
+
+
+        private async Task LogOutAsync()
+        {
+            _apiService.LogOut();
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var currentWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
+                currentWindow?.Close();
+
+                var loginView = new Views.LoginView(new LoginViewModel(_apiService));
+                loginView.Show();
+            });
+        }
 
         private async Task LoadReportsAsync()
         {

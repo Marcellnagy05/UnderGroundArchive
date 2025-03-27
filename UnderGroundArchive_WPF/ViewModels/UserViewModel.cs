@@ -55,6 +55,7 @@ namespace UnderGroundArchive_WPF.ViewModels
             ChangeBanStatusCommand = new RelayCommand(async () => await ChangeBanStatusAsync());
             UpdateUserRoleCommand = new RelayCommand(async () => await UpdateUserRoleAsync());
             GoToRequestsCommand = new RelayCommand(async () => await GoToRequests());
+                        LogOutCommand = new RelayCommand(async () => await LogOutAsync());
         }
 
         private async Task GoToRequests()
@@ -89,6 +90,21 @@ namespace UnderGroundArchive_WPF.ViewModels
         public ICommand ChangeBanStatusCommand { get; }
         public ICommand UpdateUserRoleCommand { get; }
         public ICommand GoToRequestsCommand { get; }
+        public ICommand LogOutCommand { get; }
+
+        private async Task LogOutAsync()
+        {
+            _apiService.LogOut();
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var currentWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
+                currentWindow?.Close();
+
+                var loginView = new Views.LoginView(new LoginViewModel(_apiService));
+                loginView.Show();
+            });
+        }
 
         private async Task LoadUsersAsync()
         {

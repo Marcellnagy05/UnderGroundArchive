@@ -14,13 +14,13 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
+        <DockPanel Grid.Row="0">
             <Button Content="Load Pending Requests" Command="{Binding LoadRequestsCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" />
             <Button Content="Accept Request" Command="{Binding AcceptRequestCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
             <Button Content="Deny Request" Command="{Binding DenyRequestCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
-        </StackPanel>
+            <Button Content="Go Back" Command="{Binding GoToUsersCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" HorizontalAlignment="Right"/>
+        </DockPanel>
 
-        <Button Content="Go Back" Command="{Binding GoToUsersCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" HorizontalAlignment="Right"/>
 
         <DataGrid ItemsSource="{Binding Requests}" SelectedItem="{Binding SelectedRequest}" Grid.Row="1" Style="{StaticResource UserDataGridStyle}" AutoGenerateColumns="True" />
     </Grid>

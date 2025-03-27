@@ -11,8 +11,6 @@ namespace UnderGroundArchive_WPF.Models
         public int ReportId { get; set; }
         public string ReporterId { get; set; }
         public string? ReportedPersonId { get; set; }
-        public int? ReportedCommentId { get; set; }
-        public int? ReportedBookId { get; set; }
         public int ReportTypeId { get; set; }
         public string? ReportMessage { get; set; }
         public bool IsHandled { get; set; } = false;

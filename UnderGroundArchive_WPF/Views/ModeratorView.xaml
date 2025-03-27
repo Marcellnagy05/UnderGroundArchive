@@ -14,11 +14,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
+        <DockPanel Grid.Row="0">
             <Button Content="Load Pending Reports" Command="{Binding LoadReportsCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150"/>
             <Button Content="Accept Reports(Delete Reported Creation)" Command="{Binding AcceptReportCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="250"/>
             <Button Content="Deny Reports" Command="{Binding DenyReportCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
-        </StackPanel>
+            <Button Content="Log Out" Command="{Binding LogOutCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" HorizontalAlignment="Right" />
+        </DockPanel>
 
         <DataGrid ItemsSource="{Binding Reports}" SelectedItem="{Binding SelectedReport}" Grid.Row="1" Style="{StaticResource UserDataGridStyle}" AutoGenerateColumns="True" />
     </Grid>

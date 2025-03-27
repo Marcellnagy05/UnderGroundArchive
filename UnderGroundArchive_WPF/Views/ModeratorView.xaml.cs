@@ -25,5 +25,6 @@ namespace UnderGroundArchive_WPF.Views
             InitializeComponent();
             DataContext = viewModel;
         }
+
     }
 }

@@ -29,20 +29,14 @@ namespace UnderGroundArchive_WPF.Services
         {
             _token = token;
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
-            // Save token locally
-            File.WriteAllText("token.txt", token);
         }
 
-        // Load token on app startup
-        public void LoadToken()
+        public void LogOut()
         {
-            if (File.Exists("token.txt"))
-            {
-                _token = File.ReadAllText("token.txt");
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-            }
+            _token = null;
+            _httpClient.DefaultRequestHeaders.Authorization = null;
         }
+
         public async Task<(bool isSuccess, string? token, string? role)> LoginAsync(string username, string password)
         {
             var loginData = new { Login = username, Password = password };
