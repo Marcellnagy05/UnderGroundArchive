@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Undergroundarchive_Mobile.MVVM.ViewModels"
+             x:Class="Undergroundarchive_Mobile.MVVM.Views.LoginView"
+             Title="Bejelentkezés">
+
+	<VerticalStackLayout Padding="20" Spacing="15">
+
+		<Label Text="Bejelentkezés" 
+               FontSize="24" 
+               HorizontalOptions="Center"
+               FontAttributes="Bold"/>
+
+		<Entry Placeholder="Felhasználónév"
+               Text="{Binding Username}"
+               Keyboard="Text"/>
+
+		<Entry Placeholder="Jelszó"
+               Text="{Binding Password}"
+               IsPassword="True"/>
+
+		<Button Text="Bejelentkezés"
+                Command="{Binding LoginCommand}"
+                BackgroundColor="#007BFF"
+                TextColor="White"
+                CornerRadius="10"
+                Padding="10"/>
+
+		<Label Text="{Binding ErrorMessage}" 
+               TextColor="Red" 
+               HorizontalOptions="Center"
+               IsVisible="{Binding HasError}"/>
+
+	</VerticalStackLayout>
+</ContentPage>

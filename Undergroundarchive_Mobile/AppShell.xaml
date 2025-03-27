@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Undergroundarchive_Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Undergroundarchive_Mobile.MVVM.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Undergroundarchive_Mobile">
+
+	<TabBar>
+		<ShellContent Route="home" Title="Home" ContentTemplate="{DataTemplate local:HomeView}" Icon="home_icon.png"/>
+		<ShellContent Route="books" Title="Books" ContentTemplate="{DataTemplate local:BooksView}" Icon="book.png"/>
+		<ShellContent Route="login" Title="Login" ContentTemplate="{DataTemplate local:LoginView}" Icon="login.png"/>
+	</TabBar>
+
+</Shell>

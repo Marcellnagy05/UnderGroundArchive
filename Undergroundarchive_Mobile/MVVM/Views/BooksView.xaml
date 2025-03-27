@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Undergroundarchive_Mobile.MVVM.Views.BooksView"
+             Title="Könyvek">
+	<ScrollView>
+		<StackLayout Padding="10">
+			<Label Text="Könyvek listája" FontSize="Large" HorizontalOptions="Center"/>
+
+			<CollectionView ItemsSource="{Binding Books}">
+				<CollectionView.ItemTemplate>
+					<DataTemplate>
+						<Frame BorderColor="Black" Padding="10" Margin="5" CornerRadius="10">
+							<VerticalStackLayout>
+								<Label Text="{Binding BookName}" FontSize="Medium" FontAttributes="Bold"/>
+								<Label Text="{Binding BookDescription}" FontSize="Small"/>
+								<Label Text="{Binding AverageRating, StringFormat='Értékelés: {0:F1}'}" FontSize="Small" TextColor="Green"/>
+							</VerticalStackLayout>
+						</Frame>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+		</StackLayout>
+	</ScrollView>
+</ContentPage>
