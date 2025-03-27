@@ -1,0 +1,23 @@
+﻿<Window x:Class="UnderGroundArchive_WPF.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UnderGroundArchive_WPF.Views"
+        xmlns:helpers="clr-namespace:UnderGroundArchive_WPF.Helpers"
+        mc:Ignorable="d"
+        Title="LoginView" Height="450" Width="800"
+        Style="{StaticResource BackgroundStyle}">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" KeyDown="Enter_KeyDown">
+            <TextBlock Text="Username" Style="{StaticResource LabelStyle}"/>
+            <TextBox Text="{Binding Username, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
+
+            <TextBlock Text="Password" Style="{StaticResource LabelStyle}"/>
+            <PasswordBox helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}" 
+                         Style="{StaticResource PasswordStyle}"/>
+
+            <Button x:Name="LoginButton" Content="Login" Command="{Binding LoginCommand}" Style="{StaticResource ButtonStyle}"/>
+        </StackPanel>
+    </Grid>
+</Window>

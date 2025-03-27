@@ -1,0 +1,27 @@
+﻿<Window x:Class="UnderGroundArchive_WPF.Views.RequestView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UnderGroundArchive_WPF.Views"
+        mc:Ignorable="d"
+        Title="RequestView" Height="450" Width="800"
+        Style="{StaticResource BackgroundStyle}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0">
+            <Button Content="Load Pending Requests" Command="{Binding LoadRequestsCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" />
+            <Button Content="Accept Request" Command="{Binding AcceptRequestCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
+            <Button Content="Deny Request" Command="{Binding DenyRequestCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
+            <Button Content="Go Back" Command="{Binding GoToUsersCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" HorizontalAlignment="Right"/>
+        </DockPanel>
+
+
+        <DataGrid ItemsSource="{Binding Requests}" SelectedItem="{Binding SelectedRequest}" Grid.Row="1" Style="{StaticResource UserDataGridStyle}" AutoGenerateColumns="True" />
+    </Grid>
+</Window>
