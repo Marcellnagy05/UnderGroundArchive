@@ -44,7 +44,6 @@ namespace UnderGroundArchive_WPF.Services
 
             var response = await _httpClient.PostAsJsonAsync($"{BASE_URL}/api/Account/login", loginData);
             string responseContent = await response.Content.ReadAsStringAsync(); // Log the response body
-
             if (!response.IsSuccessStatusCode)
             {
                 return (false, null, null);

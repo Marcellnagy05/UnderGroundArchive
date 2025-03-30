@@ -15,10 +15,10 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0">
-            <Button Content="Load Pending Reports" Command="{Binding LoadReportsCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150"/>
-            <Button Content="Accept Reports(Delete Reported Creation)" Command="{Binding AcceptReportCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="250"/>
-            <Button Content="Deny Reports" Command="{Binding DenyReportCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
-            <Button Content="Log Out" Command="{Binding LogOutCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="150" HorizontalAlignment="Right" />
+            <Button Content="Függőben Lévő Jelentések Betöltése" Command="{Binding LoadReportsCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="220"/>
+            <Button Content="Bejelentés elfogadása(Némítás)" Command="{Binding AcceptReportCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="200"/>
+            <Button Content="Bejelentés Elutasítása" Command="{Binding DenyReportCommand}" Style="{StaticResource ButtonStyle}" Margin="5" />
+            <Button Content="Kilépés" Command="{Binding LogOutCommand}" Style="{StaticResource ButtonStyle}" Margin="5" Width="100" HorizontalAlignment="Right" />
         </DockPanel>
 
         <DataGrid ItemsSource="{Binding Reports}" SelectedItem="{Binding SelectedReport}" Grid.Row="1" Style="{StaticResource UserDataGridStyle}" AutoGenerateColumns="True" />

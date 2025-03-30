@@ -10,14 +10,14 @@
         Style="{StaticResource BackgroundStyle}">
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" KeyDown="Enter_KeyDown">
-            <TextBlock Text="Username" Style="{StaticResource LabelStyle}"/>
+            <TextBlock Text="FelhasználóNév" Style="{StaticResource LabelStyle}"/>
             <TextBox Text="{Binding Username, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
 
-            <TextBlock Text="Password" Style="{StaticResource LabelStyle}"/>
+            <TextBlock Text="Jelszó" Style="{StaticResource LabelStyle}"/>
             <PasswordBox helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}" 
                          Style="{StaticResource PasswordStyle}"/>
 
-            <Button x:Name="LoginButton" Content="Login" Command="{Binding LoginCommand}" Style="{StaticResource ButtonStyle}"/>
+            <Button x:Name="LoginButton" Content="Belépés" Command="{Binding LoginCommand}" Style="{StaticResource ButtonStyle}"/>
         </StackPanel>
     </Grid>
 </Window>

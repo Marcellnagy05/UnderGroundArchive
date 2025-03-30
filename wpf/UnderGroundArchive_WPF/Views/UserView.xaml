@@ -18,16 +18,16 @@
         </Grid.RowDefinitions>
 
             <StackPanel Orientation="Vertical" Grid.Column="0">
-            <Button Content="Load Users" Command="{Binding LoadUsersCommand}" Style="{StaticResource ButtonStyle}" />
-            <Button Content="Mute User" Command="{Binding ChangeMuteStatusCommand}" Style="{StaticResource ButtonStyle}" />
-            <Button Content="Ban User" Command="{Binding ChangeBanStatusCommand}" Style="{StaticResource ButtonStyle}" />
-            <Button Content="Update Role" Command="{Binding UpdateUserRoleCommand}" Style="{StaticResource ButtonStyle}" />
-            <Label Content="Select Role:" Style="{StaticResource UserLabelStyle}" />
+            <Button Content="Felhasználók Betöltése" Command="{Binding LoadUsersCommand}" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Felhasználó Elnémítása" Command="{Binding ChangeMuteStatusCommand}" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Felhasználó Kitiltása" Command="{Binding ChangeBanStatusCommand}" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Szerepkör Változtatása" Command="{Binding UpdateUserRoleCommand}" Style="{StaticResource ButtonStyle}" />
+            <Label Content="Szerekpkör Kiválasztása:" Style="{StaticResource UserLabelStyle}" />
             <ComboBox ItemsSource="{Binding RoleOptions}" SelectedItem="{Binding SelectedRole}" Style="{StaticResource UserComboBoxStyle}" />
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="1">
-            <Button Content="Go To Requests" Command="{Binding GoToRequestsCommand}" Width="150" Height="40" Margin="5" Style="{StaticResource ButtonStyle}" />
-            <Button Content="Log Out" Command="{Binding LogOutCommand}" Width="150" Height="40" Margin="5" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Kérelmek" Command="{Binding GoToRequestsCommand}" Width="150" Height="40" Margin="5" Style="{StaticResource ButtonStyle}" />
+            <Button Content="Kilépés" Command="{Binding LogOutCommand}" Width="150" Height="40" Margin="5" Style="{StaticResource ButtonStyle}" />
         </StackPanel>
 
         <DataGrid ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" Grid.Column="1" Grid.RowSpan="2" AutoGenerateColumns="True" Style="{StaticResource UserDataGridStyle}" />

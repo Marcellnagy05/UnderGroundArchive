@@ -39,7 +39,7 @@
 
     <!-- Button Style -->
     <Style TargetType="Button" x:Key="ButtonStyle">
-        <Setter Property="Width" Value="100"/>
+        <Setter Property="Width" Value="150"/>
         <Setter Property="Margin" Value="10"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="Background" Value="#007ACC"/>
@@ -82,10 +82,21 @@
     <Style TargetType="DataGrid" x:Key="UserDataGridStyle">
         <Setter Property="Margin" Value="5"/>
         <Setter Property="Background" Value="#2D2D30"/>
-        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderBrush" Value="#3E3E42"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="AlternatingRowBackground" Value="#1E1E1E"/>
         <Setter Property="RowBackground" Value="#2D2D30"/>
+
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="Gray"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="5"/>
+                </Style>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>

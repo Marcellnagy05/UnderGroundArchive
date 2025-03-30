@@ -79,7 +79,7 @@ namespace UnderGroundArchive_WPF.ViewModels
         {
             if (SelectedReport != null)
             {
-                var success = await _apiService.AcceptRequestAsync(SelectedReport.ReportId);
+                var success = await _apiService.ChangeMuteStatusAsync(SelectedReport.ReportedPersonId);
                 if (success)
                 {
                     SelectedReport.IsHandled = true;
@@ -93,12 +93,8 @@ namespace UnderGroundArchive_WPF.ViewModels
         {
             if (SelectedReport != null)
             {
-                var success = await _apiService.DenyRequestAsync(SelectedReport.ReportId);
-                if (success)
-                {
-                    SelectedReport.IsHandled = true;
-                    await LoadReportsAsync();
-                }
+                SelectedReport.IsHandled = true;
+                await LoadReportsAsync();
             }
         }
 
