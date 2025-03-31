@@ -1,5 +1,13 @@
 # UnderGroundArchive
 
+## **Teszt felhasználók:**
+   - TestUser1 - User123@ 
+   - TestUser2 - User123@
+   - TestAuthor1 - Author123@
+   - TestAuthor2 - Author123@
+   - TestCritic - Critic123@
+   
+
 Dokumentáció: https://github.com/akika47/UnderGroundArchive_Documentation
 
 Dokumentáció futtatása:
