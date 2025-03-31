@@ -37,7 +37,7 @@ A teszt adatbázis a database mappában található amit a XAMPP-ot megnyitva ha
 
 A következő lépésben a "CREATE DATABASE undergroundarchive CHARACTER SET utf8 COLLATE utf8_hungarian_ci" paranccsal létrehozhatunk egy adatbázis az SQL menüpont alatt.
 
-Ezután nincs más dolgunk, mint a fenti "import" gombra rákattintani és ott kiválasztani az adatbázisunkat
+Ezután nincs más dolgunk, mint a fenti "import" gombra rákattintani és ott kiválasztani az adatbázisunkat (database/undergroundarchive.sql)
 
 
 # Telepítési Útmutató
