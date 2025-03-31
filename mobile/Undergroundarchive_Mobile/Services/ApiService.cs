@@ -17,7 +17,7 @@ namespace Undergroundarchive_Mobile.Services
         public ApiService()
         {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://2cdc-94-44-112-18.ngrok-free.app");
+            _httpClient.BaseAddress = new Uri("https://bd35-89-135-123-177.ngrok-free.app");
 
             // Statikus JWT token beállítása (csak teszteléshez)
             string jwtToken = "YOUR_JWT_TOKEN_HERE";  // Itt add meg a saját tokenedet!

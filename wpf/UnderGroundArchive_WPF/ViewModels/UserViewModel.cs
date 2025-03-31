@@ -123,6 +123,10 @@ namespace UnderGroundArchive_WPF.ViewModels
                     await LoadUsersAsync();
                 }
             }
+            else
+            {
+                MessageBox.Show("Válassz ki egy felhasználót!");
+            }
         }
 
 
@@ -136,6 +140,10 @@ namespace UnderGroundArchive_WPF.ViewModels
                     SelectedUser.IsBanned = !SelectedUser.IsBanned;
                     await LoadUsersAsync();                    
                 }
+            }
+            else
+            {
+                MessageBox.Show("Válassz ki egy felhasználót!");
             }
         }
 
@@ -151,6 +159,10 @@ namespace UnderGroundArchive_WPF.ViewModels
                     SelectedUser.RoleName = SelectedRole;
                     await LoadUsersAsync();
                 }
+            }
+            else
+            {
+               MessageBox.Show("Válassz ki egy felhasználót!");
             }
         }
 

@@ -80,6 +80,10 @@ namespace UnderGroundArchive_WPF.ViewModels
                     await LoadRequestsAsync();
                 }
             }
+            else
+            {
+                MessageBox.Show("Válassz ki egy kérelmet!");
+            }
         }
 
 
@@ -94,6 +98,10 @@ namespace UnderGroundArchive_WPF.ViewModels
                     SelectedRequest.IsHandled = true;
                     await LoadRequestsAsync();
                 }
+            }
+            else
+            {
+                MessageBox.Show("Válassz ki egy kérelmet!");
             }
         }
 

@@ -86,6 +86,10 @@ namespace UnderGroundArchive_WPF.ViewModels
                     await LoadReportsAsync();
                 }
             }
+            else
+            {
+                MessageBox.Show("Válassz ki egy bejelentést!");
+            }
         }
 
 
@@ -95,6 +99,10 @@ namespace UnderGroundArchive_WPF.ViewModels
             {
                 SelectedReport.IsHandled = true;
                 await LoadReportsAsync();
+            }
+            else
+            {
+                MessageBox.Show("Válassz ki egy bejelentést!");
             }
         }
 
