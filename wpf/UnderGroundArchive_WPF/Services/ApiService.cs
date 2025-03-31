@@ -67,6 +67,10 @@ namespace UnderGroundArchive_WPF.Services
             return (true, token, roleClaim);
         }
 
+        public string GetToken()
+        {
+            return _token;
+        }
 
 
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -20,6 +21,7 @@ namespace UnderGroundArchive_WPF.ViewModels
         private readonly ApiService _apiService;
         private ObservableCollection<UserModel> _users;
         private UserModel _selectedUser;
+        private string _currentUserId;
 
         private List<string> _roleOptions = new List<string>
         {
@@ -47,6 +49,8 @@ namespace UnderGroundArchive_WPF.ViewModels
             }
         }
 
+
+
         public UserViewModel(ApiService apiService)
         {
             _apiService = apiService;
@@ -55,7 +59,9 @@ namespace UnderGroundArchive_WPF.ViewModels
             ChangeBanStatusCommand = new RelayCommand(async () => await ChangeBanStatusAsync());
             UpdateUserRoleCommand = new RelayCommand(async () => await UpdateUserRoleAsync());
             GoToRequestsCommand = new RelayCommand(async () => await GoToRequests());
-                        LogOutCommand = new RelayCommand(async () => await LogOutAsync());
+            LogOutCommand = new RelayCommand(async () => await LogOutAsync());
+
+            _currentUserId = GetCurrentUserIdFromToken();
         }
 
         private async Task GoToRequests()
@@ -106,6 +112,31 @@ namespace UnderGroundArchive_WPF.ViewModels
             });
         }
 
+        private string GetCurrentUserIdFromToken()
+        {
+            var token = _apiService.GetToken();
+            if (string.IsNullOrEmpty(token))
+                return null;
+
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var userId = jwtToken.Claims
+                    .FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?
+                    .Value;
+
+                return userId;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error parsing JWT token: {ex.Message}");
+                return null;
+            }
+        }
+
+
         private async Task LoadUsersAsync()
         {
             var users = await _apiService.GetUsersAsync();
@@ -114,55 +145,73 @@ namespace UnderGroundArchive_WPF.ViewModels
 
         private async Task ChangeMuteStatusAsync()
         {
-            if (SelectedUser != null)
+            if (SelectedUser == null)
             {
-                var success = await _apiService.ChangeMuteStatusAsync(SelectedUser.Id);
-                if (success)
-                {
-                    SelectedUser.IsMuted = !SelectedUser.IsMuted;
-                    await LoadUsersAsync();
-                }
+                MessageBox.Show("Válassz ki egy felhasználót");
+                return;
             }
-            else
+
+            if (SelectedUser.Id == _currentUserId)
             {
-                MessageBox.Show("Válassz ki egy felhasználót!");
+                MessageBox.Show("Nem némíthatod le magad!");
+                return;
+            }
+
+            var success = await _apiService.ChangeMuteStatusAsync(SelectedUser.Id);
+            if (success)
+            {
+                SelectedUser.IsMuted = !SelectedUser.IsMuted;
+                await LoadUsersAsync();
             }
         }
-
 
         private async Task ChangeBanStatusAsync()
         {
-            if (SelectedUser != null && !string.IsNullOrEmpty(SelectedUser.Id))
+            if (SelectedUser == null)
             {
-                var success = await _apiService.ChangeBanStatusAsync(SelectedUser.Id);
-                if (success)
-                {
-                    SelectedUser.IsBanned = !SelectedUser.IsBanned;
-                    await LoadUsersAsync();                    
-                }
+                MessageBox.Show("Válassz ki egy felhasználót");
+                return;
             }
-            else
+
+            if (SelectedUser.Id == _currentUserId)
             {
-                MessageBox.Show("Válassz ki egy felhasználót!");
+                MessageBox.Show("Nem tilthatod le magad!");
+                return;
+            }
+
+            var success = await _apiService.ChangeBanStatusAsync(SelectedUser.Id);
+            if (success)
+            {
+                SelectedUser.IsBanned = !SelectedUser.IsBanned;
+                await LoadUsersAsync();
             }
         }
 
-
-
         private async Task UpdateUserRoleAsync()
         {
-            if (SelectedUser != null && !string.IsNullOrEmpty(SelectedRole))
+            if (SelectedUser == null)
             {
-                var success = await _apiService.UpdateUserRoleAsync(SelectedUser.Id, SelectedRole);
-                if (success)
-                {
-                    SelectedUser.RoleName = SelectedRole;
-                    await LoadUsersAsync();
-                }
+                MessageBox.Show("Válassz ki egy felhasználót");
+                return;
             }
-            else
+
+            if (string.IsNullOrEmpty(SelectedRole))
             {
-               MessageBox.Show("Válassz ki egy felhasználót!");
+                MessageBox.Show("Válassz ki egy szerepkört");
+                return;
+            }
+
+            if (SelectedUser.Id == _currentUserId)
+            {
+                MessageBox.Show("Nem változtathatod meg a saját szerepköröd!");
+                return;
+            }
+
+            var success = await _apiService.UpdateUserRoleAsync(SelectedUser.Id, SelectedRole);
+            if (success)
+            {
+                SelectedUser.RoleName = SelectedRole;
+                await LoadUsersAsync();
             }
         }
 
