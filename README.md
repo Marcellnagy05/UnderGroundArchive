@@ -1,7 +1,15 @@
 # UnderGroundArchive
 
 Dokumentáció: https://github.com/akika47/UnderGroundArchive_Documentation
+
 Dokumentáció futtatása:
+
+1. lépés:
+https://github.com/akika47/UnderGroundArchive_Documentation repository klónozása. (Lentebb ehhez is van segédanyag.)
+
+2. lépés mappa megnyitása, manuálisan vagy cmd-ből.
+
+3. visual studio code terminálba a következőt kell beirnunk:
 
 ```console
 npm i
