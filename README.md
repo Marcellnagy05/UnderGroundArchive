@@ -31,6 +31,12 @@ Ha elakadsz akkor lejjebb görgetve a frontend dokumentáció menüpontra részl
 
 "Lépésről lépésre útmutató XAMPP, Visual Studio, Visual Studio Code, ngrok és npm telepítéséhez."
 
+# Teszt adatbázis:
+
+A teszt adatbázis a database mappában található amit a XAMPP-ot megnyitva ha rákattintunk a MYSQL serverrel egy sorban lévő "admin" gombra akkor megnyilik a kezelőfelületünk.
+A következő lépésben a "CREATE DATABASE undergroundarchive CHARACTER SET utf8 COLLATE utf8_hungarian_ci" paranccsal létrehozhatunk egy adatbázis az SQL menüpont alatt.
+Ezután nincs más dolgunk, mint a fenti "import" gombra rákattintani és ott kiválasztani az adatbázisunkat
+
 
 # Telepítési Útmutató
 
