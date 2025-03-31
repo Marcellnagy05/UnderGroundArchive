@@ -1,11 +1,20 @@
 # UnderGroundArchive
 
 Dokumentáció: https://github.com/akika47/UnderGroundArchive_Documentation
+Dokumentáció futtatása:
 
----
-title: "Telepítési Útmutató"
-description: "Lépésről lépésre útmutató XAMPP, Visual Studio, Visual Studio Code, ngrok és npm telepítéséhez."
----
+```console
+npm i
+
+npm run dev
+
+ctrl + klikk a linkre a konzolon.
+```
+
+Ha elakadsz akkor lejjebb görgetve a frontend dokumentáció menüpontra részletesebb segítséget találsz!
+
+"Lépésről lépésre útmutató XAMPP, Visual Studio, Visual Studio Code, ngrok és npm telepítéséhez."
+
 
 # Telepítési Útmutató
 
