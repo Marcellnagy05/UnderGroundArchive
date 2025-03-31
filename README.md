@@ -474,8 +474,37 @@ $ tree UnderGroundArchive
     ##### 2. A mobil alkalmazás indítása:
 
     ###### 1. Android emulátoron:
-       
-        >Ide jön majd az android emulátor configja 
+        1. **Visual Studio telepítése és konfigurálása**
+        - Győződjünk meg róla, hogy a legfrissebb Visual Studio 2022 verzió van telepítve.
+        - A telepítés során válasszuk a **.NET Multi-platform App UI development (MAUI)** munkaterhelést.
+
+        2. **Android SDK és Emulátor telepítése**
+        - Nyissuk meg a **Visual Studio Installer** alkalmazást, és ellenőrizzük, hogy az Android SDK és az Emulátor telepítve van.
+        - Ha nincs telepítve, adjuk hozzá a szükséges komponenseket.
+
+        3. **Android emulátor beállítása**
+        - Nyissuk meg a Visual Studio **Eszközök** menüjében az **Android Device Manager**-t.
+        - Hozzunk létre egy új emulátort vagy válasszunk egy előre konfigurált modellt (pl. Pixel 5 – API 30).
+        - Indítsuk el az emulátort, és várjuk meg, amíg teljesen betölt.
+
+        4. **Hardveres gyorsítás engedélyezése**
+        - Ha az emulátor lassú vagy nem indul el, ellenőrizzük, hogy a hardveres gyorsítás engedélyezve van-e.
+        - Windows esetén ellenőrizzük a **Hyper-V** vagy **Intel HAXM** beállításokat.
+        - A részletes beállításokat a [hivatalos dokumentációban](https://learn.microsoft.com/hu-hu/xamarin/android/get-started/installation/android-emulator/hardware-acceleration) találjuk.
+
+        5. **USB hibakeresés engedélyezése fizikai eszközön (opcionális)**
+            1. Az androidos eszközön lépjünk be a **Beállítások** menübe.
+            2. Keressük meg az **Eszköz információk** menüpontot.
+            3. Kattintsunk többször a **Build szám** beállításra, amíg meg nem jelenik a "Fejlesztői beállítások feloldva" üzenet.
+            4. Lépjünk be a **Fejlesztői beállítások** menüpontba.
+            5. Engedélyezzük az **USB hibakeresést**.
+            6. Csatlakoztassuk az eszközt USB-kábellel a számítógéphez.
+            7. A felugró ablakokban engedélyezzük a kapcsolatot.
+
+        6. **A projekt futtatása az emulátoron vagy fizikai eszközön**
+            1. Nyissuk meg a **Visual Studio**-ban a .NET MAUI projektet.
+            2. A felső eszköztárban válasszuk ki a kívánt eszközt az **Android Local Devices** listából.
+            3. Kattintsunk a futtatás gombra, és várjuk meg, amíg az alkalmazás elindul az emulátoron vagy a csatlakoztatott eszközön.
     ###### 2. Saját eszközön:
         >**! Fontos: A saját eszközön való indítás CSAK androidos készüléken lehetséges.**
 
