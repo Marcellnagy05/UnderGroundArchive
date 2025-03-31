@@ -505,6 +505,7 @@ $ tree UnderGroundArchive
             1. Nyissuk meg a **Visual Studio**-ban a .NET MAUI projektet.
             2. A felső eszköztárban válasszuk ki a kívánt eszközt az **Android Local Devices** listából.
             3. Kattintsunk a futtatás gombra, és várjuk meg, amíg az alkalmazás elindul az emulátoron vagy a csatlakoztatott eszközön.
+            
     ###### 2. Saját eszközön:
         >**! Fontos: A saját eszközön való indítás CSAK androidos készüléken lehetséges.**
 
