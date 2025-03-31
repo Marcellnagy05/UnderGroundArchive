@@ -13,7 +13,7 @@ Dokumentáció: https://github.com/akika47/UnderGroundArchive_Documentation
 Dokumentáció futtatása:
 
 1. lépés:
-https://github.com/akika47/UnderGroundArchive_Documentation repository klónozása. (Lentebb ehhez is van segédanyag.)
+https://github.com/akika47/UnderGroundArchive_Documentation repository klónozása. (Lentebb ehhez is található segédanyag.)
 
 2. lépés mappa megnyitása, manuálisan vagy cmd-ből.
 
