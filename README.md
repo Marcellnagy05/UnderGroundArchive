@@ -15,7 +15,7 @@ Dokumentáció futtatása:
 1. lépés:
 https://github.com/akika47/UnderGroundArchive_Documentation repository klónozása. (Lentebb ehhez is található segédanyag.)
 
-2. lépés mappa megnyitása, manuálisan vagy cmd-ből.
+2. lépés mappa megnyitása, manuálisan vagy cmd-ből. (Lentebb ehhez is található segédanyag.)
 
 3. visual studio code terminálba a következőt kell beirnunk:
 
